@@ -21,9 +21,9 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 import java.util.Date
 
-trait Cppa2016PreAlignment extends TaxYearScheme
+trait CppaTaxYearScheme2016PreAlignment extends TaxYearScheme
 
-object Cppa2016PreAlignment {
+object CppaTaxYearScheme2016PreAlignment {
 
   case class NormalTaxYearScheme(
     name: String,
@@ -32,7 +32,7 @@ object Cppa2016PreAlignment {
     chargePaidByMember: Int,
     oPensionInputAmount: Int,
     pensionInputAmount: Int
-  ) extends Cppa2016PreAlignment
+  ) extends CppaTaxYearScheme2016PreAlignment
 
   case class InitialFlexiblyAccessedTaxYearScheme(
     name: String,
@@ -44,22 +44,22 @@ object Cppa2016PreAlignment {
     flexiAccessDate: Date,
     preAccessDefinedContributionInputAmount: Int,
     postAccessDefinedContributionInputAmount: Int
-  ) extends Cppa2016PreAlignment
+  ) extends CppaTaxYearScheme2016PreAlignment
 
-  implicit lazy val reads: Reads[Cppa2016PreAlignment] = {
+  implicit lazy val reads: Reads[CppaTaxYearScheme2016PreAlignment] = {
 
     import play.api.libs.functional.syntax._
 
-    val normalReads: Reads[Cppa2016PreAlignment] = (
+    val normalReads: Reads[CppaTaxYearScheme2016PreAlignment] = (
       (__ \ "name").read[String] and
         (__ \ "pstr").read[String] and
         (__ \ "chargePaidByScheme").read[Int] and
         (__ \ "chargePaidByMember").read[Int] and
         (__ \ "oPensionInputAmount").read[Int] and
         (__ \ "pensionInputAmount").read[Int]
-    )(Cppa2016PreAlignment.NormalTaxYearScheme)
+    )(CppaTaxYearScheme2016PreAlignment.NormalTaxYearScheme)
 
-    val initialFlexiblyAccessedReads: Reads[Cppa2016PreAlignment] = (
+    val initialFlexiblyAccessedReads: Reads[CppaTaxYearScheme2016PreAlignment] = (
       (__ \ "name").read[String] and
         (__ \ "pstr").read[String] and
         (__ \ "chargePaidByScheme").read[Int] and
@@ -69,17 +69,9 @@ object Cppa2016PreAlignment {
         (__ \ "flexiAccessDate").read[Date] and
         (__ \ "preAccessDefinedContributionInputAmount").read[Int] and
         (__ \ "postAccessDefinedContributionInputAmount").read[Int]
-    )(Cppa2016PreAlignment.InitialFlexiblyAccessedTaxYearScheme)
+    )(CppaTaxYearScheme2016PreAlignment.InitialFlexiblyAccessedTaxYearScheme)
 
-    (__ \ "period")
-      .read[Period]
-      .flatMap[Period] {
-        case p if p == Period._2016PreAlignment =>
-          Reads(_ => JsSuccess(p))
-        case _                                  =>
-          Reads(_ => JsError("tax year must be `2016-pre`"))
-      }
-      .andKeep(normalReads orElse initialFlexiblyAccessedReads)
+    normalReads orElse initialFlexiblyAccessedReads
   }
 
 }

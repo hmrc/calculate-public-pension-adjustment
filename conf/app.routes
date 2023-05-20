@@ -1,3 +1,5 @@
 # microservice specific routes
 
 GET        /hello-world             uk.gov.hmrc.calculatepublicpensionadjustment.controllers.MicroserviceHelloWorldController.hello
+
+POST       /show-calculation        uk.gov.hmrc.calculatepublicpensionadjustment.controllers.ShowCalculationController.showCalculation

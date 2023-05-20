@@ -16,10 +16,32 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
+import play.api.libs.json.Reads
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Period, TaxYear}
 
 trait CppaTaxYear extends TaxYear {
   def period: Period
   def totalIncome: Int
   def taxYearSchemes: List[TaxYearScheme]
+}
+
+object CppaTaxYear {
+
+  implicit lazy val reads: Reads[CppaTaxYear] = {
+
+    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
+
+      def or[B >: A](b: Reads[B]): Reads[B] =
+        a.map[B](identity).orElse(b)
+    }
+
+    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
+      a.map(identity)
+
+    CppaTaxYear2013To2015.reads or
+      CppaTaxYear2016PreAlignment.reads or
+      CppaTaxYear2016PostAlignment.reads or (
+        CppaTaxYear2017ToCurrent.reads
+      )
+  }
 }

@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import play.api.libs.json.{JsError, JsSuccess, Reads, __}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Income, Period}
+import play.api.libs.json.{Reads, __}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income
 
 import java.util.Date
 
-trait Cppa2017ToCurrent extends TaxYearScheme
+trait CppaTaxYearScheme2017ToCurrent extends TaxYearScheme
 
-object Cppa2017ToCurrent {
+object CppaTaxYearScheme2017ToCurrent {
 
   case class NormalTaxYearScheme(
     name: String,
@@ -33,7 +33,7 @@ object Cppa2017ToCurrent {
     oPensionInputAmount: Int,
     pensionInputAmount: Int,
     income: Income
-  ) extends Cppa2017ToCurrent
+  ) extends CppaTaxYearScheme2017ToCurrent
 
   case class InitialFlexiblyAccessedTaxYearScheme(
     name: String,
@@ -46,7 +46,7 @@ object Cppa2017ToCurrent {
     preAccessDefinedContributionInputAmount: Int,
     postAccessDefinedContributionInputAmount: Int,
     income: Income
-  ) extends Cppa2017ToCurrent
+  ) extends CppaTaxYearScheme2017ToCurrent
 
   case class PostFlexiblyAccessedTaxYearScheme(
     name: String,
@@ -57,14 +57,13 @@ object Cppa2017ToCurrent {
     definedBenefitInputAmount: Int,
     definedContributionInputAmount: Int,
     income: Income
-  ) extends Cppa2017ToCurrent
+  ) extends CppaTaxYearScheme2017ToCurrent
 
-  implicit lazy val reads: Reads[Cppa2017ToCurrent] = {
+  implicit lazy val reads: Reads[CppaTaxYearScheme2017ToCurrent] = {
 
     import play.api.libs.functional.syntax._
-    import Ordering.Implicits._
 
-    val normalReads: Reads[Cppa2017ToCurrent] = (
+    val normalReads: Reads[CppaTaxYearScheme2017ToCurrent] = (
       (__ \ "name").read[String] and
         (__ \ "pstr").read[String] and
         (__ \ "chargePaidByScheme").read[Int] and
@@ -72,9 +71,9 @@ object Cppa2017ToCurrent {
         (__ \ "oPensionInputAmount").read[Int] and
         (__ \ "pensionInputAmount").read[Int] and
         (__ \ "income").read[Income]
-    )(Cppa2017ToCurrent.NormalTaxYearScheme)
+    )(CppaTaxYearScheme2017ToCurrent.NormalTaxYearScheme)
 
-    val initialFlexiblyAccessedReads: Reads[Cppa2017ToCurrent] = (
+    val initialFlexiblyAccessedReads: Reads[CppaTaxYearScheme2017ToCurrent] = (
       (__ \ "name").read[String] and
         (__ \ "pstr").read[String] and
         (__ \ "chargePaidByScheme").read[Int] and
@@ -85,9 +84,9 @@ object Cppa2017ToCurrent {
         (__ \ "preAccessDefinedContributionInputAmount").read[Int] and
         (__ \ "postAccessDefinedContributionInputAmount").read[Int] and
         (__ \ "income").read[Income]
-    )(Cppa2017ToCurrent.InitialFlexiblyAccessedTaxYearScheme)
+    )(CppaTaxYearScheme2017ToCurrent.InitialFlexiblyAccessedTaxYearScheme)
 
-    val postFlexiblyAccessedReads: Reads[Cppa2017ToCurrent] = (
+    val postFlexiblyAccessedReads: Reads[CppaTaxYearScheme2017ToCurrent] = (
       (__ \ "name").read[String] and
         (__ \ "pstr").read[String] and
         (__ \ "chargePaidByScheme").read[Int] and
@@ -96,17 +95,9 @@ object Cppa2017ToCurrent {
         (__ \ "definedBenefitInputAmount").read[Int] and
         (__ \ "definedContributionInputAmount").read[Int] and
         (__ \ "income").read[Income]
-    )(Cppa2017ToCurrent.PostFlexiblyAccessedTaxYearScheme)
+    )(CppaTaxYearScheme2017ToCurrent.PostFlexiblyAccessedTaxYearScheme)
 
-    (__ \ "period")
-      .read[Period]
-      .flatMap[Period] {
-        case p if p >= Period._2017 =>
-          Reads(_ => JsSuccess(p))
-        case _                      =>
-          Reads(_ => JsError("tax year must be `2017` or later"))
-      }
-      .andKeep(normalReads orElse initialFlexiblyAccessedReads orElse postFlexiblyAccessedReads)
+    normalReads orElse initialFlexiblyAccessedReads orElse postFlexiblyAccessedReads
 
   }
 

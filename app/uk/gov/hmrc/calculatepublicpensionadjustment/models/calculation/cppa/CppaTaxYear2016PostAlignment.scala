@@ -16,44 +16,37 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import play.api.libs.json._
+import play.api.libs.json.{JsError, JsSuccess, Reads, __}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
-case class Cppa2013To2015(
-  name: String,
-  pstr: String,
-  chargePaidByScheme: Int,
-  chargePaidByMember: Int,
-  oPensionInputAmount: Int,
-  pensionInputAmount: Int
-) extends TaxYearScheme
+case class CppaTaxYear2016PostAlignment(
+  period: Period,
+  totalIncome: Int,
+  taxYearSchemes: List[CppaTaxYearScheme2016PostAlignment]
+) extends CppaTaxYear
 
-object Cppa2013To2015 {
+object CppaTaxYear2016PostAlignment {
 
-  implicit lazy val reads: Reads[Cppa2013To2015] = {
+  implicit lazy val reads: Reads[CppaTaxYear2016PostAlignment] = {
 
     import play.api.libs.functional.syntax._
-
-    import Ordering.Implicits._
-
-    val normalReads: Reads[Cppa2013To2015] = (
-      (__ \ "name").read[String] and
-        (__ \ "pstr").read[String] and
-        (__ \ "chargePaidByScheme").read[Int] and
-        (__ \ "chargePaidByMember").read[Int] and
-        (__ \ "oPensionInputAmount").read[Int] and
-        (__ \ "pensionInputAmount").read[Int]
-    )(Cppa2013To2015.apply _)
 
     (__ \ "period")
       .read[Period]
       .flatMap[Period] {
-        case p if p >= Period._2013 && p <= Period._2015 =>
+        case p if p == Period._2016PostAlignment =>
           Reads(_ => JsSuccess(p))
-        case _                                           =>
-          Reads(_ => JsError("taxYear must fall between `2013`-`2015`"))
+        case _                                   =>
+          Reads(_ => JsError("tax year must be `2016-post`"))
       }
-      .andKeep(normalReads)
+      .andKeep {
+        (
+          (__ \ "period").read[Period] and
+            (__ \ "totalIncome").read[Int] and
+            (__ \ "taxYearSchemes").read[List[CppaTaxYearScheme2016PostAlignment]]
+        )(CppaTaxYear2016PostAlignment.apply _)
+      }
+
   }
 
 }
