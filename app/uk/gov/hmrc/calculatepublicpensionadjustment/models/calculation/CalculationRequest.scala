@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import com.google.inject.AbstractModule
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.CppaTaxYear
 
-class Module extends AbstractModule {
-
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
-}
+case class CalculationRequest(scottishTaxYears: List[String], taxYears: List[CppaTaxYear])

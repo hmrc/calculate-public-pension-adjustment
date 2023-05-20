@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import com.google.inject.AbstractModule
-
-class Module extends AbstractModule {
-
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
+trait TaxYearScheme {
+  def name: String
+  def pstr: String
+  def chargePaidByScheme: Int
+  def chargePaidByMember: Int
+  def oPensionInputAmount: Int
 }

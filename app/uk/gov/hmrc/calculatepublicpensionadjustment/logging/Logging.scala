@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.logging
 
-import com.google.inject.AbstractModule
+import play.api.Logger
 
-class Module extends AbstractModule {
+trait Logging {
 
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
+  protected val logger: Logger =
+    Logger("application." + getClass.getCanonicalName)
 }
