@@ -20,9 +20,8 @@ import play.api.libs.json.{JsError, JsSuccess, Reads, __}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 case class CppaTaxYear2013To2015(
-  period: Period,
-  totalIncome: Int,
-  taxYearSchemes: List[CppaTaxYearScheme2013To2015]
+  pensionInputAmount: Int,
+  period: Period
 ) extends CppaTaxYear
 
 object CppaTaxYear2013To2015 {
@@ -42,9 +41,8 @@ object CppaTaxYear2013To2015 {
           Reads(_ => JsError("taxYear must fall between `2013`-`2015`"))
       } andKeep {
       (
-        (__ \ "period").read[Period] and
-          (__ \ "totalIncome").read[Int] and
-          (__ \ "taxYearSchemes").read[List[CppaTaxYearScheme2013To2015]]
+        (__ \ "pensionInputAmount").read[Int] and
+          (__ \ "period").read[Period]
       )(CppaTaxYear2013To2015.apply _)
     }
 

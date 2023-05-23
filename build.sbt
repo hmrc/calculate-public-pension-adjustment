@@ -1,5 +1,3 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-
 lazy val microservice = Project("calculate-public-pension-adjustment", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafmtPlugin)
   .disablePlugins(JUnitXmlReportPlugin)

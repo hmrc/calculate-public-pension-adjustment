@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.libs.json.{JsError, JsString, JsSuccess, Reads, Writes, __}
+import play.api.libs.json._
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 
 import java.time.LocalDate
@@ -26,7 +26,6 @@ sealed trait Period {
 
   def start: LocalDate
   def end: LocalDate
-  def next: Period
 }
 
 object Period extends Logging {
@@ -39,13 +38,6 @@ object Period extends Logging {
     override lazy val toString: String = year.toString
     override lazy val start: LocalDate = LocalDate.of(year - 1, 4, 6)
     override lazy val end: LocalDate   = LocalDate.of(year, 4, 5)
-
-    override lazy val next: Period =
-      if (year == 2015) {
-        Period._2016PreAlignment
-      } else {
-        Period.Year(year + 1)
-      }
   }
 
   case object _2016PreAlignment extends Period {
@@ -53,9 +45,6 @@ object Period extends Logging {
     override lazy val toString: String = "2016-pre"
     override lazy val start: LocalDate = LocalDate.of(2015, 4, 6)
     override lazy val end: LocalDate   = LocalDate.of(2015, 7, 8)
-
-    override lazy val next: Period =
-      Period._2016PostAlignment
   }
 
   case object _2016PostAlignment extends Period {
@@ -63,9 +52,6 @@ object Period extends Logging {
     override lazy val toString: String = "2016-post"
     override lazy val start: LocalDate = LocalDate.of(2015, 7, 9)
     override lazy val end: LocalDate   = LocalDate.of(2016, 4, 5)
-
-    override lazy val next: Period =
-      Period._2017
   }
 
   val _2013: Period = Period.Year(2013)

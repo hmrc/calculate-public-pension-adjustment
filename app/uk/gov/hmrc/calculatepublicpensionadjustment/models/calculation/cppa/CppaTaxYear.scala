@@ -19,10 +19,10 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 import play.api.libs.json.Reads
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Period, TaxYear}
 
+import scala.language.implicitConversions
+
 trait CppaTaxYear extends TaxYear {
   def period: Period
-  def totalIncome: Int
-  def taxYearSchemes: List[TaxYearScheme]
 }
 
 object CppaTaxYear {
@@ -40,8 +40,7 @@ object CppaTaxYear {
 
     CppaTaxYear2013To2015.reads or
       CppaTaxYear2016PreAlignment.reads or
-      CppaTaxYear2016PostAlignment.reads or (
-        CppaTaxYear2017ToCurrent.reads
-      )
+      CppaTaxYear2016PostAlignment.reads or
+      CppaTaxYear2017ToCurrent.reads
   }
 }

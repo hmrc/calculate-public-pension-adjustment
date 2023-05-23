@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.libs.json.{JsSuccess, Json, Reads, Writes, __}
+import play.api.libs.json.{JsSuccess, Reads, __}
 
 sealed trait Income
 
