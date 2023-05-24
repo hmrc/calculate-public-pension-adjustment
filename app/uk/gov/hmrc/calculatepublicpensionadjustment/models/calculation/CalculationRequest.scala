@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import com.google.inject.AbstractModule
+import play.api.libs.json.{Reads, __}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.CppaTaxYear
 
-class Module extends AbstractModule {
+case class CalculationRequest(scottishTaxYears: List[String], taxYears: List[CppaTaxYear])
 
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
+object CalculationRequest {
+
+  implicit lazy val reads: Reads[CalculationRequest] = {
+
+    import play.api.libs.functional.syntax._
+
+    ((__ \ "scottishTaxYears").read[List[String]] and
+      (__ \ "taxYears").read[List[CppaTaxYear]])(CalculationRequest(_, _))
+  }
 }

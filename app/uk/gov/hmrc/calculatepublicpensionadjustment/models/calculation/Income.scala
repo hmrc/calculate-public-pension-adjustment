@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import com.google.inject.AbstractModule
+import play.api.libs.json.{JsSuccess, Reads, __}
 
-class Module extends AbstractModule {
+sealed trait Income
 
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
+object Income {
+
+  case object BelowThreshold extends Income
+  case class AboveThreshold(adjustedIncome: Int) extends Income
+
+  implicit lazy val reads: Reads[Income] =
+    (__ \ "incomeAboveThreshold").read[Boolean].flatMap {
+      case true  =>
+        (__ \ "adjustedIncome").read[Int].map(Income.AboveThreshold)
+      case false =>
+        Reads(_ => JsSuccess(Income.BelowThreshold))
+    }
 }
