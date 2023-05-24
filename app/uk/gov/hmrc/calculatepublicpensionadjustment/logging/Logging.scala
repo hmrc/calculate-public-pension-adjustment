@@ -21,5 +21,5 @@ import play.api.Logger
 trait Logging {
 
   protected val logger: Logger =
-    Logger("application." + getClass.getCanonicalName)
+    Logger("calculate-public-pension-adjustment." + getClass.getCanonicalName)
 }

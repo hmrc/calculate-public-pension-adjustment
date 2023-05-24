@@ -21,7 +21,9 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 import java.util.Date
 
-sealed trait CppaTaxYear2016PostAlignment extends CppaTaxYear
+sealed trait CppaTaxYear2016PostAlignment extends CppaTaxYear {
+  val period: Period = Period._2016PostAlignment
+}
 
 object CppaTaxYear2016PostAlignment {
 
@@ -29,8 +31,7 @@ object CppaTaxYear2016PostAlignment {
     pensionInputAmount: Int,
     totalIncome: Int,
     chargePaidByMember: Int,
-    taxYearSchemes: List[TaxYearScheme],
-    period: Period = Period._2016PostAlignment
+    taxYearSchemes: List[TaxYearScheme]
   ) extends CppaTaxYear2016PostAlignment
 
   case class InitialFlexiblyAccessedTaxYear(
@@ -40,8 +41,7 @@ object CppaTaxYear2016PostAlignment {
     postAccessDefinedContributionInputAmount: Int,
     totalIncome: Int,
     chargePaidByMember: Int,
-    taxYearSchemes: List[TaxYearScheme],
-    period: Period = Period._2016PostAlignment
+    taxYearSchemes: List[TaxYearScheme]
   ) extends CppaTaxYear2016PostAlignment
 
   case class PostFlexiblyAccessedTaxYear(
@@ -49,8 +49,7 @@ object CppaTaxYear2016PostAlignment {
     definedContributionInputAmount: Int,
     totalIncome: Int,
     chargePaidByMember: Int,
-    taxYearSchemes: List[TaxYearScheme],
-    period: Period = Period._2016PostAlignment
+    taxYearSchemes: List[TaxYearScheme]
   ) extends CppaTaxYear2016PostAlignment
 
   implicit lazy val reads: Reads[CppaTaxYear2016PostAlignment] = {
@@ -61,7 +60,7 @@ object CppaTaxYear2016PostAlignment {
       (__ \ "totalIncome").read[Int] and
       (__ \ "chargePaidByMember").read[Int] and
       (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
-      CppaTaxYear2016PostAlignment.NormalTaxYear(_, _, _, _)
+      CppaTaxYear2016PostAlignment.NormalTaxYear
     )
 
     val initialReads: Reads[CppaTaxYear2016PostAlignment] = ((__ \ "definedBenefitInputAmount").read[Int] and
@@ -71,7 +70,7 @@ object CppaTaxYear2016PostAlignment {
       (__ \ "totalIncome").read[Int] and
       (__ \ "chargePaidByMember").read[Int] and
       (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
-      CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _)
+      CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear
     )
 
     val postFlexiblyAccessedReads: Reads[CppaTaxYear2016PostAlignment] =
@@ -80,7 +79,7 @@ object CppaTaxYear2016PostAlignment {
         (__ \ "totalIncome").read[Int] and
         (__ \ "chargePaidByMember").read[Int] and
         (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
-        CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(_, _, _, _, _)
+        CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear
       )
 
     (__ \ "period")

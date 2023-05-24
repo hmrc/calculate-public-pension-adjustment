@@ -21,16 +21,17 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 import java.util.Date
 
-sealed trait CppaTaxYear2016PreAlignment extends CppaTaxYear
+sealed trait CppaTaxYear2016PreAlignment extends CppaTaxYear {
+  val totalIncome: Int        = 0
+  val chargePaidByMember: Int = 0
+  val period: Period          = Period._2016PreAlignment
+}
 
 object CppaTaxYear2016PreAlignment {
 
   case class NormalTaxYear(
     pensionInputAmount: Int,
-    taxYearSchemes: List[TaxYearScheme],
-    totalIncome: Int = 0,
-    chargePaidByMember: Int = 0,
-    period: Period = Period._2016PreAlignment
+    taxYearSchemes: List[TaxYearScheme]
   ) extends CppaTaxYear2016PreAlignment
 
   case class InitialFlexiblyAccessedTaxYear(
@@ -38,10 +39,7 @@ object CppaTaxYear2016PreAlignment {
     flexiAccessDate: Date,
     preAccessDefinedContributionInputAmount: Int,
     postAccessDefinedContributionInputAmount: Int,
-    taxYearSchemes: List[TaxYearScheme],
-    totalIncome: Int = 0,
-    chargePaidByMember: Int = 0,
-    period: Period = Period._2016PreAlignment
+    taxYearSchemes: List[TaxYearScheme]
   ) extends CppaTaxYear2016PreAlignment
 
   implicit lazy val reads: Reads[CppaTaxYear2016PreAlignment] = {
@@ -50,7 +48,7 @@ object CppaTaxYear2016PreAlignment {
 
     val normalReads: Reads[CppaTaxYear2016PreAlignment] = ((__ \ "pensionInputAmount").read[Int] and
       (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
-      CppaTaxYear2016PreAlignment.NormalTaxYear(_, _)
+      CppaTaxYear2016PreAlignment.NormalTaxYear
     )
 
     val initialReads: Reads[CppaTaxYear2016PreAlignment] = ((__ \ "definedBenefitInputAmount").read[Int] and
@@ -58,7 +56,7 @@ object CppaTaxYear2016PreAlignment {
       (__ \ "preAccessDefinedContributionInputAmount").read[Int] and
       (__ \ "postAccessDefinedContributionInputAmount").read[Int] and
       (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
-      CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(_, _, _, _, _)
+      CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear
     )
 
     (__ \ "period")
