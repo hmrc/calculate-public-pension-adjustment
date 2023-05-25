@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.libs.json.{JsSuccess, Reads, __}
+import play.api.libs.json._
 
 sealed trait Income
 
@@ -32,4 +32,16 @@ object Income {
       case false =>
         Reads(_ => JsSuccess(Income.BelowThreshold))
     }
+
+  implicit lazy val writes: Writes[Income] = Writes {
+    case Income.BelowThreshold                 =>
+      Json.obj(
+        "incomeAboveThreshold" -> false
+      )
+    case Income.AboveThreshold(adjustedIncome) =>
+      Json.obj(
+        "incomeAboveThreshold" -> true,
+        "adjustedIncome"       -> adjustedIncome
+      )
+  }
 }

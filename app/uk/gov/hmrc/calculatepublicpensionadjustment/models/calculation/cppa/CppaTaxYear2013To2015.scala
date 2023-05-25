@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import play.api.libs.json.{JsError, JsSuccess, Reads, __}
+import play.api.libs.json._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 case class CppaTaxYear2013To2015(
@@ -45,6 +45,15 @@ object CppaTaxYear2013To2015 {
           (__ \ "period").read[Period]
       )(CppaTaxYear2013To2015.apply _)
     }
+  }
 
+  lazy val writes: Writes[CppaTaxYear2013To2015] = {
+
+    import play.api.libs.functional.syntax._
+
+    (
+      (__ \ "pensionInputAmount").write[Int] and
+        (__ \ "period").write[Period]
+    )(a => (a.pensionInputAmount, a.period))
   }
 }

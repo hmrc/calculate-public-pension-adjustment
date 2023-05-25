@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{Reads, Writes, __}
 
 case class TaxYearScheme(
   name: String,
@@ -40,5 +40,18 @@ object TaxYearScheme {
         (__ \ "chargePaidByScheme").read[Int]
     )(TaxYearScheme.apply _)
 
+  }
+
+  implicit lazy val writes: Writes[TaxYearScheme] = {
+
+    import play.api.libs.functional.syntax._
+
+    (
+      (__ \ "name").write[String] and
+        (__ \ "pstr").write[String] and
+        (__ \ "oPensionInputAmount").write[Int] and
+        (__ \ "rPensionInputAmount").write[Int] and
+        (__ \ "chargePaidByScheme").write[Int]
+    )(a => (a.name, a.pstr, a.oPensionInputAmount, a.rPensionInputAmount, a.chargePaidByScheme))
   }
 }

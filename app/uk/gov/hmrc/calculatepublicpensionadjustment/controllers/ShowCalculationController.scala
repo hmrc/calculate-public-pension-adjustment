@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import com.google.inject.{Inject, Singleton}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationRequest
@@ -33,7 +33,7 @@ class ShowCalculationController @Inject() (
 
   def showCalculation: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[CalculationRequest]("Calculation request") { calculationRequest =>
-      logger.info(s"Received a calculation request : $calculationRequest")
+      logger.info(s"Received a calculation request : ${Json.toJson(calculationRequest)}")
       Future.successful(Ok("Calculation request accepted"))
     }
 

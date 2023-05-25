@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{Format, Json, Reads, __}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.CppaTaxYear
 
 case class CalculationRequest(scottishTaxYears: List[String], taxYears: List[CppaTaxYear])
@@ -30,4 +30,6 @@ object CalculationRequest {
     ((__ \ "scottishTaxYears").read[List[String]] and
       (__ \ "taxYears").read[List[CppaTaxYear]])(CalculationRequest(_, _))
   }
+
+  implicit lazy val formats: Format[CalculationRequest] = Json.format
 }

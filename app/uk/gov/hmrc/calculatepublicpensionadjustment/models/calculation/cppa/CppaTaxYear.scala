@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import play.api.libs.json.Reads
+import play.api.libs.json.{Json, Reads, Writes}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Period, TaxYear}
 
 import scala.language.implicitConversions
@@ -42,5 +42,13 @@ object CppaTaxYear {
       CppaTaxYear2016PreAlignment.reads or
       CppaTaxYear2016PostAlignment.reads or
       CppaTaxYear2017ToCurrent.reads
+  }
+
+  implicit lazy val writes: Writes[CppaTaxYear] = Writes {
+    case year: CppaTaxYear2013To2015        => Json.toJson(year)(CppaTaxYear2013To2015.writes)
+    case year: CppaTaxYear2016PreAlignment  => Json.toJson(year)(CppaTaxYear2016PreAlignment.writes)
+    case year: CppaTaxYear2016PostAlignment => Json.toJson(year)(CppaTaxYear2016PostAlignment.writes)
+    case year: CppaTaxYear2017ToCurrent     => Json.toJson(year)(CppaTaxYear2017ToCurrent.writes)
+    case _                                  => throw new Exception("Tax year period is invalid")
   }
 }

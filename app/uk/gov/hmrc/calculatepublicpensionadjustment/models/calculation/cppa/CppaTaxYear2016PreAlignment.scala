@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import play.api.libs.json.{JsError, JsSuccess, Reads, __}
+import play.api.libs.json._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
-import java.util.Date
+import java.time.LocalDate
 
 sealed trait CppaTaxYear2016PreAlignment extends CppaTaxYear
 
@@ -35,7 +35,7 @@ object CppaTaxYear2016PreAlignment {
 
   case class InitialFlexiblyAccessedTaxYear(
     definedBenefitInputAmount: Int,
-    flexiAccessDate: Date,
+    flexiAccessDate: LocalDate,
     preAccessDefinedContributionInputAmount: Int,
     postAccessDefinedContributionInputAmount: Int,
     taxYearSchemes: List[TaxYearScheme],
@@ -54,7 +54,7 @@ object CppaTaxYear2016PreAlignment {
     )
 
     val initialReads: Reads[CppaTaxYear2016PreAlignment] = ((__ \ "definedBenefitInputAmount").read[Int] and
-      (__ \ "flexiAccessDate").read[Date] and
+      (__ \ "flexiAccessDate").read[LocalDate] and
       (__ \ "preAccessDefinedContributionInputAmount").read[Int] and
       (__ \ "postAccessDefinedContributionInputAmount").read[Int] and
       (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
@@ -72,4 +72,46 @@ object CppaTaxYear2016PreAlignment {
       .andKeep(normalReads orElse initialReads)
   }
 
+  lazy val writes: Writes[CppaTaxYear2016PreAlignment] = {
+
+    import play.api.libs.functional.syntax._
+
+    lazy val normalWrites: Writes[CppaTaxYear2016PreAlignment.NormalTaxYear] = (
+      (__ \ "pensionInputAmount").write[Int] and
+        (__ \ "taxYearSchemes").write[List[TaxYearScheme]] and
+        (__ \ "totalIncome").write[Int] and
+        (__ \ "chargePaidByMember").write[Int] and
+        (__ \ "period").write[Period]
+    )(a => (a.pensionInputAmount, a.taxYearSchemes, a.totalIncome, a.chargePaidByMember, a.period))
+
+    lazy val initialWrites: Writes[CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear] = (
+      (__ \ "definedBenefitInputAmount").write[Int] and
+        (__ \ "flexiAccessDate").write[LocalDate] and
+        (__ \ "preAccessDefinedContributionInputAmount").write[Int] and
+        (__ \ "postAccessDefinedContributionInputAmount").write[Int] and
+        (__ \ "taxYearSchemes").write[List[TaxYearScheme]] and
+        (__ \ "totalIncome").write[Int] and
+        (__ \ "chargePaidByMember").write[Int] and
+        (__ \ "period").write[Period]
+    )(a =>
+      (
+        a.definedBenefitInputAmount,
+        a.flexiAccessDate,
+        a.preAccessDefinedContributionInputAmount,
+        a.postAccessDefinedContributionInputAmount,
+        a.taxYearSchemes,
+        a.totalIncome,
+        a.chargePaidByMember,
+        a.period
+      )
+    )
+
+    Writes {
+      case year: CppaTaxYear2016PreAlignment.NormalTaxYear =>
+        Json.toJson(year)(normalWrites)
+
+      case year: CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear =>
+        Json.toJson(year)(initialWrites)
+    }
+  }
 }
