@@ -67,22 +67,20 @@ trait ModelGenerators extends Generators {
   lazy val genSchemePstr: Gen[String] =
     alphaNumStr.map(_.substring(0, 10))
 
-  def genLocalDate(period: Period): Gen[LocalDate] =
-    period match {
-      case Period._2013              => Gen.choose(LocalDate.parse("2012-04-06"), LocalDate.parse("2013-04-05"))
-      case Period._2014              => Gen.choose(LocalDate.parse("2013-04-06"), LocalDate.parse("2014-04-05"))
-      case Period._2015              => Gen.choose(LocalDate.parse("2014-04-06"), LocalDate.parse("2015-04-05"))
-      case Period._2016PreAlignment  => Gen.choose(LocalDate.parse("2015-04-06"), LocalDate.parse("2015-07-08"))
-      case Period._2016PostAlignment => Gen.choose(LocalDate.parse("2015-07-09"), LocalDate.parse("2016-04-05"))
-      case Period._2017              => Gen.choose(LocalDate.parse("2016-04-06"), LocalDate.parse("2017-04-05"))
-      case Period._2018              => Gen.choose(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-05"))
-      case Period._2019              => Gen.choose(LocalDate.parse("2018-04-06"), LocalDate.parse("2019-04-05"))
-      case Period._2020              => Gen.choose(LocalDate.parse("2019-04-06"), LocalDate.parse("2020-04-05"))
-      case Period._2021              => Gen.choose(LocalDate.parse("2020-04-06"), LocalDate.parse("2021-04-05"))
-      case Period._2022              => Gen.choose(LocalDate.parse("2021-04-06"), LocalDate.parse("2022-04-05"))
-      case Period._2023              => Gen.choose(LocalDate.parse("2022-04-06"), LocalDate.parse("2023-04-05"))
-
-    }
+  lazy val genFlexiAccessDate: Period => Gen[LocalDate] = {
+    case Period._2013              => Gen.choose(LocalDate.parse("2012-04-06"), LocalDate.parse("2013-04-05"))
+    case Period._2014              => Gen.choose(LocalDate.parse("2013-04-06"), LocalDate.parse("2014-04-05"))
+    case Period._2015              => Gen.choose(LocalDate.parse("2014-04-06"), LocalDate.parse("2015-04-05"))
+    case Period._2016PreAlignment  => Gen.choose(LocalDate.parse("2015-04-06"), LocalDate.parse("2015-07-08"))
+    case Period._2016PostAlignment => Gen.choose(LocalDate.parse("2015-07-09"), LocalDate.parse("2016-04-05"))
+    case Period._2017              => Gen.choose(LocalDate.parse("2016-04-06"), LocalDate.parse("2017-04-05"))
+    case Period._2018              => Gen.choose(LocalDate.parse("2017-04-06"), LocalDate.parse("2018-04-05"))
+    case Period._2019              => Gen.choose(LocalDate.parse("2018-04-06"), LocalDate.parse("2019-04-05"))
+    case Period._2020              => Gen.choose(LocalDate.parse("2019-04-06"), LocalDate.parse("2020-04-05"))
+    case Period._2021              => Gen.choose(LocalDate.parse("2020-04-06"), LocalDate.parse("2021-04-05"))
+    case Period._2022              => Gen.choose(LocalDate.parse("2021-04-06"), LocalDate.parse("2022-04-05"))
+    case Period._2023              => Gen.choose(LocalDate.parse("2022-04-06"), LocalDate.parse("2023-04-05"))
+  }
 
   lazy val genAdjustedIncome: Gen[Int] =
     Gen.chooseNum(
@@ -96,25 +94,7 @@ trait ModelGenerators extends Generators {
       genAdjustedIncome.map(Income.AboveThreshold)
     )
 
-  val genPeriod: Gen[Period] =
-    Gen.oneOf(
-      Period._2016PreAlignment,
-      Period._2016PostAlignment,
-      Period._2017,
-      Period._2018,
-      Period._2019,
-      Period._2020,
-      Period._2021,
-      Period._2022,
-      Period._2023
-    )
-
-  def genCppaTaxYear2013To2015ForPeriod(period: Period): Gen[TaxYear] =
-    for {
-      pensionInputAmount <- genPensionInputAmount
-    } yield CppaTaxYear2013To2015(pensionInputAmount, period)
-
-  def genTaxYearScheme: Gen[TaxYearScheme] =
+  lazy val genTaxYearScheme: Gen[TaxYearScheme] =
     for {
       schemeName          <- genSchemeName
       schemePstr          <- genSchemePstr
@@ -123,7 +103,12 @@ trait ModelGenerators extends Generators {
       chargePaidByScheme  <- genChargePaidBySchemeOrMember
     } yield TaxYearScheme(schemeName, schemePstr, oPensionInputAmount, rPensionInputAmount, chargePaidByScheme)
 
-  def genCppaTaxYear2016PreAlignmentNormalTaxYear: Gen[TaxYear] =
+  lazy val genCppaTaxYear2013To2015ForPeriod: Period => Gen[CppaTaxYear2013To2015] = (period: Period) =>
+    for {
+      pensionInputAmount <- genPensionInputAmount
+    } yield CppaTaxYear2013To2015(pensionInputAmount, period)
+
+  lazy val genCppaTaxYear2016PreAlignmentNormalTaxYear: Gen[TaxYear] =
     for {
       pensionInputAmount <- genPensionInputAmount
       noOfTaxYearSchemes <- Gen.oneOf(1, 5)
@@ -138,10 +123,10 @@ trait ModelGenerators extends Generators {
       Period._2016PreAlignment
     )
 
-  def genCppaTaxYear2016PreAlignmentInitialFlexiblyAccessedTaxYear: Gen[TaxYear] =
+  lazy val genCppaTaxYear2016PreAlignmentInitialFlexiblyAccessedTaxYear: Gen[TaxYear] =
     for {
       definedBenefitInputAmount                <- genDefinedBenefitInputAmount
-      flexiAccessDate                          <- genLocalDate(Period._2016PreAlignment)
+      flexiAccessDate                          <- genFlexiAccessDate(Period._2016PreAlignment)
       preAccessDefinedContributionInputAmount  <- genPreAndPostAccessDefinedContributionInputAmount
       postAccessDefinedContributionInputAmount <- genPreAndPostAccessDefinedContributionInputAmount
       noOfTaxYearSchemes                       <- Gen.oneOf(1, 5)
@@ -159,7 +144,7 @@ trait ModelGenerators extends Generators {
       Period._2016PreAlignment
     )
 
-  def genCppaTaxYear2016PostAlignmentNormalTaxYear: Gen[TaxYear] =
+  lazy val genCppaTaxYear2016PostAlignmentNormalTaxYear: Gen[TaxYear] =
     for {
       pensionInputAmount <- genPensionInputAmount
       totalIncome        <- genTotalIncome
@@ -174,10 +159,10 @@ trait ModelGenerators extends Generators {
       Period._2016PostAlignment
     )
 
-  def genCppaTaxYear2016PostAlignmentInitialFlexiblyAccessedTaxYear: Gen[TaxYear] =
+  lazy val genCppaTaxYear2016PostAlignmentInitialFlexiblyAccessedTaxYear: Gen[TaxYear] =
     for {
       definedBenefitInputAmount                <- genDefinedBenefitInputAmount
-      flexiAccessDate                          <- genLocalDate(Period._2016PostAlignment)
+      flexiAccessDate                          <- genFlexiAccessDate(Period._2016PostAlignment)
       preAccessDefinedContributionInputAmount  <- genPreAndPostAccessDefinedContributionInputAmount
       postAccessDefinedContributionInputAmount <- genPreAndPostAccessDefinedContributionInputAmount
       totalIncome                              <- genTotalIncome
@@ -195,7 +180,7 @@ trait ModelGenerators extends Generators {
       Period._2016PostAlignment
     )
 
-  def genCppaTaxYear2016PostAlignmentPostFlexiblyAccessedTaxYear: Gen[TaxYear] =
+  lazy val genCppaTaxYear2016PostAlignmentPostFlexiblyAccessedTaxYear: Gen[TaxYear] =
     for {
       definedBenefitInputAmount      <- genDefinedBenefitInputAmount
       definedContributionInputAmount <- genDefinedContributionInputAmount
@@ -212,27 +197,29 @@ trait ModelGenerators extends Generators {
       Period._2016PostAlignment
     )
 
-  def genCppaTaxYear2017ToCurrentNormalTaxYearForPeriod(period: Period): Gen[TaxYear] =
-    for {
-      pensionInputAmount <- genPensionInputAmount
-      income             <- genIncome
-      totalIncome        <- genTotalIncome
-      chargePaidByMember <- genChargePaidBySchemeOrMember
-      noOfTaxYearSchemes <- Gen.oneOf(1, 5)
-      taxYearSchemes     <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
-    } yield CppaTaxYear2017ToCurrent.NormalTaxYear(
-      pensionInputAmount,
-      income,
-      totalIncome,
-      chargePaidByMember,
-      taxYearSchemes,
-      period
-    )
+  lazy val genCppaTaxYear2017ToCurrentNormalTaxYearForPeriod: Period => Gen[CppaTaxYear2017ToCurrent.NormalTaxYear] =
+    (period: Period) =>
+      for {
+        pensionInputAmount <- genPensionInputAmount
+        income             <- genIncome
+        totalIncome        <- genTotalIncome
+        chargePaidByMember <- genChargePaidBySchemeOrMember
+        noOfTaxYearSchemes <- Gen.oneOf(1, 5)
+        taxYearSchemes     <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+      } yield CppaTaxYear2017ToCurrent.NormalTaxYear(
+        pensionInputAmount,
+        income,
+        totalIncome,
+        chargePaidByMember,
+        taxYearSchemes,
+        period
+      )
 
-  def genCppaTaxYear2017ToCurrentInitialFlexiblyAccessedTaxYearForPeriod(period: Period): Gen[TaxYear] =
+  lazy val genCppaTaxYear2017ToCurrentInitialFlexiblyAccessedTaxYearForPeriod
+    : Period => Gen[CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear] = (period: Period) =>
     for {
       definedBenefitInputAmount                <- genDefinedBenefitInputAmount
-      flexiAccessDate                          <- genLocalDate(period)
+      flexiAccessDate                          <- genFlexiAccessDate(period)
       preAccessDefinedContributionInputAmount  <- genPreAndPostAccessDefinedContributionInputAmount
       postAccessDefinedContributionInputAmount <- genPreAndPostAccessDefinedContributionInputAmount
       income                                   <- genIncome
@@ -252,7 +239,8 @@ trait ModelGenerators extends Generators {
       period
     )
 
-  def genCppaTaxYear2017ToCurrentPostFlexiblyAccessedTaxYearForPeriod(period: Period): Gen[TaxYear] =
+  lazy val genCppaTaxYear2017ToCurrentPostFlexiblyAccessedTaxYearForPeriod
+    : Period => Gen[CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear] = (period: Period) =>
     for {
       definedBenefitInputAmount      <- genDefinedBenefitInputAmount
       definedContributionInputAmount <- genDefinedContributionInputAmount
