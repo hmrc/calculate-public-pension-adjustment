@@ -27,7 +27,7 @@ sm2 --start CALCULATE_PUBLIC_PENSION_ADJUSTMENT
 Run `sm2 -s` to check what services are running.
 
 ## Launching the service locally
-To bring up the service on the configured port 12803, use
+To bring up the service on the configured port 12802, use
 
 ```
 sbt run

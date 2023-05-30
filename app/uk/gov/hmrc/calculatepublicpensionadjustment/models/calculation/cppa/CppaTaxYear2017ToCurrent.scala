@@ -106,7 +106,7 @@ object CppaTaxYear2017ToCurrent {
 
   }
 
-  lazy val writes: Writes[CppaTaxYear2017ToCurrent] = {
+  implicit lazy val writes: Writes[CppaTaxYear2017ToCurrent] = {
 
     import play.api.libs.functional.syntax._
 

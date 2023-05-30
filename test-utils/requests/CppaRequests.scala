@@ -18,7 +18,7 @@ package requests
 
 import play.api.libs.json._
 
-trait Requests {
+trait CppaRequests {
 
   val emptyRequest = Json.parse("""{
       |

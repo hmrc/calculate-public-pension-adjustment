@@ -72,7 +72,7 @@ object CppaTaxYear2016PreAlignment {
       .andKeep(normalReads orElse initialReads)
   }
 
-  lazy val writes: Writes[CppaTaxYear2016PreAlignment] = {
+  implicit lazy val writes: Writes[CppaTaxYear2016PreAlignment] = {
 
     import play.api.libs.functional.syntax._
 

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
-import requests.Requests
+import requests.CppaRequests
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -31,62 +31,9 @@ class ShowCalculationControllerSpec
     with GuiceOneAppPerSuite
     with OptionValues
     with ScalaCheckPropertyChecks
-    with Requests {
+    with CppaRequests {
 
   "ShowCalculationController" - {
-    "must return Status 400 - Bad Request" - {
-      "when the request is empty" in {
-
-        val request =
-          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
-            .withHeaders(
-              CONTENT_TYPE -> "application/json"
-            )
-            .withJsonBody(emptyRequest)
-
-        val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
-      }
-
-      "when the request contains tax year out of valid 2013 - 2023 tax years" in {
-
-        val request =
-          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
-            .withHeaders(
-              CONTENT_TYPE -> "application/json"
-            )
-            .withJsonBody(outOfTaxYearsRequest)
-
-        val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
-      }
-
-      "when the request contains invalid data type" in {
-
-        val request =
-          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
-            .withHeaders(
-              CONTENT_TYPE -> "application/json"
-            )
-            .withJsonBody(invalidDataTypeRequest)
-
-        val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
-      }
-
-      "when the request is missing mandatory data" in {
-
-        val request =
-          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
-            .withHeaders(
-              CONTENT_TYPE -> "application/json"
-            )
-            .withJsonBody(missingDataRequest)
-
-        val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
-      }
-    }
 
     "must return Status 200 - Ok" - {
       "when the valid request contains all tax years 2013 - 2023 with NormalTaxYear" in {
@@ -141,6 +88,60 @@ class ShowCalculationControllerSpec
         status(result) mustEqual OK
       }
 
+    }
+
+    "must return Status 400 - Bad Request" - {
+      "when the request is empty" in {
+
+        val request =
+          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
+            .withHeaders(
+              CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(emptyRequest)
+
+        val result = route(app, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
+
+      "when the request contains tax year out of valid 2013 - 2023 tax years" in {
+
+        val request =
+          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
+            .withHeaders(
+              CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(outOfTaxYearsRequest)
+
+        val result = route(app, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
+
+      "when the request contains invalid data type" in {
+
+        val request =
+          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
+            .withHeaders(
+              CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(invalidDataTypeRequest)
+
+        val result = route(app, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
+
+      "when the request is missing mandatory data" in {
+
+        val request =
+          FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
+            .withHeaders(
+              CONTENT_TYPE -> "application/json"
+            )
+            .withJsonBody(missingDataRequest)
+
+        val result = route(app, request).value
+        status(result) mustEqual BAD_REQUEST
+      }
     }
 
   }

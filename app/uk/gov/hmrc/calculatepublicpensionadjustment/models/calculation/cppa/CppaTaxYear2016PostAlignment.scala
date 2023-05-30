@@ -95,7 +95,7 @@ object CppaTaxYear2016PostAlignment {
 
   }
 
-  lazy val writes: Writes[CppaTaxYear2016PostAlignment] = {
+  implicit lazy val writes: Writes[CppaTaxYear2016PostAlignment] = {
 
     import play.api.libs.functional.syntax._
 
