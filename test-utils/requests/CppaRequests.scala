@@ -50,16 +50,16 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                }
       |            ]
@@ -94,16 +94,16 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": 123,
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": 123,
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                }
      |            ]
@@ -131,21 +131,21 @@ trait CppaRequests {
      |            "period": "2016-pre",
      |            "totalIncome": 0,
      |            "flexiAccessDate": "2015-05-25",
-     |            "preAccessDefinedContributionInputAmount": 6000,
      |            "postAccessDefinedContributionInputAmount": 10000,
+     |            "chargePaidByMember": 0,
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": 123,
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                }
      |            ]
@@ -182,16 +182,16 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                }
      |            ]
@@ -204,17 +204,17 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 2000
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 6000
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                }
      |            ]
      |        },
@@ -230,17 +230,17 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 9000
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 9000
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                }
      |            ]
      |        },
@@ -256,17 +256,17 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 0
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 18000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 6000
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                }
      |            ]
      |        },
@@ -281,17 +281,17 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 3000
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 18000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 0
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                }
      |            ]
      |        },
@@ -307,17 +307,17 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 6000
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 18000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 0
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                }
      |            ]
      |        },
@@ -332,16 +332,16 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 2000
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 18000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                }
      |            ]
@@ -358,17 +358,17 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 3000
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 18000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 6000
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                }
      |            ]
      |        },
@@ -384,17 +384,17 @@ trait CppaRequests {
      |            "taxYearSchemes": [
      |                {
      |                    "name": "Scheme 1",
-     |                    "pstr": "pstrTest1",
-     |                    "oPensionInputAmount": 12000,
-     |                    "rPensionInputAmount": 10000,
+     |                    "pensionSchemeTaxReference": "pstrTest1",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
      |                    "chargePaidByScheme": 1000
      |                },
      |                {
      |                    "name": "Scheme 2",
-     |                    "pstr": "pstrTest2",
-     |                    "oPensionInputAmount": 18000,
-     |                    "rPensionInputAmount": 10000,
-     |                    "chargePaidByScheme": 6000
+     |                    "pensionSchemeTaxReference": "pstrTest2",
+     |                    "originalPensionInputAmount": 12000,
+     |                    "revisedPensionInputAmount": 10000,
+     |                    "chargePaidByScheme": 1000
      |                }
      |            ]
      |        }
@@ -432,16 +432,16 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                }
       |            ]
@@ -457,17 +457,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 2000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -486,17 +486,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 9000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 9000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -515,17 +515,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -543,17 +543,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 3000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -572,17 +572,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -600,16 +600,16 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 2000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                }
       |            ]
@@ -629,17 +629,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 3000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -658,17 +658,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        }
@@ -706,16 +706,16 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                }
       |            ]
@@ -729,17 +729,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 2000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -756,17 +756,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 9000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 9000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -783,17 +783,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -809,17 +809,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 3000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -836,17 +836,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -862,16 +862,16 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 2000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                }
       |            ]
@@ -889,17 +889,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 3000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -916,17 +916,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        }
@@ -960,16 +960,16 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                }
       |            ]
@@ -983,17 +983,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 2000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -1010,17 +1010,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 9000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 9000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -1037,17 +1037,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 3000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -1065,17 +1065,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 0
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -1092,17 +1092,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 3000
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        },
@@ -1121,17 +1121,17 @@ trait CppaRequests {
       |            "taxYearSchemes": [
       |                {
       |                    "name": "Scheme 1",
-      |                    "pstr": "pstrTest1",
-      |                    "oPensionInputAmount": 12000,
-      |                    "rPensionInputAmount": 10000,
+      |                    "pensionSchemeTaxReference": "pstrTest1",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
       |                    "chargePaidByScheme": 1000
       |                },
       |                {
       |                    "name": "Scheme 2",
-      |                    "pstr": "pstrTest2",
-      |                    "oPensionInputAmount": 18000,
-      |                    "rPensionInputAmount": 10000,
-      |                    "chargePaidByScheme": 6000
+      |                    "pensionSchemeTaxReference": "pstrTest2",
+      |                    "originalPensionInputAmount": 12000,
+      |                    "revisedPensionInputAmount": 10000,
+      |                    "chargePaidByScheme": 1000
       |                }
       |            ]
       |        }

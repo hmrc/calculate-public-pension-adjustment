@@ -20,9 +20,9 @@ import play.api.libs.json.{Reads, Writes, __}
 
 case class TaxYearScheme(
   name: String,
-  pstr: String,
-  oPensionInputAmount: Int,
-  rPensionInputAmount: Int,
+  pensionSchemeTaxReference: String,
+  originalPensionInputAmount: Int,
+  revisedPensionInputAmount: Int,
   chargePaidByScheme: Int
 )
 
@@ -34,9 +34,9 @@ object TaxYearScheme {
 
     (
       (__ \ "name").read[String] and
-        (__ \ "pstr").read[String] and
-        (__ \ "oPensionInputAmount").read[Int] and
-        (__ \ "rPensionInputAmount").read[Int] and
+        (__ \ "pensionSchemeTaxReference").read[String] and
+        (__ \ "originalPensionInputAmount").read[Int] and
+        (__ \ "revisedPensionInputAmount").read[Int] and
         (__ \ "chargePaidByScheme").read[Int]
     )(TaxYearScheme.apply _)
 
@@ -48,10 +48,18 @@ object TaxYearScheme {
 
     (
       (__ \ "name").write[String] and
-        (__ \ "pstr").write[String] and
-        (__ \ "oPensionInputAmount").write[Int] and
-        (__ \ "rPensionInputAmount").write[Int] and
+        (__ \ "pensionSchemeTaxReference").write[String] and
+        (__ \ "originalPensionInputAmount").write[Int] and
+        (__ \ "revisedPensionInputAmount").write[Int] and
         (__ \ "chargePaidByScheme").write[Int]
-    )(a => (a.name, a.pstr, a.oPensionInputAmount, a.rPensionInputAmount, a.chargePaidByScheme))
+    )(a =>
+      (
+        a.name,
+        a.pensionSchemeTaxReference,
+        a.originalPensionInputAmount,
+        a.revisedPensionInputAmount,
+        a.chargePaidByScheme
+      )
+    )
   }
 }

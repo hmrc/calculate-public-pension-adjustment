@@ -33,7 +33,6 @@ class ShowCalculationController @Inject() (
 
   def showCalculation: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[CalculationRequest]("Calculation request") { calculationRequest =>
-      logger.info(s"Received a calculation request : ${Json.toJson(calculationRequest)}")
       Future.successful(Ok("Calculation request accepted"))
     }
 

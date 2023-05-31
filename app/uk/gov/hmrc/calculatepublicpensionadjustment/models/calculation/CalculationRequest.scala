@@ -19,7 +19,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 import play.api.libs.json.{Format, Json, Reads, __}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.CppaTaxYear
 
-case class CalculationRequest(scottishTaxYears: List[String], taxYears: List[CppaTaxYear])
+case class CalculationRequest(scottishTaxYears: List[Period], taxYears: List[CppaTaxYear])
 
 object CalculationRequest {
 
@@ -27,7 +27,7 @@ object CalculationRequest {
 
     import play.api.libs.functional.syntax._
 
-    ((__ \ "scottishTaxYears").read[List[String]] and
+    ((__ \ "scottishTaxYears").read[List[Period]] and
       (__ \ "taxYears").read[List[CppaTaxYear]])(CalculationRequest(_, _))
   }
 
