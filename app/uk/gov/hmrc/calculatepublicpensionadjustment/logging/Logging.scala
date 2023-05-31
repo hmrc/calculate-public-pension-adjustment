@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.logging
 
-import play.api.Configuration
+import play.api.Logger
 
-import javax.inject.{Inject, Singleton}
+trait Logging {
 
-@Singleton
-class AppConfig @Inject() (config: Configuration) {
-
-  val appName: String = config.get[String]("appName")
+  protected val logger: Logger =
+    Logger("calculate-public-pension-adjustment." + getClass.getCanonicalName)
 }

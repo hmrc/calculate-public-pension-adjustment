@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.Configuration
-
-import javax.inject.{Inject, Singleton}
-
-@Singleton
-class AppConfig @Inject() (config: Configuration) {
-
-  val appName: String = config.get[String]("appName")
+trait TaxYear {
+  def period: Period
 }
