@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
-import requests.CppaRequests
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -24,6 +23,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import requests.CppaRequests
 
 class ShowCalculationControllerSpec
     extends AnyFreeSpec

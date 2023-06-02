@@ -17,15 +17,17 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import com.google.inject.{Inject, Singleton}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationRequest
+import uk.gov.hmrc.calculatepublicpensionadjustment.services.PaacService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class ShowCalculationController @Inject() (
+  paacService: PaacService,
   cc: ControllerComponents
 )(implicit ec: ExecutionContext)
     extends CppaBaseController(cc)
@@ -33,6 +35,7 @@ class ShowCalculationController @Inject() (
 
   def showCalculation: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[CalculationRequest]("Calculation request") { calculationRequest =>
+      paacService.sendRequest(calculationRequest)
       Future.successful(Ok("Calculation request accepted"))
     }
 

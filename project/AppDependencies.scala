@@ -5,6 +5,7 @@ object AppDependencies {
   private val AllTestScope     = "test, it"
   private val bootstrapVersion = "7.15.0"
   private val hmrcMongoVersion = "1.1.0"
+  private val taxyearVersion   = "3.0.0"
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"             %% "bootstrap-backend-play-28"    % bootstrapVersion,
@@ -13,7 +14,8 @@ object AppDependencies {
     "org.typelevel"           %% "cats-core"                    % "2.9.0",
     "uk.gov.hmrc"             %% "internal-auth-client-play-28" % "1.2.0",
     "uk.gov.hmrc.objectstore" %% "object-store-client-play-28"  % "1.0.0",
-    "org.apache.xmlgraphics"   % "fop"                          % "2.8"
+    "org.apache.xmlgraphics"   % "fop"                          % "2.8",
+    "uk.gov.hmrc"             %% "tax-year"                     % taxyearVersion
   )
 
   val test: Seq[ModuleID] = Seq(
