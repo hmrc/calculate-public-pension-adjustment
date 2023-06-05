@@ -35,7 +35,7 @@ class ShowCalculationController @Inject() (
 
   def showCalculation: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[CalculationRequest]("Calculation request") { calculationRequest =>
-      paacService.sendRequest(calculationRequest)
+      paacService.doCalulations(calculationRequest)
       Future.successful(Ok("Calculation request accepted"))
     }
 

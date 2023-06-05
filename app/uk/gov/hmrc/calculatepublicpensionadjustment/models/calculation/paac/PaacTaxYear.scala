@@ -36,14 +36,14 @@ object PaacTaxYear {
     implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
       a.map(identity)
 
-    PaacTaxYear2013To2015.reads or
+    PaacTaxYear2011To2015.reads or
       PaacTaxYear2016PreAlignment.reads or
       PaacTaxYear2016PostAlignment.reads or
       PaacTaxYear2017ToCurrent.reads
   }
 
   implicit lazy val writes: Writes[PaacTaxYear] = Writes {
-    case year: PaacTaxYear2013To2015        => Json.toJson(year)(PaacTaxYear2013To2015.writes)
+    case year: PaacTaxYear2011To2015        => Json.toJson(year)(PaacTaxYear2011To2015.writes)
     case year: PaacTaxYear2016PreAlignment  => Json.toJson(year)(PaacTaxYear2016PreAlignment.writes)
     case year: PaacTaxYear2016PostAlignment => Json.toJson(year)(PaacTaxYear2016PostAlignment.writes)
     case year: PaacTaxYear2017ToCurrent     => Json.toJson(year)(PaacTaxYear2017ToCurrent.writes)

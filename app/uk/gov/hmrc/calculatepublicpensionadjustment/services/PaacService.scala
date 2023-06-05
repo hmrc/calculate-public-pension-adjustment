@@ -16,21 +16,43 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
+import com.google.inject.Inject
+import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationRequest
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationRequest, PaacRequest}
+import uk.gov.hmrc.http.HeaderCarrier
 
-class PaacService extends Logging {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def sendRequest(calculationRequest: CalculationRequest): Unit = {
+class PaacService @Inject() (connector: PaacConnector) extends Logging {
 
-    val paacRequest = buildPaacRequest(calculationRequest)
-  }
+  def doCalulations(
+    calculationRequest: CalculationRequest
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[PaacResponse] =
+    for {
+      paacResponse <- sendRequest(calculationRequest)
+    } yield paacResponse
+
+  def sendRequest(
+    calculationRequest: CalculationRequest
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[PaacResponse] =
+    connector.sendRequest(buildPaacRequest(calculationRequest)).map { response =>
+      PaacResponse(response.rows.flatMap { row =>
+        row.taxYear match {
+          case _: PaacTaxYear2011To2015.NoInputTaxYear | _: PaacTaxYear2016PreAlignment.NoInputTaxYear |
+              _: PaacTaxYear2016PostAlignment.NoInputTaxYear | _: PaacTaxYear2017ToCurrent.NoInputTaxYear =>
+            None
+          case _ => Some(row)
+        }
+      })
+    }
 
   def buildPaacRequest(calculationRequest: CalculationRequest): PaacRequest = {
     val paacTaxYears = calculationRequest.taxYears.map {
-      case CppaTaxYear2013To2015(pensionInputAmount, period) => PaacTaxYear2013To2015(pensionInputAmount, period)
+      case CppaTaxYear2013To2015(pensionInputAmount, period) =>
+        PaacTaxYear2011To2015.NormalTaxYear(pensionInputAmount, period)
 
       case CppaTaxYear2016PreAlignment.NormalTaxYear(pensionInputAmount, taxYearSchemes, _, _, period) =>
         PaacTaxYear2016PreAlignment.NormalTaxYear(

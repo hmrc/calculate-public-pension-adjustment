@@ -35,6 +35,8 @@ object PaacTaxYear2016PreAlignment {
     period: Period = Period._2016PreAlignment
   ) extends PaacTaxYear2016PreAlignment
 
+  case class NoInputTaxYear(period: Period) extends PaacTaxYear2016PreAlignment
+
   implicit lazy val reads: Reads[PaacTaxYear2016PreAlignment] = {
 
     import play.api.libs.functional.syntax._
@@ -50,6 +52,9 @@ object PaacTaxYear2016PreAlignment {
       PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(_, _, _)
     )
 
+    val noInputReads: Reads[PaacTaxYear2016PreAlignment] =
+      (__ \ "period").read[Period].map(PaacTaxYear2016PreAlignment.NoInputTaxYear)
+
     (__ \ "period")
       .read[Period]
       .flatMap[Period] {
@@ -58,7 +63,7 @@ object PaacTaxYear2016PreAlignment {
         case _                                  =>
           Reads(_ => JsError("tax year must be `2016-pre`"))
       }
-      .andKeep(normalReads orElse initialReads)
+      .andKeep(normalReads orElse initialReads orElse noInputReads)
   }
 
   implicit lazy val writes: Writes[PaacTaxYear2016PreAlignment] = {
@@ -84,12 +89,18 @@ object PaacTaxYear2016PreAlignment {
       )
     )
 
+    lazy val noInputWrites: Writes[PaacTaxYear2016PreAlignment.NoInputTaxYear] =
+      (__ \ "period").write[Period].contramap(_.period)
+
     Writes {
       case year: PaacTaxYear2016PreAlignment.NormalTaxYear =>
         Json.toJson(year)(normalWrites)
 
       case year: PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear =>
         Json.toJson(year)(initialWrites)
+
+      case year: PaacTaxYear2016PreAlignment.NoInputTaxYear =>
+        Json.toJson(year)(noInputWrites)
     }
   }
 

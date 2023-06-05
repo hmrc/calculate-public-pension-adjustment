@@ -41,6 +41,8 @@ object PaacTaxYear2016PostAlignment {
     period: Period = Period._2016PostAlignment
   ) extends PaacTaxYear2016PostAlignment
 
+  case class NoInputTaxYear(period: Period) extends PaacTaxYear2016PostAlignment
+
   implicit lazy val reads: Reads[PaacTaxYear2016PostAlignment] = {
 
     import play.api.libs.functional.syntax._
@@ -48,7 +50,7 @@ object PaacTaxYear2016PostAlignment {
     val normalReads: Reads[PaacTaxYear2016PostAlignment] =
       (__ \ "pensionInputAmount")
         .read[Int]
-        .map(PaacTaxYear2016PostAlignment.NormalTaxYear(_))
+        .map(NormalTaxYear(_))
 
     val initialReads: Reads[PaacTaxYear2016PostAlignment] = (
       (__ \ "definedBenefitInputAmount").read[Int] and
@@ -61,6 +63,9 @@ object PaacTaxYear2016PostAlignment {
         (__ \ "definedContributionInputAmount").read[Int]
     )(PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(_, _))
 
+    val noInputReads: Reads[PaacTaxYear2016PostAlignment] =
+      (__ \ "period").read[Period].map(PaacTaxYear2016PostAlignment.NoInputTaxYear)
+
     (__ \ "period")
       .read[Period]
       .flatMap[Period] {
@@ -69,7 +74,7 @@ object PaacTaxYear2016PostAlignment {
         case _                                   =>
           Reads(_ => JsError("tax year must be `2016-post`"))
       }
-      .andKeep(normalReads orElse initialReads orElse postFlexiblyAccessedReads)
+      .andKeep(normalReads orElse initialReads orElse postFlexiblyAccessedReads orElse noInputReads)
   }
 
   implicit lazy val writes: Writes[PaacTaxYear2016PostAlignment] = {
@@ -107,6 +112,9 @@ object PaacTaxYear2016PostAlignment {
       )
     )
 
+    lazy val noInputWrites: Writes[PaacTaxYear2016PostAlignment.NoInputTaxYear] =
+      (__ \ "period").write[Period].contramap(_.period)
+
     Writes {
       case year: PaacTaxYear2016PostAlignment.NormalTaxYear =>
         Json.toJson(year)(normalWrites)
@@ -116,6 +124,9 @@ object PaacTaxYear2016PostAlignment {
 
       case year: PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear =>
         Json.toJson(year)(postWrites)
+
+      case year: PaacTaxYear2016PostAlignment.NoInputTaxYear =>
+        Json.toJson(year)(noInputWrites)
     }
   }
 

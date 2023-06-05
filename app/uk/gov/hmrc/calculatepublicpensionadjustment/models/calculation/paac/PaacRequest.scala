@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 
 import play.api.libs.json._
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac.PaacTaxYear
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Period, paac}
 import uk.gov.hmrc.time
 
 case class PaacRequest(taxYears: List[PaacTaxYear], until: Period = Period.Year(time.TaxYear.current.finishYear))
@@ -30,7 +30,7 @@ object PaacRequest {
     (
       (__ \ "taxYears").read[List[PaacTaxYear]] and
         (__ \ "until").readNullable[Period].map(_.getOrElse(Period.Year(time.TaxYear.current.finishYear)))
-    )(PaacRequest(_, _))
+    )(paac.PaacRequest(_, _))
 
   }
 

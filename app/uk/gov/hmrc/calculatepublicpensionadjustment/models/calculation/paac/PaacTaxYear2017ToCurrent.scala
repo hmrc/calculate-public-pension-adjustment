@@ -44,6 +44,8 @@ object PaacTaxYear2017ToCurrent {
     period: Period
   ) extends PaacTaxYear2017ToCurrent
 
+  case class NoInputTaxYear(period: Period) extends PaacTaxYear2017ToCurrent
+
   implicit lazy val reads: Reads[PaacTaxYear2017ToCurrent] = {
 
     import play.api.libs.functional.syntax._
@@ -71,6 +73,9 @@ object PaacTaxYear2017ToCurrent {
         (__ \ "period").read[Period]
     )(PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear)
 
+    val noInputReads: Reads[PaacTaxYear2017ToCurrent] =
+      (__ \ "period").read[Period].map(PaacTaxYear2017ToCurrent.NoInputTaxYear)
+
     (__ \ "period")
       .read[Period]
       .flatMap[Period] {
@@ -79,7 +84,7 @@ object PaacTaxYear2017ToCurrent {
         case _                      =>
           Reads(_ => JsError("tax year must be `2017` or later"))
       }
-      .andKeep(normalReads orElse initialReads orElse postReads)
+      .andKeep(normalReads orElse initialReads orElse postReads orElse noInputReads)
   }
 
   lazy val writes: Writes[PaacTaxYear2017ToCurrent] = {
@@ -115,6 +120,9 @@ object PaacTaxYear2017ToCurrent {
         (__ \ "period").write[Period]
     )(a => (a.definedBenefitInputAmount, a.definedContributionInputAmount, a.income, a.period))
 
+    lazy val noInputWrites: Writes[PaacTaxYear2017ToCurrent.NoInputTaxYear] =
+      (__ \ "period").write[Period].contramap(_.period)
+
     Writes {
       case year: PaacTaxYear2017ToCurrent.NormalTaxYear =>
         Json.toJson(year)(normalWrites)
@@ -124,6 +132,9 @@ object PaacTaxYear2017ToCurrent {
 
       case year: PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear =>
         Json.toJson(year)(postWrites)
+
+      case year: PaacTaxYear2017ToCurrent.NoInputTaxYear =>
+        Json.toJson(year)(noInputWrites)
     }
   }
 
