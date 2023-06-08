@@ -87,7 +87,7 @@ object PaacTaxYear2017ToCurrent {
       .andKeep(normalReads orElse initialReads orElse postReads orElse noInputReads)
   }
 
-  lazy val writes: Writes[PaacTaxYear2017ToCurrent] = {
+  implicit lazy val writes: Writes[PaacTaxYear2017ToCurrent] = {
 
     import play.api.libs.functional.syntax._
 

@@ -23,31 +23,7 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
 
 import java.time.LocalDate
 
-trait CppaModelGenerators {
-
-  lazy val genPensionInputAmount: Gen[Int] =
-    Gen.chooseNum(
-      minT = 0,
-      maxT = 100000
-    )
-
-  lazy val genDefinedBenefitInputAmount: Gen[Int] =
-    Gen.chooseNum(
-      minT = 0,
-      maxT = 40000
-    )
-
-  lazy val genDefinedContributionInputAmount: Gen[Int] =
-    Gen.chooseNum(
-      minT = 0,
-      maxT = 20000
-    )
-
-  lazy val genPreAndPostAccessDefinedContributionInputAmount: Gen[Int] =
-    Gen.chooseNum(
-      minT = 0,
-      maxT = 20000
-    )
+trait CppaModelGenerators extends ModelGenerators {
 
   lazy val genTotalIncome: Gen[Int] =
     Gen.chooseNum(
@@ -81,18 +57,6 @@ trait CppaModelGenerators {
     case Period._2022              => Gen.choose(LocalDate.parse("2021-04-06"), LocalDate.parse("2022-04-05"))
     case Period._2023              => Gen.choose(LocalDate.parse("2022-04-06"), LocalDate.parse("2023-04-05"))
   }
-
-  lazy val genAdjustedIncome: Gen[Int] =
-    Gen.chooseNum(
-      minT = 0,
-      maxT = 100000
-    )
-
-  lazy val genIncome: Gen[Income] =
-    Gen.oneOf(
-      Gen.const(Income.BelowThreshold),
-      genAdjustedIncome.map(Income.AboveThreshold)
-    )
 
   lazy val genTaxYearScheme: Gen[TaxYearScheme] =
     for {

@@ -27,9 +27,11 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextO
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaacConnector @Inject() (config: AppConfig, httpClient1: HttpClient, httpClient2: HttpClientV2) extends Logging {
+class PaacConnector @Inject() (config: AppConfig, httpClient1: HttpClient, httpClient2: HttpClientV2)(implicit
+  ec: ExecutionContext
+) extends Logging {
 
-  def sendRequest(paacRequest: PaacRequest)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[PaacResponse] =
+  def sendRequest(paacRequest: PaacRequest)(implicit hc: HeaderCarrier): Future[PaacResponse] =
     httpClient2
       .post(url"${config.paacServiceUrl}/pension-annual-allowance-calculator/calculate")
       .withBody(Json.toJson(paacRequest))

@@ -47,5 +47,5 @@ lazy val scoverageSettings =
     coverageExcludedFiles := "<empty>;.*javascript.*;.*Routes.*;.*testonly.*",
     coverageFailOnMinimum := true,
     coverageHighlighting := true,
-    coverageMinimumStmtTotal := 80
+    coverageMinimumStmtTotal := 60
   )

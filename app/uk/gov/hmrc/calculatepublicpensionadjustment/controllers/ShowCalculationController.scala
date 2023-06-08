@@ -23,7 +23,7 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationRequest
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.PaacService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton()
 class ShowCalculationController @Inject() (
@@ -35,8 +35,7 @@ class ShowCalculationController @Inject() (
 
   def showCalculation: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[CalculationRequest]("Calculation request") { calculationRequest =>
-      paacService.doCalulations(calculationRequest)
-      Future.successful(Ok("Calculation request accepted"))
+      paacService.calculate(calculationRequest).map(_ => Ok("Calculation request accepted"))
     }
 
   }

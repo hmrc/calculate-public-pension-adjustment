@@ -26,28 +26,30 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaacService @Inject() (connector: PaacConnector) extends Logging {
+class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionContext) extends Logging {
 
-  def doCalulations(
+  def calculate(
     calculationRequest: CalculationRequest
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[PaacResponse] =
+  )(implicit hc: HeaderCarrier): Future[Unit] =
     for {
       paacResponse <- sendRequest(calculationRequest)
-    } yield paacResponse
+    } yield Future.unit
 
   def sendRequest(
     calculationRequest: CalculationRequest
-  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[PaacResponse] =
-    connector.sendRequest(buildPaacRequest(calculationRequest)).map { response =>
-      PaacResponse(response.rows.flatMap { row =>
-        row.taxYear match {
-          case _: PaacTaxYear2011To2015.NoInputTaxYear | _: PaacTaxYear2016PreAlignment.NoInputTaxYear |
-              _: PaacTaxYear2016PostAlignment.NoInputTaxYear | _: PaacTaxYear2017ToCurrent.NoInputTaxYear =>
-            None
-          case _ => Some(row)
-        }
-      })
-    }
+  )(implicit hc: HeaderCarrier): Future[PaacResponse] =
+    connector
+      .sendRequest(buildPaacRequest(calculationRequest))
+      .map { response =>
+        PaacResponse(response.rows flatMap { row =>
+          row.taxYear match {
+            case _: PaacTaxYear2011To2015.NoInputTaxYear | _: PaacTaxYear2016PreAlignment.NoInputTaxYear |
+                _: PaacTaxYear2016PostAlignment.NoInputTaxYear | _: PaacTaxYear2017ToCurrent.NoInputTaxYear =>
+              None
+            case _ => Some(row)
+          }
+        })
+      }
 
   def buildPaacRequest(calculationRequest: CalculationRequest): PaacRequest = {
     val paacTaxYears = calculationRequest.taxYears.map {

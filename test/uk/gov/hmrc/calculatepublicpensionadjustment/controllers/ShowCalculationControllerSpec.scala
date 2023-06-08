@@ -16,14 +16,22 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
-import org.scalatest.OptionValues
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import requests.CppaRequests
+import uk.gov.hmrc.calculatepublicpensionadjustment.services.PaacService
+
+import scala.concurrent.Future
 
 class ShowCalculationControllerSpec
     extends AnyFreeSpec
@@ -31,12 +39,31 @@ class ShowCalculationControllerSpec
     with GuiceOneAppPerSuite
     with OptionValues
     with ScalaCheckPropertyChecks
+    with ScalaFutures
+    with MockitoSugar
+    with BeforeAndAfterEach
     with CppaRequests {
+
+  private val mockPaacService = mock[PaacService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockPaacService)
+  }
+
+  override lazy val app = GuiceApplicationBuilder()
+    .overrides(
+      bind[PaacService].toInstance(mockPaacService)
+    )
+    .build()
 
   "ShowCalculationController" - {
 
     "must return Status 200 - Ok" - {
       "when the valid request contains all tax years 2013 - 2023 with NormalTaxYear" in {
+
+        when(mockPaacService.calculate(any())(any()))
+          .thenReturn(Future.unit)
 
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
@@ -51,6 +78,9 @@ class ShowCalculationControllerSpec
 
       "when the valid request contains all tax years 2013 - 2023 with InitialFlexiblyAccessedTaxYear" in {
 
+        when(mockPaacService.calculate(any())(any()))
+          .thenReturn(Future.unit)
+
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
             .withHeaders(
@@ -64,6 +94,9 @@ class ShowCalculationControllerSpec
 
       "when the valid request contains all tax years 2013 - 2023 with PostFlexiblyAccessedTax" in {
 
+        when(mockPaacService.calculate(any())(any()))
+          .thenReturn(Future.unit)
+
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
             .withHeaders(
@@ -76,6 +109,9 @@ class ShowCalculationControllerSpec
       }
 
       "when the valid request missing few tax years" in {
+
+        when(mockPaacService.calculate(any())(any()))
+          .thenReturn(Future.unit)
 
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
