@@ -17,6 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import com.google.inject.Inject
+import org.threeten.extra.AmountFormats
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationRequest
@@ -58,7 +59,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
       case CppaTaxYear2016PreAlignment.NormalTaxYear(pensionInputAmount, taxYearSchemes, _, _, period) =>
         PaacTaxYear2016PreAlignment.NormalTaxYear(
-          pensionInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(pensionInputAmount, taxYearSchemes),
           period
         )
 
@@ -73,7 +74,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             period
           ) =>
         PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(definedBenefitInputAmount, taxYearSchemes),
           preAccessDefinedContributionInputAmount,
           postAccessDefinedContributionInputAmount,
           period
@@ -81,7 +82,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
       case CppaTaxYear2016PostAlignment.NormalTaxYear(pensionInputAmount, _, _, taxYearSchemes, period) =>
         PaacTaxYear2016PostAlignment.NormalTaxYear(
-          pensionInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(pensionInputAmount, taxYearSchemes),
           period
         )
 
@@ -96,7 +97,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             period
           ) =>
         PaacTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(definedBenefitInputAmount, taxYearSchemes),
           preAccessDefinedContributionInputAmount,
           postAccessDefinedContributionInputAmount,
           period
@@ -111,14 +112,14 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             period
           ) =>
         PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(definedBenefitInputAmount, taxYearSchemes),
           definedContributionInputAmount,
           period
         )
 
       case CppaTaxYear2017ToCurrent.NormalTaxYear(pensionInputAmount, income, _, _, taxYearSchemes, period) =>
         PaacTaxYear2017ToCurrent.NormalTaxYear(
-          pensionInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(pensionInputAmount, taxYearSchemes),
           income,
           period
         )
@@ -135,7 +136,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             period
           ) =>
         PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(definedBenefitInputAmount, taxYearSchemes),
           preAccessDefinedContributionInputAmount,
           postAccessDefinedContributionInputAmount,
           income,
@@ -152,7 +153,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             period
           ) =>
         PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+          addInputAmounts(definedBenefitInputAmount, taxYearSchemes),
           definedContributionInputAmount,
           income,
           period
@@ -162,5 +163,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     PaacRequest(paacTaxYears, paacTaxYears.map(_.period).sorted.max)
   }
+
+  def addInputAmounts(originalAmount: Int, taxYearSchemes: List[TaxYearScheme]): Int =
+    originalAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum
 
 }
