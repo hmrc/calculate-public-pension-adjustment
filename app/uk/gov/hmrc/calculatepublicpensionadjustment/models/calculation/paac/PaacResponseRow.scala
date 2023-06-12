@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.{Format, Json}
 
-import javax.inject.{Inject, Singleton}
+case class PaacResponseRow(
+  taxYear: PaacTaxYear,
+  chargeableAmount: Int
+)
 
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
+object PaacResponseRow {
 
-  val appName: String = config.get[String]("appName")
-
-  lazy val paacServiceUrl: String = servicesConfig.baseUrl("pension-annual-allowance-calculator")
+  implicit lazy val format: Format[PaacResponseRow] =
+    Json.format[PaacResponseRow]
 }
