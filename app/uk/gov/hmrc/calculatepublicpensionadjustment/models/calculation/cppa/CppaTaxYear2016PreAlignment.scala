@@ -28,8 +28,8 @@ object CppaTaxYear2016PreAlignment {
   case class NormalTaxYear(
     pensionInputAmount: Int,
     taxYearSchemes: List[TaxYearScheme],
-    totalIncome: Int = 0,
-    chargePaidByMember: Int = 0,
+    totalIncome: Int,
+    chargePaidByMember: Int,
     period: Period = Period._2016PreAlignment
   ) extends CppaTaxYear2016PreAlignment
 
@@ -44,22 +44,44 @@ object CppaTaxYear2016PreAlignment {
     period: Period = Period._2016PreAlignment
   ) extends CppaTaxYear2016PreAlignment
 
+  case class PostFlexiblyAccessedTaxYear(
+    definedBenefitInputAmount: Int,
+    definedContributionInputAmount: Int,
+    totalIncome: Int,
+    chargePaidByMember: Int,
+    taxYearSchemes: List[TaxYearScheme],
+    period: Period = Period._2016PreAlignment
+  ) extends CppaTaxYear2016PreAlignment
+
   implicit lazy val reads: Reads[CppaTaxYear2016PreAlignment] = {
 
     import play.api.libs.functional.syntax._
 
     val normalReads: Reads[CppaTaxYear2016PreAlignment] = ((__ \ "pensionInputAmount").read[Int] and
-      (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
-      CppaTaxYear2016PreAlignment.NormalTaxYear(_, _)
+      (__ \ "taxYearSchemes").read[List[TaxYearScheme]] and
+      (__ \ "totalIncome").read[Int] and
+      (__ \ "chargePaidByMember").read[Int])(
+      CppaTaxYear2016PreAlignment.NormalTaxYear(_, _, _, _)
     )
 
     val initialReads: Reads[CppaTaxYear2016PreAlignment] = ((__ \ "definedBenefitInputAmount").read[Int] and
       (__ \ "flexiAccessDate").read[LocalDate] and
       (__ \ "preAccessDefinedContributionInputAmount").read[Int] and
       (__ \ "postAccessDefinedContributionInputAmount").read[Int] and
-      (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
-      CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(_, _, _, _, _)
+      (__ \ "taxYearSchemes").read[List[TaxYearScheme]] and
+      (__ \ "totalIncome").read[Int] and
+      (__ \ "chargePaidByMember").read[Int])(
+      CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _)
     )
+
+    val postFlexiblyAccessedReads: Reads[CppaTaxYear2016PreAlignment] =
+      ((__ \ "definedBenefitInputAmount").read[Int] and
+        (__ \ "definedContributionInputAmount").read[Int] and
+        (__ \ "totalIncome").read[Int] and
+        (__ \ "chargePaidByMember").read[Int] and
+        (__ \ "taxYearSchemes").read[List[TaxYearScheme]])(
+        CppaTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(_, _, _, _, _)
+      )
 
     (__ \ "period")
       .read[Period]
@@ -69,7 +91,7 @@ object CppaTaxYear2016PreAlignment {
         case _                                  =>
           Reads(_ => JsError("tax year must be `2016-pre`"))
       }
-      .andKeep(normalReads orElse initialReads)
+      .andKeep(normalReads orElse initialReads orElse postFlexiblyAccessedReads)
   }
 
   implicit lazy val writes: Writes[CppaTaxYear2016PreAlignment] = {
@@ -106,12 +128,33 @@ object CppaTaxYear2016PreAlignment {
       )
     )
 
+    lazy val postWrites: Writes[CppaTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear] = (
+      (__ \ "definedBenefitInputAmount").write[Int] and
+        (__ \ "definedContributionInputAmount").write[Int] and
+        (__ \ "totalIncome").write[Int] and
+        (__ \ "chargePaidByMember").write[Int] and
+        (__ \ "taxYearSchemes").write[List[TaxYearScheme]] and
+        (__ \ "period").write[Period]
+    )(a =>
+      (
+        a.definedBenefitInputAmount,
+        a.definedContributionInputAmount,
+        a.totalIncome,
+        a.chargePaidByMember,
+        a.taxYearSchemes,
+        a.period
+      )
+    )
+
     Writes {
       case year: CppaTaxYear2016PreAlignment.NormalTaxYear =>
         Json.toJson(year)(normalWrites)
 
       case year: CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear =>
         Json.toJson(year)(initialWrites)
+
+      case year: CppaTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear =>
+        Json.toJson(year)(postWrites)
     }
   }
 }
