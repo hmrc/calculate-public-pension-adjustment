@@ -35,6 +35,12 @@ object PaacTaxYear2016PreAlignment {
     period: Period = Period._2016PreAlignment
   ) extends PaacTaxYear2016PreAlignment
 
+  case class PostFlexiblyAccessedTaxYear(
+    definedBenefitInputAmount: Int,
+    definedContributionInputAmount: Int,
+    period: Period = Period._2016PreAlignment
+  ) extends PaacTaxYear2016PreAlignment
+
   case class NoInputTaxYear(period: Period) extends PaacTaxYear2016PreAlignment
 
   implicit lazy val reads: Reads[PaacTaxYear2016PreAlignment] = {
@@ -52,6 +58,11 @@ object PaacTaxYear2016PreAlignment {
       PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(_, _, _)
     )
 
+    val postFlexiblyAccessedReads: Reads[PaacTaxYear2016PreAlignment] = (
+      (__ \ "definedBenefitInputAmount").read[Int] and
+        (__ \ "definedContributionInputAmount").read[Int]
+    )(PaacTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(_, _))
+
     val noInputReads: Reads[PaacTaxYear2016PreAlignment] =
       (__ \ "period").read[Period].map(PaacTaxYear2016PreAlignment.NoInputTaxYear)
 
@@ -63,7 +74,7 @@ object PaacTaxYear2016PreAlignment {
         case _                                  =>
           Reads(_ => JsError("tax year must be `2016-pre`"))
       }
-      .andKeep(normalReads orElse initialReads orElse noInputReads)
+      .andKeep(normalReads orElse initialReads orElse postFlexiblyAccessedReads orElse noInputReads)
   }
 
   implicit lazy val writes: Writes[PaacTaxYear2016PreAlignment] = {
@@ -89,6 +100,18 @@ object PaacTaxYear2016PreAlignment {
       )
     )
 
+    lazy val postWrites: Writes[PaacTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear] = (
+      (__ \ "definedBenefitInputAmount").write[Int] and
+        (__ \ "definedContributionInputAmount").write[Int] and
+        (__ \ "period").write[Period]
+    )(a =>
+      (
+        a.definedBenefitInputAmount,
+        a.definedContributionInputAmount,
+        a.period
+      )
+    )
+
     lazy val noInputWrites: Writes[PaacTaxYear2016PreAlignment.NoInputTaxYear] =
       (__ \ "period").write[Period].contramap(_.period)
 
@@ -98,6 +121,9 @@ object PaacTaxYear2016PreAlignment {
 
       case year: PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear =>
         Json.toJson(year)(initialWrites)
+
+      case year: PaacTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear =>
+        Json.toJson(year)(postWrites)
 
       case year: PaacTaxYear2016PreAlignment.NoInputTaxYear =>
         Json.toJson(year)(noInputWrites)
