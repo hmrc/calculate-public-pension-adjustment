@@ -21,11 +21,12 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.{AboveThreshold, BelowThreshold}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationRequest, Period}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.http.{HeaderCarrier, ServiceUnavailableException}
 
 import java.time.LocalDate
@@ -38,7 +39,8 @@ class PaacServiceSpec
     with ScalaFutures
     with OptionValues
     with MockitoSugar
-    with BeforeAndAfterEach {
+    with BeforeAndAfterEach
+    with CalculationResponses {
 
   private val mockPaacConnector = mock[PaacConnector]
 
@@ -172,6 +174,112 @@ class PaacServiceSpec
       )
     )
 
+    val validCalculationRequestWith2020InitialFlexiblyAccessedTaxYear = {
+
+      val uTaxYears = validCalculationRequestWithAllYears.taxYears
+        .filterNot(v => v.period == Period._2016PreAlignment | v.period == Period._2016PostAlignment) ++ List(
+        CppaTaxYear2016PreAlignment.NormalTaxYear(
+          10000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 9000),
+            TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 9000)
+          ),
+          100000,
+          0,
+          Period._2016PreAlignment
+        ),
+        CppaTaxYear2016PostAlignment.NormalTaxYear(
+          10000,
+          100000,
+          0,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 9000),
+            TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 9000)
+          ),
+          Period._2016PostAlignment
+        )
+      )
+
+      validCalculationRequestWithAllYears.copy(taxYears = uTaxYears.sortBy(_.period))
+    }
+
+    val validCalculationRequestWith2016PostAlignmentInitialFlexiblyAccessedTaxYear = {
+
+      val uTaxYears = validCalculationRequestWithAllYears.taxYears
+        .filterNot(v => v.period == Period._2016PreAlignment | v.period == Period._2016PostAlignment) ++ List(
+        CppaTaxYear2016PreAlignment.NormalTaxYear(
+          10000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 9000),
+            TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 9000)
+          ),
+          100000,
+          0,
+          Period._2016PreAlignment
+        ),
+        CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
+          23000,
+          LocalDate.parse("2016-02-21"),
+          6000,
+          10000,
+          90000,
+          4000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+            TaxYearScheme("Scheme 2", "pstrTest2", 18000, 10000, 6000)
+          ),
+          Period._2016PostAlignment
+        )
+      )
+
+      validCalculationRequestWithAllYears.copy(taxYears = uTaxYears.sortBy(_.period))
+    }
+
+    val validCalculationRequestWithNoInitialFlexiblyAccessedTaxYear = {
+
+      val uTaxYears = validCalculationRequestWithAllYears.taxYears.filterNot(v =>
+        v.period == Period._2016PreAlignment | v.period == Period._2020 | v.period == Period._2023
+      ) ++ List(
+        CppaTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(
+          6000,
+          4000,
+          100000,
+          0,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 9000),
+            TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 9000)
+          ),
+          Period._2016PreAlignment
+        ),
+        CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+          12000,
+          10000,
+          BelowThreshold,
+          90000,
+          3000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 3000),
+            TaxYearScheme("Scheme 2", "pstrTest2", 18000, 10000, 6000)
+          ),
+          Period._2020
+        ),
+        CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+          8000,
+          6000,
+          AboveThreshold(24000),
+          90000,
+          3000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 3000),
+            TaxYearScheme("Scheme 2", "pstrTest2", 18000, 10000, 6000)
+          ),
+          Period._2023
+        )
+      )
+
+      validCalculationRequestWithAllYears.copy(taxYears = uTaxYears.sortBy(_.period))
+    }
+
     val validPaacRequestWithAllYears = PaacRequest(
       List(
         PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
@@ -186,6 +294,60 @@ class PaacServiceSpec
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
         PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2022),
         PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, AboveThreshold(24000), Period._2023)
+      ),
+      Period._2023
+    )
+
+    val validPaacRequestWith2020InitialFlexiblyAccessedTaxYear = PaacRequest(
+      List(
+        PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
+        PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
+        PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
+        PaacTaxYear2016PreAlignment.NormalTaxYear(10000, Period._2016PreAlignment),
+        PaacTaxYear2016PostAlignment.NormalTaxYear(10000, Period._2016PostAlignment),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(31000, AboveThreshold(21000), Period._2017),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(45000, AboveThreshold(24000), Period._2019),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, BelowThreshold, Period._2020),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2022),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, AboveThreshold(24000), Period._2023)
+      ),
+      Period._2023
+    )
+
+    val validPaacRequestWith2016PostAlignmentInitialFlexiblyAccessedTaxYear = PaacRequest(
+      List(
+        PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
+        PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
+        PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
+        PaacTaxYear2016PreAlignment.NormalTaxYear(10000, Period._2016PreAlignment),
+        PaacTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, Period._2016PostAlignment),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(12000, 19000, AboveThreshold(21000), Period._2017),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2019),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, BelowThreshold, Period._2020),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2022),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, AboveThreshold(24000), Period._2023)
+      ),
+      Period._2023
+    )
+
+    val validPaacRequestWithNoInitialFlexiblyAccessedTaxYear = PaacRequest(
+      List(
+        PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
+        PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
+        PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
+        PaacTaxYear2016PreAlignment.NormalTaxYear(10000, Period._2016PreAlignment),
+        PaacTaxYear2016PostAlignment.NormalTaxYear(36000, Period._2016PostAlignment),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(31000, AboveThreshold(21000), Period._2017),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(45000, AboveThreshold(24000), Period._2019),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(22000, BelowThreshold, Period._2020),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(45000, AboveThreshold(24000), Period._2022),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(14000, AboveThreshold(24000), Period._2023)
       ),
       Period._2023
     )
@@ -367,7 +529,7 @@ class PaacServiceSpec
 
     }
 
-    /*   "buildPaacRequest" - {
+    "buildPaacRequest" - {
 
       "must return valid PaacRequest for given valid CalculationRequest with all tax years" in {
 
@@ -383,7 +545,1273 @@ class PaacServiceSpec
         result mustEqual validPaacRequestWithMissingYears
       }
 
-    }*/
+      "must return valid PaacRequest for given valid CalculationRequest with 2020 InitialFlexiblyAccessedTaxYear" in {
+
+        val result = service.buildPaacRequest(validCalculationRequestWith2020InitialFlexiblyAccessedTaxYear)
+
+        result mustEqual validPaacRequestWith2020InitialFlexiblyAccessedTaxYear
+      }
+
+      "must return valid PaacRequest for given valid CalculationRequest with 2016PostAlignment InitialFlexiblyAccessedTaxYear" in {
+
+        val result =
+          service.buildPaacRequest(validCalculationRequestWith2016PostAlignmentInitialFlexiblyAccessedTaxYear)
+
+        result mustEqual validPaacRequestWith2016PostAlignmentInitialFlexiblyAccessedTaxYear
+      }
+
+      "must return valid PaacRequest for given valid CalculationRequest with no InitialFlexiblyAccessedTaxYear" in {
+
+        val result = service.buildPaacRequest(validCalculationRequestWithNoInitialFlexiblyAccessedTaxYear)
+
+        result mustEqual validPaacRequestWithNoInitialFlexiblyAccessedTaxYear
+      }
+
+    }
+
+    "findTaxRate" - {
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PreAlignment under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PreAlignment, 10600)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PreAlignment under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2016PreAlignment, Period._2017), Period._2016PreAlignment, 10599)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PreAlignment under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PreAlignment, 42385)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PreAlignment under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2016PreAlignment, Period._2017), Period._2016PreAlignment, 42384)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PreAlignment under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PreAlignment, 150000)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PreAlignment under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2016PreAlignment, Period._2017), Period._2016PreAlignment, 149999)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PreAlignment above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PreAlignment, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PreAlignment above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2016PreAlignment, Period._2017), Period._2016PreAlignment, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PostAlignment under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PostAlignment, 10600)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PostAlignment under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2016PostAlignment, 10599)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PostAlignment under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PostAlignment, 42385)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PostAlignment under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2016PostAlignment, 42384)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PostAlignment under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PostAlignment, 150000)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PostAlignment under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2016PostAlignment, 149999)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2016PostAlignment above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2016PostAlignment, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2016PostAlignment above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2016PostAlignment, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2017 under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2018), Period._2017, 11000)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2017 under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2017, 10999)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2017 under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2018), Period._2017, 43000)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2017 under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2017, 42385)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2017 under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2018), Period._2017, 150000)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2017 under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2017, 149999)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2017 above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2018), Period._2017, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2017 above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2017), Period._2017, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2018 under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2018, 11500)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2018 under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2018), Period._2018, 11499)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2018 under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2018, 45000)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2018 under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2018), Period._2018, 42999)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2018 under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2018, 150000)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2018 under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2018), Period._2018, 149999)
+
+        result mustEqual 0.4
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2018 above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2018, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2018 above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2018), Period._2018, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2019 under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2019, 11850)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2019 under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2019), Period._2019, 11850)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2019 under StarterRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2019), Period._2019, 13850)
+
+        result mustEqual 0.19
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2019 under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2019, 46350)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2019 under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2019), Period._2019, 24000)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2019 under IntermediateRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2019), Period._2019, 43430)
+
+        result mustEqual 0.21
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2019 under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2019, 150000)
+
+        result mustEqual 0.40
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2019 under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2019), Period._2019, 149999)
+
+        result mustEqual 0.41
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2019 above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2019, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2019 above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2019), Period._2019, 150001)
+
+        result mustEqual 0.46
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2020 under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2020, 12500)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2020 under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2020), Period._2020, 12499)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2020 under StarterRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2020), Period._2020, 14549)
+
+        result mustEqual 0.19
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2020 under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2020, 50000)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2020 under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2020), Period._2020, 24944)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2020 under IntermediateRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2020), Period._2020, 43430)
+
+        result mustEqual 0.21
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2020 under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2020, 150000)
+
+        result mustEqual 0.40
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2020 under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2020), Period._2020, 149999)
+
+        result mustEqual 0.41
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2020 above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2020, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2020 above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2020), Period._2020, 150001)
+
+        result mustEqual 0.46
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2021 under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2021, 12500)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2021 under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2021), Period._2021, 12499)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2021 under StarterRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2021), Period._2021, 14585)
+
+        result mustEqual 0.19
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2021 under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2021, 50000)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2021 under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2021), Period._2021, 25158)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2021 under IntermediateRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2021), Period._2021, 43430)
+
+        result mustEqual 0.21
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2021 under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2021, 150000)
+
+        result mustEqual 0.40
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2021 under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2021), Period._2021, 149999)
+
+        result mustEqual 0.41
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2021 above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2021, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2021 above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2021), Period._2021, 150001)
+
+        result mustEqual 0.46
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2022 under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2022, 12570)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2022 under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2022), Period._2022, 12569)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2022 under StarterRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2022), Period._2022, 14667)
+
+        result mustEqual 0.19
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2022 under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2022, 50270)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2022 under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2022), Period._2022, 25296)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2022 under IntermediateRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2022), Period._2022, 43662)
+
+        result mustEqual 0.21
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2022 under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2022, 150000)
+
+        result mustEqual 0.40
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2022 under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2022), Period._2022, 149999)
+
+        result mustEqual 0.41
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2022 above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2022, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2022 above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2022), Period._2022, 150001)
+
+        result mustEqual 0.46
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2023 under FreeAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2023, 12570)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2023 under FreeAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2023), Period._2023, 12569)
+
+        result mustEqual 0.0
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2023 under StarterRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2023), Period._2023, 14732)
+
+        result mustEqual 0.19
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2023 under BasicRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2023, 50270)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2023 under BasicRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2023), Period._2023, 25688)
+
+        result mustEqual 0.2
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2023 under IntermediateRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2023), Period._2023, 43662)
+
+        result mustEqual 0.21
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2023 under TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2023, 150000)
+
+        result mustEqual 0.40
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2023 under TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2023), Period._2023, 149999)
+
+        result mustEqual 0.41
+      }
+
+      "must return correct TaxRate for NonScottishTaxRate 2023 above TopRateAllowance" in {
+
+        val result = service.findTaxRate(List(Period._2017), Period._2023, 150001)
+
+        result mustEqual 0.45
+      }
+
+      "must return correct TaxRate for ScottishTaxRate 2023 above TopRateAllowance" in {
+
+        val result =
+          service.findTaxRate(List(Period._2016PostAlignment, Period._2023), Period._2023, 150001)
+
+        result mustEqual 0.46
+      }
+
+    }
+
+    "calculateOriginalCharge" - {
+
+      val nonZeroTaxYearSchemes = List(
+        TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 2000),
+        TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 3000)
+      )
+
+      val zeroTaxYearSchemes = List(
+        TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 0),
+        TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 0)
+      )
+
+      "must return correct OriginalCharge for non-zero chargePaidByMember and chargePaidBySchemes" in {
+
+        val result =
+          service.calculateOriginalCharge(1000, nonZeroTaxYearSchemes)
+
+        result mustEqual 6000
+      }
+
+      "must return correct OriginalCharge for zero chargePaidByMember and non-zero chargePaidBySchemes" in {
+
+        val result =
+          service.calculateOriginalCharge(0, nonZeroTaxYearSchemes)
+
+        result mustEqual 5000
+      }
+
+      "must return correct OriginalCharge for non-zero chargePaidByMember and zero chargePaidBySchemes" in {
+
+        val result =
+          service.calculateOriginalCharge(1000, zeroTaxYearSchemes)
+
+        result mustEqual 1000
+      }
+
+      "must return correct OriginalCharge for non-zero chargePaidByMember and Nil chargePaidBySchemes" in {
+
+        val result =
+          service.calculateOriginalCharge(1000, Nil)
+
+        result mustEqual 1000
+      }
+
+      "must return correct OriginalCharge for zero chargePaidByMember and chargePaidBySchemes" in {
+
+        val result =
+          service.calculateOriginalCharge(0, zeroTaxYearSchemes)
+
+        result mustEqual 0
+      }
+
+      "must return correct OriginalCharge for zero chargePaidByMember and Nil chargePaidBySchemes" in {
+
+        val result =
+          service.calculateOriginalCharge(0, Nil)
+
+        result mustEqual 0
+      }
+
+    }
+
+    "calculateRevisedCharge" - {
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and non scottishTaxYear 2017 with TaxRate 0.4" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(Period._2016PostAlignment, Period._2023),
+            Period._2017,
+            60000,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
+                18000
+              )
+            )
+          )
+
+        result mustEqual 7200.0
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and scottishTaxYear 2019 with TaxRate 0.21" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(Period._2016PostAlignment, Period._2019),
+            Period._2019,
+            40000,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
+                18000
+              )
+            )
+          )
+
+        result mustEqual 3780.0
+      }
+
+      "must return correct RevisedCharge for zero chargeableAmount and scottishTaxYear 2019 with TaxRate 0.21" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(Period._2016PostAlignment, Period._2019),
+            Period._2019,
+            40000,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
+                0
+              )
+            )
+          )
+
+        result mustEqual 0.0
+      }
+
+      "must return correct RevisedCharge for negative chargeableAmount and scottishTaxYear 2019 with TaxRate 0.21" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(Period._2016PostAlignment, Period._2019),
+            Period._2019,
+            40000,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
+                -18000
+              )
+            )
+          )
+
+        result mustEqual 0.0
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and scottishTaxYear 2022 with TaxRate 0.19" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(Period._2016PostAlignment, Period._2022),
+            Period._2022,
+            14000,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
+                18000
+              )
+            )
+          )
+
+        result mustEqual 3420.0
+      }
+
+      "must return correct RevisedCharge for zero chargeableAmount and scottishTaxYear 2022 with TaxRate 0.19" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(Period._2016PostAlignment, Period._2022),
+            Period._2022,
+            14000,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
+                0
+              )
+            )
+          )
+
+        result mustEqual 0.0
+      }
+
+      "must return correct RevisedCharge for negative chargeableAmount and scottishTaxYear 2022 with TaxRate 0.41" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(Period._2016PostAlignment, Period._2022),
+            Period._2022,
+            80000,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
+                -18000
+              )
+            )
+          )
+
+        result mustEqual -7380.0
+      }
+
+    }
+
+    "buildOutOfDatesTaxYearsCalculationResult" - {
+
+      val nonZeroTaxYearSchemes = List(
+        TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 2000),
+        TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 3000)
+      )
+
+      val zeroTaxYearSchemes = List(
+        TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 0),
+        TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 0)
+      )
+
+      "must return correct OutOfDatesTaxYearsCalculation for non-zero chargeableAmount, chargePaidByMember and chargePaidBySchemes for nonScottishTaxYear" in {
+
+        val result =
+          service.buildOutOfDatesTaxYearsCalculationResult(
+            Period._2017,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            1000,
+            nonZeroTaxYearSchemes,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
+                3000
+              )
+            )
+          )
+
+        result mustEqual OutOfDatesTaxYearsCalculation(
+          Period._2017,
+          800,
+          4000,
+          List(
+            OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1600),
+            OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 2400)
+          )
+        )
+      }
+
+      "must return correct OutOfDatesTaxYearsCalculation for non-zero chargeableAmount, chargePaidByMember and chargePaidBySchemes for scottishTaxYear" in {
+
+        val result =
+          service.buildOutOfDatesTaxYearsCalculationResult(
+            Period._2019,
+            List(Period._2016PostAlignment, Period._2019),
+            30000,
+            1000,
+            nonZeroTaxYearSchemes,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
+                3000
+              )
+            )
+          )
+
+        result mustEqual OutOfDatesTaxYearsCalculation(
+          Period._2019,
+          895,
+          4475,
+          List(
+            OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1790),
+            OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 2685)
+          )
+        )
+      }
+
+      "must return correct OutOfDatesTaxYearsCalculation for non-zero chargeableAmount, chargePaidByMember and chargePaidBySchemes for nonScottishTaxYear with negative charge" in {
+
+        val result =
+          service.buildOutOfDatesTaxYearsCalculationResult(
+            Period._2017,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            100,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 200),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 300)
+            ),
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
+                3000
+              )
+            )
+          )
+
+        result mustEqual OutOfDatesTaxYearsCalculation(
+          Period._2017,
+          0,
+          0,
+          List(
+            OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
+            OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
+          )
+        )
+      }
+
+      "must return correct OutOfDatesTaxYearsCalculation for zero chargePaidByMember and chargePaidBySchemes for nonScottishTaxYear with non zero charge" in {
+
+        val result =
+          service.buildOutOfDatesTaxYearsCalculationResult(
+            Period._2017,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            0,
+            zeroTaxYearSchemes,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
+                3000
+              )
+            )
+          )
+
+        result mustEqual OutOfDatesTaxYearsCalculation(
+          Period._2017,
+          0,
+          0,
+          List(
+            OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
+            OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
+          )
+        )
+      }
+
+    }
+
+    "buildInDatesTaxYearsCalculationResult" - {
+
+      val nonZeroTaxYearSchemes = List(
+        TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 2000),
+        TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 3000)
+      )
+
+      val zeroTaxYearSchemes = List(
+        TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 0),
+        TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 0)
+      )
+
+      "must return correct InDatesTaxYearsCalculation for non-zero chargeableAmount, chargePaidByMember and chargePaidBySchemes for nonScottishTaxYear" in {
+
+        val result =
+          service.buildInDatesTaxYearsCalculationResult(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            1000,
+            nonZeroTaxYearSchemes,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
+                3000
+              )
+            )
+          )
+
+        result mustEqual InDatesTaxYearsCalculation(
+          Period._2021,
+          6000,
+          800,
+          4000,
+          0,
+          List(
+            InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 2000),
+            InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 3000)
+          )
+        )
+      }
+
+      "must return correct InDatesTaxYearsCalculation for non-zero chargeableAmount, chargePaidByMember and chargePaidBySchemes for scottishTaxYear" in {
+
+        val result =
+          service.buildInDatesTaxYearsCalculationResult(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2021),
+            30000,
+            1000,
+            nonZeroTaxYearSchemes,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
+                3000
+              )
+            )
+          )
+
+        result mustEqual InDatesTaxYearsCalculation(
+          Period._2021,
+          6000,
+          895,
+          4475,
+          0,
+          List(
+            InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 2000),
+            InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 3000)
+          )
+        )
+      }
+
+      "must return correct InDatesTaxYearsCalculation for non-zero chargeableAmount, chargePaidByMember and chargePaidBySchemes for nonScottishTaxYear with negative charge" in {
+
+        val result =
+          service.buildInDatesTaxYearsCalculationResult(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            100,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 200),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 300)
+            ),
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
+                3000
+              )
+            )
+          )
+
+        result mustEqual InDatesTaxYearsCalculation(
+          Period._2021,
+          600,
+          0,
+          0,
+          600,
+          List(
+            InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 200),
+            InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 300)
+          )
+        )
+      }
+
+      "must return correct InDatesTaxYearsCalculation for zero chargePaidByMember and chargePaidBySchemes for nonScottishTaxYear with non zero charge" in {
+
+        val result =
+          service.buildInDatesTaxYearsCalculationResult(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            0,
+            zeroTaxYearSchemes,
+            Some(
+              PaacResponseRow(
+                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
+                3000
+              )
+            )
+          )
+
+        result mustEqual InDatesTaxYearsCalculation(
+          Period._2021,
+          0,
+          0,
+          0,
+          1200,
+          List(
+            InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
+            InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
+          )
+        )
+      }
+
+    }
+
+    "calculateCompensation" - {
+
+      val validCalculationRequestWithNormalTaxYears = CalculationRequest(
+        List(Period._2017, Period._2018, Period._2021),
+        List(
+          CppaTaxYear2013To2015(10000, Period._2013),
+          CppaTaxYear2013To2015(11000, Period._2014),
+          CppaTaxYear2013To2015(12000, Period._2015),
+          CppaTaxYear2016PreAlignment.NormalTaxYear(
+            18000,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            0,
+            0,
+            Period._2016PreAlignment
+          ),
+          CppaTaxYear2016PostAlignment.NormalTaxYear(
+            18000,
+            90000,
+            4000,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2016PostAlignment
+          ),
+          CppaTaxYear2017ToCurrent.NormalTaxYear(
+            18000,
+            AboveThreshold(21000),
+            100000,
+            0,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2017
+          ),
+          CppaTaxYear2017ToCurrent.NormalTaxYear(
+            10000,
+            AboveThreshold(24000),
+            100000,
+            0,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2018
+          ),
+          CppaTaxYear2017ToCurrent.NormalTaxYear(
+            10000,
+            BelowThreshold,
+            90000,
+            3000,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2019
+          ),
+          CppaTaxYear2017ToCurrent.NormalTaxYear(
+            10000,
+            AboveThreshold(24000),
+            90000,
+            3000,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2020
+          ),
+          CppaTaxYear2017ToCurrent.NormalTaxYear(
+            10000,
+            BelowThreshold,
+            90000,
+            8000,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2021
+          ),
+          CppaTaxYear2017ToCurrent.NormalTaxYear(
+            10000,
+            AboveThreshold(24000),
+            90000,
+            3000,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2022
+          ),
+          CppaTaxYear2017ToCurrent.NormalTaxYear(
+            10000,
+            AboveThreshold(24000),
+            90000,
+            4000,
+            List(
+              TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 1000),
+              TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 1000)
+            ),
+            Period._2023
+          )
+        )
+      )
+
+      val validPaacResponseWithNormalTaxYears = PaacResponse(
+        List(
+          PaacResponseRow(
+            PaacTaxYear2017ToCurrent
+              .NormalTaxYear(10000, AboveThreshold(24000), Period._2023),
+            0
+          ),
+          PaacResponseRow(
+            PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2022),
+            0
+          ),
+          PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(10000, BelowThreshold, Period._2021), 0),
+          PaacResponseRow(
+            PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2020),
+            0
+          ),
+          PaacResponseRow(
+            PaacTaxYear2017ToCurrent.NormalTaxYear(10000, BelowThreshold, Period._2019),
+            0
+          ),
+          PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018), 0),
+          PaacResponseRow(
+            PaacTaxYear2017ToCurrent.NormalTaxYear(18000, AboveThreshold(21000), Period._2017),
+            0
+          ),
+          PaacResponseRow(
+            PaacTaxYear2016PostAlignment.NormalTaxYear(18000, Period._2016PostAlignment),
+            10000
+          ),
+          PaacResponseRow(
+            PaacTaxYear2016PreAlignment.NormalTaxYear(18000, Period._2016PreAlignment),
+            0
+          ),
+          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0),
+          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014), 0),
+          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0),
+          PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2012), 0),
+          PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2011), 0)
+        )
+      )
+
+      "must return correct CalculationResponse for a valid CalculationRequest with all years" in {
+
+        val result = service.calculateCompensation(validCalculationRequestWithAllYears, validPaacResponseWithAllYears)
+
+        result mustEqual withAllYearsResponse
+      }
+
+      "must return correct CalculationResponse for a valid CalculationRequest with all NormalTaxYears" in {
+
+        val result =
+          service.calculateCompensation(validCalculationRequestWithNormalTaxYears, validPaacResponseWithNormalTaxYears)
+
+        result mustEqual allTaxYearsWithNormalTaxYearResponse
+      }
+
+    }
 
   }
 

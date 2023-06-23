@@ -517,23 +517,9 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             _,
             period
-          ) if oFlexiblyAccessedTaxYear.forall(p => List(period, p) == List(period, p).sorted) =>
+          ) =>
         PaacTaxYear2016PreAlignment.NormalTaxYear(
           definedBenefitInputAmount + definedContributionInputAmount,
-          period
-        )
-
-      case CppaTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(
-            definedBenefitInputAmount,
-            definedContributionInputAmount,
-            _,
-            _,
-            _,
-            period
-          ) =>
-        PaacTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount,
-          definedContributionInputAmount,
           period
         )
 

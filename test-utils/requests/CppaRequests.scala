@@ -121,7 +121,7 @@ trait CppaRequests {
      |    "taxYears": [
      |        {
      |            "period": "2013",
-     |            "pensionInputAmount": 10000
+     |            "pensionInputAmount": 10000   
      |        },
      |        {
      |            "period": "2015",

@@ -20,7 +20,7 @@ import play.api.libs.json.{Reads, Writes, __}
 
 case class OutOfDatesTaxYearsCalculation(
   period: Period,
-  directCompensation: Double,
+  directCompensation: Int,
   indirectCompensation: Int,
   taxYearSchemes: List[OutOfDatesTaxYearSchemeCalculation]
 )
@@ -33,7 +33,7 @@ object OutOfDatesTaxYearsCalculation {
 
     (
       (__ \ "period").read[Period] and
-        (__ \ "directCompensation").read[Double] and
+        (__ \ "directCompensation").read[Int] and
         (__ \ "indirectCompensation").read[Int] and
         (__ \ "taxYearSchemes").read[List[OutOfDatesTaxYearSchemeCalculation]]
     )(OutOfDatesTaxYearsCalculation.apply _)
@@ -46,7 +46,7 @@ object OutOfDatesTaxYearsCalculation {
 
     (
       (__ \ "period").write[Period] and
-        (__ \ "directCompensation").write[Double] and
+        (__ \ "directCompensation").write[Int] and
         (__ \ "indirectCompensation").write[Int] and
         (__ \ "taxYearSchemes").write[List[OutOfDatesTaxYearSchemeCalculation]]
     )(a =>
