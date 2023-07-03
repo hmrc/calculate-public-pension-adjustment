@@ -463,7 +463,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   ): TotalAmounts =
     TotalAmounts(
       outDates.map(v => v.directCompensation + v.indirectCompensation).sum,
-      inDates.map(v => v.Debit).sum,
+      inDates.map(_.Debit).sum,
       inDates.map(v => v.memberCredit + v.schemeCredit).sum
     )
 
