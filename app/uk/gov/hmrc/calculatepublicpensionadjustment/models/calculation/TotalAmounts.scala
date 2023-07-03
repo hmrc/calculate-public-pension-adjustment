@@ -18,37 +18,35 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
 import play.api.libs.json.{Reads, Writes, __}
 
-case class CalculationResponse(
-  totalAmounts: TotalAmounts,
-  outDates: List[OutOfDatesTaxYearsCalculation],
-  inDates: List[InDatesTaxYearsCalculation]
-)
+case class TotalAmounts(outDatesCompensation: Int, inDatesDebit: Int, inDatesCredit: Int)
 
-object CalculationResponse {
+object TotalAmounts {
 
-  implicit lazy val reads: Reads[CalculationResponse] = {
+  implicit lazy val reads: Reads[TotalAmounts] = {
 
     import play.api.libs.functional.syntax._
 
-    ((__ \ "totalAmounts").read[TotalAmounts] and
-      (__ \ "outDates").read[List[OutOfDatesTaxYearsCalculation]] and
-      (__ \ "inDates").read[List[InDatesTaxYearsCalculation]])(CalculationResponse(_, _, _))
+    ((__ \ "outDatesCompensation").read[Int] and
+      (__ \ "inDatesDebit").read[Int] and
+      (__ \ "inDatesCredit").read[Int])(TotalAmounts(_, _, _))
   }
 
-  implicit lazy val writes: Writes[CalculationResponse] = {
+  implicit lazy val writes: Writes[TotalAmounts] = {
 
     import play.api.libs.functional.syntax._
 
     (
-      (__ \ "totalAmounts").write[TotalAmounts] and
-        (__ \ "outDates").write[List[OutOfDatesTaxYearsCalculation]] and
-        (__ \ "inDates").write[List[InDatesTaxYearsCalculation]]
+      (__ \ "outDatesCompensation").write[Int] and
+        (__ \ "inDatesDebit").write[Int] and
+        (__ \ "inDatesCredit").write[Int]
     )(a =>
       (
-        a.totalAmounts,
-        a.outDates,
-        a.inDates
+        a.outDatesCompensation,
+        a.inDatesDebit,
+        a.inDatesCredit
       )
     )
+
   }
+
 }
