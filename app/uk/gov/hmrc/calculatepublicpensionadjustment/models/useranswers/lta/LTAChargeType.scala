@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
-import play.api.inject.Binding
-import play.api.{Configuration, Environment}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
-import java.time.Clock
+sealed trait LTAChargeType
 
-class Module extends play.api.inject.Module {
+object LTAChargeType extends Enumerable.Implicits {
 
-  override def bindings(environment: Environment, configuration: Configuration): collection.Seq[Binding[_]] =
-    Seq(
-      bind[AppConfig].toSelf.eagerly(),
-      bind[Clock].toInstance(Clock.systemUTC())
-    )
+  case object New extends LTAChargeType
+  case object Increased extends LTAChargeType
+  case object Decreased extends LTAChargeType
+
+  val values: Seq[LTAChargeType] = Seq(
+    New,
+    Increased,
+    Decreased
+  )
+
+  implicit lazy val enumerable: Enumerable[LTAChargeType] =
+    Enumerable(values.map(v => v.toString -> v): _*)
+
 }
