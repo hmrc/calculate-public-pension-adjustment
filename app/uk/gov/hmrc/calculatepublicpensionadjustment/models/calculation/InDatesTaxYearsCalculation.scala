@@ -38,7 +38,7 @@ object InDatesTaxYearsCalculation {
         (__ \ "originalCharge").read[Int] and
         (__ \ "memberCredit").read[Int] and
         (__ \ "schemeCredit").read[Int] and
-        (__ \ "Debit").read[Int] and
+        (__ \ "debit").read[Int] and
         (__ \ "taxYearSchemes").read[List[InDatesTaxYearSchemeCalculation]]
     )(InDatesTaxYearsCalculation.apply _)
   }
@@ -52,7 +52,7 @@ object InDatesTaxYearsCalculation {
         (__ \ "originalCharge").write[Int] and
         (__ \ "memberCredit").write[Int] and
         (__ \ "schemeCredit").write[Int] and
-        (__ \ "Debit").write[Int] and
+        (__ \ "debit").write[Int] and
         (__ \ "taxYearSchemes").write[List[InDatesTaxYearSchemeCalculation]]
     )(a =>
       (
