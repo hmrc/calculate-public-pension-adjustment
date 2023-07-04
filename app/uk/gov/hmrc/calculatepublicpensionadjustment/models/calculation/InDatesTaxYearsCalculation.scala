@@ -23,7 +23,7 @@ case class InDatesTaxYearsCalculation(
   originalCharge: Int,
   memberCredit: Int,
   schemeCredit: Int,
-  Debit: Int,
+  debit: Int,
   taxYearSchemes: List[InDatesTaxYearSchemeCalculation]
 )
 
@@ -60,7 +60,7 @@ object InDatesTaxYearsCalculation {
         a.originalCharge,
         a.memberCredit,
         a.schemeCredit,
-        a.Debit,
+        a.debit,
         a.taxYearSchemes
       )
     )
