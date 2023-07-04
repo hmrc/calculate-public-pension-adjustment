@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
-import play.api.inject.Binding
-import play.api.{Configuration, Environment}
+import play.api.libs.json.{Format, Json}
 
-import java.time.Clock
+case class SubmittedCalculation(someCalculationData: String)
 
-class Module extends play.api.inject.Module {
+object SubmittedCalculation {
 
-  override def bindings(environment: Environment, configuration: Configuration): collection.Seq[Binding[_]] =
-    Seq(
-      bind[AppConfig].toSelf.eagerly(),
-      bind[Clock].toInstance(Clock.systemUTC())
-    )
+  implicit lazy val format: Format[SubmittedCalculation] = Json.format
 }

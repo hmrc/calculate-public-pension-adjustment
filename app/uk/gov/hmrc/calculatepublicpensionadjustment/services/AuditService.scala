@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
-import play.api.inject.Binding
-import play.api.{Configuration, Environment}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.PPASubmissionEvent
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
-import java.time.Clock
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
-class Module extends play.api.inject.Module {
+@Singleton
+class AuditService @Inject()(
+  auditConnector: AuditConnector
+)(implicit ec: ExecutionContext) {
 
-  override def bindings(environment: Environment, configuration: Configuration): collection.Seq[Binding[_]] =
-    Seq(
-      bind[AppConfig].toSelf.eagerly(),
-      bind[Clock].toInstance(Clock.systemUTC())
-    )
+  def auditSubmitRequest(event: PPASubmissionEvent)(implicit hc: HeaderCarrier): Unit =
+    auditConnector.sendExplicitAudit("PPASubmissionEvent", event)
 }

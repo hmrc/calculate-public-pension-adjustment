@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
-import play.api.inject.Binding
-import play.api.{Configuration, Environment}
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 
-import java.time.Clock
-
-class Module extends play.api.inject.Module {
-
-  override def bindings(environment: Environment, configuration: Configuration): collection.Seq[Binding[_]] =
-    Seq(
-      bind[AppConfig].toSelf.eagerly(),
-      bind[Clock].toInstance(Clock.systemUTC())
-    )
+@Singleton
+class UuidService @Inject() () {
+  def random(): String = UUID.randomUUID().toString
 }
