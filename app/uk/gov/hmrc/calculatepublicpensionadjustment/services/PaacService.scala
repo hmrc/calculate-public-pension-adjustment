@@ -311,7 +311,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     }.toList
 
-    CalculationResponse(outDates.sortBy(_.period), inDates.sortBy(_.period))
+    CalculationResponse(calculateTotalAmounts(outDates, inDates), outDates.sortBy(_.period), inDates.sortBy(_.period))
 
   }
 
@@ -456,6 +456,16 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
       case (true, Period._2023) => ScottishTaxRateAfter2018._2023().getTaxRate(totalIncome)
     }
+
+  def calculateTotalAmounts(
+    outDates: List[OutOfDatesTaxYearsCalculation],
+    inDates: List[InDatesTaxYearsCalculation]
+  ): TotalAmounts =
+    TotalAmounts(
+      outDates.map(v => v.directCompensation + v.indirectCompensation).sum,
+      inDates.map(_.debit).sum,
+      inDates.map(v => v.memberCredit + v.schemeCredit).sum
+    )
 
   def sendRequest(
     calculationRequest: CalculationRequest

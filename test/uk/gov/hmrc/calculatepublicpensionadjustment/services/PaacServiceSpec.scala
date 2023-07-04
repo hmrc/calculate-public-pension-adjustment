@@ -24,9 +24,9 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.{AboveThreshold, BelowThreshold}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.http.{HeaderCarrier, ServiceUnavailableException}
 
 import java.time.LocalDate
@@ -1809,6 +1809,59 @@ class PaacServiceSpec
           service.calculateCompensation(validCalculationRequestWithNormalTaxYears, validPaacResponseWithNormalTaxYears)
 
         result mustEqual allTaxYearsWithNormalTaxYearResponse
+      }
+
+    }
+
+    "calculateTotalAmounts" - {
+
+      "must return correct TotalAmounts for a valid outDates and inDates calculations for all years" in {
+
+        val result =
+          service.calculateTotalAmounts(withAllYearsResponse.outDates, withAllYearsResponse.inDates)
+
+        result mustEqual TotalAmounts(42401, 0, 23002)
+      }
+
+      "must return correct TotalAmounts for a valid outDates and inDates calculations for missing years" in {
+
+        val result =
+          service.calculateTotalAmounts(missingTaxYearsValidResponse.outDates, missingTaxYearsValidResponse.inDates)
+
+        result mustEqual TotalAmounts(4002, 2200, 6200)
+      }
+
+      "must return correct TotalAmounts for a valid outDates and inDates calculations for all TaxYears with all NormalTaxYear" in {
+
+        val result =
+          service.calculateTotalAmounts(
+            allTaxYearsWithNormalTaxYearResponse.outDates,
+            allTaxYearsWithNormalTaxYearResponse.inDates
+          )
+
+        result mustEqual TotalAmounts(13002, 0, 26000)
+      }
+
+      "must return correct TotalAmounts for a valid outDates and inDates calculations for all TaxYears with all InitialFlexiblyAccessedTaxYear" in {
+
+        val result =
+          service.calculateTotalAmounts(
+            allTaxYearsWithInitialFlexiblyAccessedTaxYearResponse.outDates,
+            allTaxYearsWithInitialFlexiblyAccessedTaxYearResponse.inDates
+          )
+
+        result mustEqual TotalAmounts(12600, 0, 16340)
+      }
+
+      "must return correct TotalAmounts for a valid outDates and inDates calculations for all TaxYears with PostFlexiblyAccessedTaxYear" in {
+
+        val result =
+          service.calculateTotalAmounts(
+            allTaxYearsWithPostFlexiblyAccessedTaxYearResponse.outDates,
+            allTaxYearsWithPostFlexiblyAccessedTaxYearResponse.inDates
+          )
+
+        result mustEqual TotalAmounts(4002, 3200, 3440)
       }
 
     }

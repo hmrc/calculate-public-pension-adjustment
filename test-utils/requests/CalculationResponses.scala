@@ -21,6 +21,7 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 trait CalculationResponses {
 
   val allTaxYearsWithNormalTaxYearResponse: CalculationResponse = CalculationResponse(
+    TotalAmounts(13002, 0, 26000),
     List(
       OutOfDatesTaxYearsCalculation(
         Period._2016PreAlignment,
@@ -117,6 +118,7 @@ trait CalculationResponses {
   )
 
   val allTaxYearsWithInitialFlexiblyAccessedTaxYearResponse = CalculationResponse(
+    TotalAmounts(12600, 0, 16340),
     List(
       OutOfDatesTaxYearsCalculation(
         Period._2016PreAlignment,
@@ -213,6 +215,7 @@ trait CalculationResponses {
   )
 
   val allTaxYearsWithPostFlexiblyAccessedTaxYearResponse = CalculationResponse(
+    TotalAmounts(4002, 3200, 3440),
     List(
       OutOfDatesTaxYearsCalculation(
         Period._2016PreAlignment,
@@ -309,6 +312,7 @@ trait CalculationResponses {
   )
 
   val missingTaxYearsValidResponse = CalculationResponse(
+    TotalAmounts(4002, 2200, 6200),
     List(
       OutOfDatesTaxYearsCalculation(
         Period._2016PreAlignment,
@@ -385,6 +389,7 @@ trait CalculationResponses {
   )
 
   val withAllYearsResponse = CalculationResponse(
+    TotalAmounts(42401, 0, 23002),
     List(
       OutOfDatesTaxYearsCalculation(
         Period._2016PreAlignment,
