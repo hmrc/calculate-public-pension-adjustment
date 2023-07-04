@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
-import play.api.inject.Binding
-import play.api.{Configuration, Environment}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
-import java.time.Clock
+sealed trait LTAChargeWhoPays
 
-class Module extends play.api.inject.Module {
+object LTAChargeWhoPays extends Enumerable.Implicits {
 
-  override def bindings(environment: Environment, configuration: Configuration): collection.Seq[Binding[_]] =
-    Seq(
-      bind[AppConfig].toSelf.eagerly(),
-      bind[Clock].toInstance(Clock.systemUTC())
-    )
+  case object You extends LTAChargeWhoPays
+  case object PensionScheme extends LTAChargeWhoPays
+
+  val values: Seq[LTAChargeWhoPays] = Seq(
+    You,
+    PensionScheme
+  )
+
+  implicit val enumerable: Enumerable[LTAChargeWhoPays] =
+    Enumerable(values.map(v => v.toString -> v): _*)
+
 }
