@@ -56,6 +56,7 @@ class PaacServiceSpec
   "PaacService" - {
 
     val validCalculationRequestWithAllYears = CalculationRequest(
+      Resubmission(isResubmission = true, Some("Change in amounts")),
       List(Period._2017, Period._2019, Period._2021),
       List(
         CppaTaxYear2013To2015(10000, Period._2013),
@@ -357,39 +358,46 @@ class PaacServiceSpec
         PaacResponseRow(
           PaacTaxYear2017ToCurrent
             .InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, AboveThreshold(24000), Period._2023),
-          16000
+          16000,
+          40000
         ),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
-          18000
+          18000,
+          60000
         ),
-        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2021), 0),
+        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2021), 0, 0),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, BelowThreshold, Period._2020),
-          16000
+          16000,
+          0
         ),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
-          18000
+          18000,
+          30000
         ),
-        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2018), 0),
+        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2018), 0, 0),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(32000, 19000, AboveThreshold(21000), Period._2017),
-          9000
+          9000,
+          40000
         ),
         PaacResponseRow(
           PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(36000, 20000, Period._2016PostAlignment),
-          10000
+          10000,
+          0
         ),
         PaacResponseRow(
           PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(36000, 6000, 10000, Period._2016PreAlignment),
-          0
+          0,
+          20000
         ),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2012), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2011), 0)
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0, 0),
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014), 0, 20000),
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0, 30000),
+        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2012), 0, 0),
+        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2011), 0, 0)
       )
     )
 
@@ -398,42 +406,50 @@ class PaacServiceSpec
         PaacResponseRow(
           PaacTaxYear2017ToCurrent
             .InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, AboveThreshold(24000), Period._2023),
-          16000
+          16000,
+          40000
         ),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
-          18000
+          18000,
+          60000
         ),
-        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2021), 0),
+        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2021), 0, 0),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, BelowThreshold, Period._2020),
-          16000
+          16000,
+          0
         ),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
-          18000
+          18000,
+          30000
         ),
-        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2018), 0),
+        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2018), 0, 0),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(32000, 19000, AboveThreshold(21000), Period._2017),
-          9000
+          9000,
+          40000
         ),
         PaacResponseRow(
           PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(36000, 20000, Period._2016PostAlignment),
-          10000
+          10000,
+          0
         ),
         PaacResponseRow(
           PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(36000, 6000, 10000, Period._2016PreAlignment),
-          0
+          0,
+          20000
         ),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0)
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0, 0),
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014), 0, 20000),
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0, 30000)
       )
     )
 
     val validCalculationRequestWithMissingYears =
       CalculationRequest(
+        validCalculationRequestWithAllYears.resubmission,
         validCalculationRequestWithAllYears.scottishTaxYears,
         validCalculationRequestWithAllYears.taxYears.filterNot(p =>
           p.period == Period._2014 | p.period == Period._2016PostAlignment | p.period == Period._2018 | p.period == Period._2020
@@ -452,33 +468,38 @@ class PaacServiceSpec
         PaacResponseRow(
           PaacTaxYear2017ToCurrent
             .InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, AboveThreshold(24000), Period._2023),
-          16000
+          16000,
+          20000
         ),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
-          18000
+          18000,
+          30000
         ),
-        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2021), 0),
-        PaacResponseRow(PaacTaxYear2017ToCurrent.NoInputTaxYear(Period._2020), 0),
+        PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(30000, AboveThreshold(24000), Period._2021), 0, 20000),
+        PaacResponseRow(PaacTaxYear2017ToCurrent.NoInputTaxYear(Period._2020), 0, 10000),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
-          18000
+          18000,
+          10000
         ),
-        PaacResponseRow(PaacTaxYear2017ToCurrent.NoInputTaxYear(Period._2018), 0),
+        PaacResponseRow(PaacTaxYear2017ToCurrent.NoInputTaxYear(Period._2018), 0, 20000),
         PaacResponseRow(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(32000, 19000, AboveThreshold(21000), Period._2017),
-          9000
-        ),
-        PaacResponseRow(PaacTaxYear2016PostAlignment.NoInputTaxYear(Period._2016PostAlignment), 0),
-        PaacResponseRow(
-          PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(16000, 6000, 10000, Period._2016PreAlignment),
+          9000,
           0
         ),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2014), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2012), 0),
-        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2011), 0)
+        PaacResponseRow(PaacTaxYear2016PostAlignment.NoInputTaxYear(Period._2016PostAlignment), 0, 10000),
+        PaacResponseRow(
+          PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(16000, 6000, 10000, Period._2016PreAlignment),
+          0,
+          10000
+        ),
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0, 0),
+        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2014), 0, 0),
+        PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0, 0),
+        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2012), 0, 0),
+        PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2011), 0, 0)
       )
     )
 
@@ -1260,12 +1281,7 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2023),
             Period._2017,
             60000,
-            Some(
-              PaacResponseRow(
-                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
-                18000
-              )
-            )
+            18000
           )
 
         result mustEqual 7200.0
@@ -1278,12 +1294,7 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2019),
             Period._2019,
             40000,
-            Some(
-              PaacResponseRow(
-                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
-                18000
-              )
-            )
+            18000
           )
 
         result mustEqual 3780.0
@@ -1296,12 +1307,7 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2019),
             Period._2019,
             40000,
-            Some(
-              PaacResponseRow(
-                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
-                0
-              )
-            )
+            0
           )
 
         result mustEqual 0.0
@@ -1314,12 +1320,7 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2019),
             Period._2019,
             40000,
-            Some(
-              PaacResponseRow(
-                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
-                -18000
-              )
-            )
+            -18000
           )
 
         result mustEqual 0.0
@@ -1332,12 +1333,7 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2022),
             Period._2022,
             14000,
-            Some(
-              PaacResponseRow(
-                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
-                18000
-              )
-            )
+            18000
           )
 
         result mustEqual 3420.0
@@ -1350,12 +1346,7 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2022),
             Period._2022,
             14000,
-            Some(
-              PaacResponseRow(
-                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
-                0
-              )
-            )
+            0
           )
 
         result mustEqual 0.0
@@ -1368,12 +1359,7 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2022),
             Period._2022,
             80000,
-            Some(
-              PaacResponseRow(
-                PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
-                -18000
-              )
-            )
+            -18000
           )
 
         result mustEqual -7380.0
@@ -1405,7 +1391,8 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
-                3000
+                3000,
+                10000
               )
             )
           )
@@ -1414,6 +1401,11 @@ class PaacServiceSpec
           Period._2017,
           800,
           4000,
+          1000,
+          5000,
+          3000,
+          1200,
+          10000,
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1600),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 2400)
@@ -1433,7 +1425,8 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
-                3000
+                3000,
+                20000
               )
             )
           )
@@ -1442,6 +1435,11 @@ class PaacServiceSpec
           Period._2019,
           895,
           4475,
+          1000,
+          5000,
+          3000,
+          630,
+          20000,
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1790),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 2685)
@@ -1464,7 +1462,8 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
-                3000
+                3000,
+                10000
               )
             )
           )
@@ -1473,6 +1472,11 @@ class PaacServiceSpec
           Period._2017,
           0,
           0,
+          100,
+          500,
+          3000,
+          1200,
+          10000,
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
@@ -1492,7 +1496,8 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2017),
-                3000
+                3000,
+                10000
               )
             )
           )
@@ -1501,6 +1506,11 @@ class PaacServiceSpec
           Period._2017,
           0,
           0,
+          0,
+          0,
+          3000,
+          1200,
+          10000,
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
@@ -1534,17 +1544,22 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
-                3000
+                3000,
+                10000
               )
             )
           )
 
         result mustEqual InDatesTaxYearsCalculation(
           Period._2021,
-          6000,
           800,
           4000,
           0,
+          1000,
+          5000,
+          3000,
+          1200,
+          10000,
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 2000),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 3000)
@@ -1564,17 +1579,22 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
-                3000
+                3000,
+                20000
               )
             )
           )
 
         result mustEqual InDatesTaxYearsCalculation(
           Period._2021,
-          6000,
           895,
           4475,
           0,
+          1000,
+          5000,
+          3000,
+          630,
+          20000,
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 2000),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 3000)
@@ -1597,17 +1617,22 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
-                3000
+                3000,
+                10000
               )
             )
           )
 
         result mustEqual InDatesTaxYearsCalculation(
           Period._2021,
-          600,
           0,
           0,
           600,
+          100,
+          500,
+          3000,
+          1200,
+          10000,
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 200),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 300)
@@ -1627,7 +1652,8 @@ class PaacServiceSpec
             Some(
               PaacResponseRow(
                 PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2021),
-                3000
+                3000,
+                10000
               )
             )
           )
@@ -1636,8 +1662,12 @@ class PaacServiceSpec
           Period._2021,
           0,
           0,
-          0,
           1200,
+          0,
+          0,
+          3000,
+          1200,
+          10000,
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
@@ -1650,6 +1680,7 @@ class PaacServiceSpec
     "calculateCompensation" - {
 
       val validCalculationRequestWithNormalTaxYears = CalculationRequest(
+        Resubmission(isResubmission = false, None),
         List(Period._2017, Period._2018, Period._2021),
         List(
           CppaTaxYear2013To2015(10000, Period._2013),
@@ -1760,39 +1791,46 @@ class PaacServiceSpec
           PaacResponseRow(
             PaacTaxYear2017ToCurrent
               .NormalTaxYear(10000, AboveThreshold(24000), Period._2023),
-            0
+            0,
+            10000
           ),
           PaacResponseRow(
             PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2022),
-            0
+            0,
+            10000
           ),
-          PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(10000, BelowThreshold, Period._2021), 0),
+          PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(10000, BelowThreshold, Period._2021), 0, 10000),
           PaacResponseRow(
             PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2020),
-            0
+            0,
+            10000
           ),
           PaacResponseRow(
             PaacTaxYear2017ToCurrent.NormalTaxYear(10000, BelowThreshold, Period._2019),
-            0
+            0,
+            10000
           ),
-          PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018), 0),
+          PaacResponseRow(PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018), 0, 10000),
           PaacResponseRow(
             PaacTaxYear2017ToCurrent.NormalTaxYear(18000, AboveThreshold(21000), Period._2017),
-            0
+            0,
+            10000
           ),
           PaacResponseRow(
             PaacTaxYear2016PostAlignment.NormalTaxYear(18000, Period._2016PostAlignment),
+            10000,
             10000
           ),
           PaacResponseRow(
             PaacTaxYear2016PreAlignment.NormalTaxYear(18000, Period._2016PreAlignment),
-            0
+            0,
+            10000
           ),
-          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0),
-          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014), 0),
-          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0),
-          PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2012), 0),
-          PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2011), 0)
+          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015), 0, 10000),
+          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014), 0, 10000),
+          PaacResponseRow(PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013), 0, 10000),
+          PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2012), 0, 10000),
+          PaacResponseRow(PaacTaxYear2011To2015.NoInputTaxYear(Period._2011), 0, 10000)
         )
       )
 

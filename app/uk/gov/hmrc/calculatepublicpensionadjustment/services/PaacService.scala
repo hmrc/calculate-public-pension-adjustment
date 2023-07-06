@@ -311,7 +311,12 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     }.toList
 
-    CalculationResponse(calculateTotalAmounts(outDates, inDates), outDates.sortBy(_.period), inDates.sortBy(_.period))
+    CalculationResponse(
+      calculationRequest.resubmission,
+      calculateTotalAmounts(outDates, inDates),
+      outDates.sortBy(_.period),
+      inDates.sortBy(_.period)
+    )
 
   }
 
@@ -326,7 +331,9 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val originalCharge = calculateOriginalCharge(chargePaidByMember, taxYearSchemes)
 
-    val revisedCharge = calculateRevisedCharge(scottishTaxYears, period, totalIncome, oPaacResponseRow)
+    val chargeableAmount = oPaacResponseRow.map(_.chargeableAmount).getOrElse(0)
+
+    val revisedCharge = calculateRevisedCharge(scottishTaxYears, period, totalIncome, chargeableAmount)
 
     val totalCompensation = originalCharge - revisedCharge
 
@@ -357,7 +364,17 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val indirectCompensation = compensationToSchemes.map(_.compensation).sum
 
-    OutOfDatesTaxYearsCalculation(period, directCompensation, indirectCompensation, compensationToSchemes)
+    OutOfDatesTaxYearsCalculation(
+      period,
+      directCompensation,
+      indirectCompensation,
+      chargePaidByMember,
+      taxYearSchemes.map(_.chargePaidByScheme).sum,
+      chargeableAmount,
+      floor(revisedCharge).toInt,
+      oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0),
+      compensationToSchemes
+    )
   }
 
   def buildInDatesTaxYearsCalculationResult(
@@ -371,7 +388,9 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val originalCharge = calculateOriginalCharge(chargePaidByMember, taxYearSchemes)
 
-    val revisedCharge = calculateRevisedCharge(scottishTaxYears, period, totalIncome, oPaacResponseRow)
+    val chargeableAmount = oPaacResponseRow.map(_.chargeableAmount).getOrElse(0)
+
+    val revisedCharge = calculateRevisedCharge(scottishTaxYears, period, totalIncome, chargeableAmount)
 
     val totalCompensation = originalCharge - revisedCharge
 
@@ -391,10 +410,14 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     InDatesTaxYearsCalculation(
       period,
-      originalCharge,
       memberCredit,
       schemeCredit,
       debit,
+      chargePaidByMember,
+      taxYearSchemes.map(_.chargePaidByScheme).sum,
+      chargeableAmount,
+      floor(revisedCharge).toInt,
+      oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0),
       inDatesTaxYearSchemeCalculation
     )
 
@@ -407,10 +430,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     scottishTaxYears: List[Period],
     period: Period,
     totalIncome: Int,
-    oPaacResponseRow: Option[PaacResponseRow]
-  ): Double = {
-    val chargeableAmount = oPaacResponseRow.map(_.chargeableAmount).getOrElse(0)
-
+    chargeableAmount: Int
+  ): Double =
     (period, chargeableAmount > 0) match {
       case (Period._2016PreAlignment | Period._2016PostAlignment | Period._2017 | Period._2018 | Period._2019, true) =>
         chargeableAmount * findTaxRate(scottishTaxYears, period, totalIncome)
@@ -421,8 +442,6 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       case (Period._2020 | Period._2021 | Period._2022 | Period._2023, _) =>
         chargeableAmount * findTaxRate(scottishTaxYears, period, totalIncome)
     }
-
-  }
 
   def findTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int): Double =
     (scottishTaxYears.contains(period), period) match {

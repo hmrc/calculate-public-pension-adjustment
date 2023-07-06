@@ -19,6 +19,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 import play.api.libs.json.{Reads, Writes, __}
 
 case class CalculationResponse(
+  resubmission: Resubmission,
   totalAmounts: TotalAmounts,
   outDates: List[OutOfDatesTaxYearsCalculation],
   inDates: List[InDatesTaxYearsCalculation]
@@ -30,9 +31,10 @@ object CalculationResponse {
 
     import play.api.libs.functional.syntax._
 
-    ((__ \ "totalAmounts").read[TotalAmounts] and
+    ((__ \ "resubmission").read[Resubmission] and
+      (__ \ "totalAmounts").read[TotalAmounts] and
       (__ \ "outDates").read[List[OutOfDatesTaxYearsCalculation]] and
-      (__ \ "inDates").read[List[InDatesTaxYearsCalculation]])(CalculationResponse(_, _, _))
+      (__ \ "inDates").read[List[InDatesTaxYearsCalculation]])(CalculationResponse(_, _, _, _))
   }
 
   implicit lazy val writes: Writes[CalculationResponse] = {
@@ -40,11 +42,13 @@ object CalculationResponse {
     import play.api.libs.functional.syntax._
 
     (
-      (__ \ "totalAmounts").write[TotalAmounts] and
+      (__ \ "resubmission").write[Resubmission] and
+        (__ \ "totalAmounts").write[TotalAmounts] and
         (__ \ "outDates").write[List[OutOfDatesTaxYearsCalculation]] and
         (__ \ "inDates").write[List[InDatesTaxYearsCalculation]]
     )(a =>
       (
+        a.resubmission,
         a.totalAmounts,
         a.outDates,
         a.inDates

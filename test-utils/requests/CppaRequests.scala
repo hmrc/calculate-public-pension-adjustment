@@ -156,6 +156,10 @@ trait CppaRequests {
 
   val allTaxYearsWithNormalTaxYearValidRequest: JsValue = Json.parse("""
      |{
+     |    "resubmission" : {
+     |        "isResubmission" : true,
+     |        "reason": "Change in amounts"
+     |    },
      |    "scottishTaxYears": [
      |        "2017",
      |        "2018",
@@ -403,6 +407,9 @@ trait CppaRequests {
 
   val allTaxYearsWithInitialFlexiblyAccessedTaxYearValidRequest: JsValue = Json.parse("""
       |{
+      |    "resubmission" : {
+      |        "isResubmission" : false
+      |    },
       |    "scottishTaxYears": [
       |        "2017",
       |        "2018",
@@ -677,6 +684,10 @@ trait CppaRequests {
 
   val allTaxYearsWithPostFlexiblyAccessedTaxYearValidRequest: JsValue = Json.parse("""
       |{
+      |    "resubmission" : {
+      |        "isResubmission" : true,
+      |        "reason": "Change in amounts"
+      |    },
       |    "scottishTaxYears": [
       |        "2017",
       |        "2018",
@@ -935,6 +946,9 @@ trait CppaRequests {
 
   val missingTaxYearsValidRequest: JsValue = Json.parse("""
       |{
+      |    "resubmission" : {
+      |        "isResubmission" : false
+      |    },
       |    "scottishTaxYears": [
       |        "2017",
       |        "2019",
