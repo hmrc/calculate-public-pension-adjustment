@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
 
-import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
 sealed trait WhoPaysLTACharge

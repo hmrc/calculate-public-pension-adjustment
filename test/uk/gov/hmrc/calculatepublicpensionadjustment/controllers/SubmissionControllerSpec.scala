@@ -29,22 +29,30 @@ import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.SubmissionRequest
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.{CalculationUserAnswers, Resubmission}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers._
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.SubmissionService
 import uk.gov.hmrc.internalauth.client._
 import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SubmissionControllerSpec extends AnyFreeSpec with Matchers with ScalaFutures with IntegrationPatience with OptionValues with MockitoSugar with BeforeAndAfterEach {
+class SubmissionControllerSpec
+    extends AnyFreeSpec
+    with Matchers
+    with ScalaFutures
+    with IntegrationPatience
+    with OptionValues
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit                          = {
     super.beforeEach()
     Mockito.reset[Any](mockSubmissionService, mockStubBehaviour)
   }
-  private val mockSubmissionService = mock[SubmissionService]
-  private val mockStubBehaviour = mock[StubBehaviour]
+  private val mockSubmissionService                        = mock[SubmissionService]
+  private val mockStubBehaviour                            = mock[StubBehaviour]
   private val backendAuthComponents: BackendAuthComponents =
     BackendAuthComponentsStub(mockStubBehaviour)(Helpers.stubControllerComponents(), global)
 
@@ -63,7 +71,6 @@ class SubmissionControllerSpec extends AnyFreeSpec with Matchers with ScalaFutur
     )
     .build()
 
-
   "submit" - {
 
     "must return ACCEPTED when a submission is successful" in {
@@ -74,8 +81,15 @@ class SubmissionControllerSpec extends AnyFreeSpec with Matchers with ScalaFutur
       when(mockSubmissionService.submit(any(), any())(any()))
         .thenReturn(Future.successful("uniqueId"))
 
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None)
-      val calculationResponse = Some(CalculationResponse(List.empty, List.empty))
+      val ltaCharge =
+        LTACharge(1234, WhoPaysLTACharge.PensionScheme,
+          Some(ChargePaidByScheme("scheme1", "pstr1", HowPaidLTACharge.LumpSum)))
+
+      val lifetimeAllowance = Some(LifetimeAllowance(LocalDate.now(), LTAChargeType.New,
+        List(LTAProtection(ProtectionType.FixedProtection, "123")), List.empty, ltaCharge))
+
+      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, lifetimeAllowance)
+      val calculationResponse    = Some(CalculationResponse(List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.submit)
         .withHeaders(AUTHORIZATION -> "my-token")
@@ -85,7 +99,6 @@ class SubmissionControllerSpec extends AnyFreeSpec with Matchers with ScalaFutur
 
       status(result) mustEqual ACCEPTED
       contentAsJson(result) mustEqual Json.obj("id" -> "submissionReference")
-
 
       verify(mockSubmissionService, times(1)).submit(eqTo(calculationUserAnswers), eqTo(calculationResponse))(any())
     }

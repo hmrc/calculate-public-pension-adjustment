@@ -21,7 +21,7 @@ import play.api.libs.json.{Format, Json}
 case class CalculationUserAnswers(
   resubmission: Resubmission,
   annualAllowance: Option[AnnualAllowance],
-  //lifetimeAllowance: Option[LifetimeAllowance]
+  lifetimeAllowance: Option[LifetimeAllowance]
 ) {}
 object CalculationUserAnswers {
 

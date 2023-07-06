@@ -18,7 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswe
 
 import play.api.libs.json.{Format, Json}
 
-case class LTACharge(amount: Int, who: WhoPaysLTACharge, how: HowPaidLTACharge, schemeName: String, schemeTaxReference: String) {
+case class LTACharge(amount: Int, who: WhoPaysLTACharge, chargePaidByScheme: Option[ChargePaidByScheme]) {
 
 }
 

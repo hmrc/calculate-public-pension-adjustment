@@ -20,14 +20,16 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.{CalculationUserAnswers, Resubmission}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers._
+
+import java.time.LocalDate
 
 class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks {
 
   "SubmissionRequest" - {
 
     "must serialise to expected Json" in {
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None)
+      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, None)
       val submissionRequest      = SubmissionRequest(calculationUserAnswers, None)
 
       val serialised: JsValue = Json.toJson(submissionRequest)
@@ -45,13 +47,31 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks {
 
       val deserialised: JsResult[SubmissionRequest] = json.validate[SubmissionRequest]
 
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None)
+      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, None)
       val submissionRequest      = SubmissionRequest(calculationUserAnswers, None)
       deserialised mustEqual (JsSuccess(submissionRequest))
     }
 
     "serialise" in {
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None)
+
+      val ltaCharge =
+        LTACharge(
+          1234,
+          WhoPaysLTACharge.PensionScheme,
+          Some(ChargePaidByScheme("scheme1", "pstr1", HowPaidLTACharge.LumpSum))
+        )
+
+      val lifetimeAllowance = Some(
+        LifetimeAllowance(
+          LocalDate.now(),
+          LTAChargeType.New,
+          List(LTAProtection(ProtectionType.FixedProtection, "123")),
+          List.empty,
+          ltaCharge
+        )
+      )
+
+      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, lifetimeAllowance)
       val submissionRequest      = SubmissionRequest(calculationUserAnswers, Some(SubmissionTestData.calculationResponse))
       val json                   = Json.toJson(submissionRequest)
 

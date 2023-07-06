@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
 
-import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
 sealed trait LTAChargeType
@@ -26,13 +25,11 @@ object LTAChargeType extends Enumerable.Implicits {
   case object New extends LTAChargeType
   case object Increased extends LTAChargeType
   case object Decreased extends LTAChargeType
-  case object None extends LTAChargeType
 
   val values: Seq[LTAChargeType] = Seq(
     New,
     Increased,
-    Decreased,
-    None
+    Decreased
   )
 
   implicit lazy val enumerable: Enumerable[LTAChargeType] =

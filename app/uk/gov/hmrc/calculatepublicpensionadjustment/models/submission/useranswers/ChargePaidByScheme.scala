@@ -18,17 +18,9 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswe
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
+case class ChargePaidByScheme (name: String, taxReference: String, howPaid: HowPaidLTACharge)
 
-case class LifetimeAllowance(
-  benefitCrystallisationEventDate: LocalDate,
-  chargeType: LTAChargeType,
-  protection: List[LTAProtection],
-  changedProtection: List[LTAProtection],
-  charge: LTACharge
-) {}
+object ChargePaidByScheme {
 
-object LifetimeAllowance {
-
-  implicit lazy val format: Format[LifetimeAllowance] = Json.format
+  implicit lazy val format: Format[ChargePaidByScheme] = Json.format
 }
