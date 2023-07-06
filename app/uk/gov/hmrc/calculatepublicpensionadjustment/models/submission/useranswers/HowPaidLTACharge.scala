@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
 
 import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.CalculationUserAnswers
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
-case class SubmissionRequest(userAnswers: CalculationUserAnswers, calculation: Option[CalculationResponse])
+sealed trait HowPaidLTACharge
 
-object SubmissionRequest {
+object HowPaidLTACharge extends Enumerable.Implicits {
 
-  implicit lazy val format: Format[SubmissionRequest] = Json.format
+  case object AnnualPayment extends HowPaidLTACharge
+  case object LumpSum extends HowPaidLTACharge
+
+  val values: Seq[HowPaidLTACharge] = Seq(
+    AnnualPayment,
+    LumpSum
+  )
+
+  implicit val enumerable: Enumerable[HowPaidLTACharge] =
+    Enumerable(values.map(v => v.toString -> v): _*)
 }

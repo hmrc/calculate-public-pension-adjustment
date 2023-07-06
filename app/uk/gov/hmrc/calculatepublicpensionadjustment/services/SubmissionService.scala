@@ -17,7 +17,9 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import play.api.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission, SubmittedCalculation, SubmittedUserAnswers}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.CalculationUserAnswers
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -33,12 +35,12 @@ class SubmissionService @Inject() (
     extends Logging {
 
   def submit(
-    submittedUserAnswers: SubmittedUserAnswers,
-    submittedCalculation: Option[SubmittedCalculation]
+    calculationUserAnswers: CalculationUserAnswers,
+    calculationResponse: Option[CalculationResponse]
   )(implicit hc: HeaderCarrier): Future[String] = {
 
-    val uniqueId = uuidService.random()
-    val submission = buildSubmission(submittedUserAnswers, submittedCalculation, uniqueId)
+    val uniqueId   = uuidService.random()
+    val submission = buildSubmission(uniqueId, calculationUserAnswers, calculationResponse)
 
     for {
       _ <- submissionRepository.insert(submission)
@@ -47,10 +49,10 @@ class SubmissionService @Inject() (
   }
 
   private def buildSubmission(
-    submittedUserAnswers: SubmittedUserAnswers,
-    submittedCalculation: Option[SubmittedCalculation],
-    uniqueId: String
-  ) = Submission(submittedUserAnswers, submittedCalculation, uniqueId)
+    uniqueId: String,
+    calculationUserAnswers: CalculationUserAnswers,
+    calculationResponse: Option[CalculationResponse]
+  ) = Submission(uniqueId, calculationUserAnswers, calculationResponse)
 
   private def buildAudit(submission: Submission): PPASubmissionEvent = PPASubmissionEvent(submission.id)
 }

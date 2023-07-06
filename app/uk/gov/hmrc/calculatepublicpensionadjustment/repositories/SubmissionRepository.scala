@@ -17,7 +17,6 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.repositories
 
 import org.mongodb.scala.model._
-import play.api.Configuration
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.mongo.MongoComponent

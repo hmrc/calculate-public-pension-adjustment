@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
 
 import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
-case class SubmittedCalculation(someCalculationData: String)
+sealed trait LTAChargeType
 
-object SubmittedCalculation {
+object LTAChargeType extends Enumerable.Implicits {
 
-  implicit lazy val format: Format[SubmittedCalculation] = Json.format
+  case object New extends LTAChargeType
+  case object Increased extends LTAChargeType
+  case object Decreased extends LTAChargeType
+  case object None extends LTAChargeType
+
+  val values: Seq[LTAChargeType] = Seq(
+    New,
+    Increased,
+    Decreased,
+    None
+  )
+
+  implicit lazy val enumerable: Enumerable[LTAChargeType] =
+    Enumerable(values.map(v => v.toString -> v): _*)
+
 }

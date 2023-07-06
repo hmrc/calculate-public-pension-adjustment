@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
 
 import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.CalculationUserAnswers
 
-case class SubmissionRequest(userAnswers: CalculationUserAnswers, calculation: Option[CalculationResponse])
+case class CalculationUserAnswers(
+  resubmission: Resubmission,
+  annualAllowance: Option[AnnualAllowance],
+  //lifetimeAllowance: Option[LifetimeAllowance]
+) {}
+object CalculationUserAnswers {
 
-object SubmissionRequest {
-
-  implicit lazy val format: Format[SubmissionRequest] = Json.format
+  implicit lazy val format: Format[CalculationUserAnswers] = Json.format
 }

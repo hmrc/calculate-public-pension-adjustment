@@ -17,14 +17,16 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
 import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.CalculationUserAnswers
 
 import java.time.Instant
 
 case class Submission(
-  userAnswers: SubmittedUserAnswers,
-  calculation: Option[SubmittedCalculation],
-  id: String,
-  lastUpdated: Instant = Instant.now
+                       id: String,
+                       userAnswers: CalculationUserAnswers,
+                       calculation: Option[CalculationResponse],
+                       lastUpdated: Instant = Instant.now
 )
 
 object Submission {
