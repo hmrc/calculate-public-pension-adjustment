@@ -16,21 +16,26 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.libs.json.{Format, Json, Reads, __}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.CppaTaxYear
+import play.api.libs.json.{Reads, Writes, __}
 
-case class CalculationRequest(resubmission: Resubmission, scottishTaxYears: List[Period], taxYears: List[CppaTaxYear])
+case class Resubmission(isResubmission: Boolean, reason: Option[String])
 
-object CalculationRequest {
+object Resubmission {
 
-  implicit lazy val reads: Reads[CalculationRequest] = {
-
+  implicit lazy val reads: Reads[Resubmission] = {
     import play.api.libs.functional.syntax._
 
-    ((__ \ "resubmission").read[Resubmission] and
-      (__ \ "scottishTaxYears").read[List[Period]] and
-      (__ \ "taxYears").read[List[CppaTaxYear]])(CalculationRequest(_, _, _))
+    ((__ \ "isResubmission").read[Boolean] and
+      (__ \ "reason").readNullable[String])(Resubmission(_, _))
+
   }
 
-  implicit lazy val formats: Format[CalculationRequest] = Json.format
+  implicit lazy val writes: Writes[Resubmission] = {
+    import play.api.libs.functional.syntax._
+
+    ((__ \ "isResubmission").write[Boolean] and
+      (__ \ "reason").writeNullable[String])(a => (a.isResubmission, a.reason))
+
+  }
+
 }

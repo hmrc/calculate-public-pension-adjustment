@@ -20,7 +20,8 @@ import play.api.libs.json.{Format, Json}
 
 case class PaacResponseRow(
   taxYear: PaacTaxYear,
-  chargeableAmount: Int
+  chargeableAmount: Int,
+  predictedFutureUnusedAllowance: Int
 )
 
 object PaacResponseRow {

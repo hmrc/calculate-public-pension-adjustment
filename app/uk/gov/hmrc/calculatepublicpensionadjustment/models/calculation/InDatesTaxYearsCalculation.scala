@@ -20,10 +20,14 @@ import play.api.libs.json.{Reads, Writes, __}
 
 case class InDatesTaxYearsCalculation(
   period: Period,
-  originalCharge: Int,
   memberCredit: Int,
   schemeCredit: Int,
   debit: Int,
+  chargePaidByMember: Int,
+  chargePaidBySchemes: Int,
+  revisedChargableAmountBeforeTaxRate: Int,
+  revisedChargableAmountAfterTaxRate: Int,
+  unusedAnnualAllowance: Int,
   taxYearSchemes: List[InDatesTaxYearSchemeCalculation]
 )
 
@@ -35,10 +39,14 @@ object InDatesTaxYearsCalculation {
 
     (
       (__ \ "period").read[Period] and
-        (__ \ "originalCharge").read[Int] and
         (__ \ "memberCredit").read[Int] and
         (__ \ "schemeCredit").read[Int] and
         (__ \ "debit").read[Int] and
+        (__ \ "chargePaidByMember").read[Int] and
+        (__ \ "chargePaidBySchemes").read[Int] and
+        (__ \ "revisedChargableAmountBeforeTaxRate").read[Int] and
+        (__ \ "revisedChargableAmountAfterTaxRate").read[Int] and
+        (__ \ "unusedAnnualAllowance").read[Int] and
         (__ \ "taxYearSchemes").read[List[InDatesTaxYearSchemeCalculation]]
     )(InDatesTaxYearsCalculation.apply _)
   }
@@ -49,18 +57,26 @@ object InDatesTaxYearsCalculation {
 
     (
       (__ \ "period").write[Period] and
-        (__ \ "originalCharge").write[Int] and
         (__ \ "memberCredit").write[Int] and
         (__ \ "schemeCredit").write[Int] and
         (__ \ "debit").write[Int] and
+        (__ \ "chargePaidByMember").write[Int] and
+        (__ \ "chargePaidBySchemes").write[Int] and
+        (__ \ "revisedChargableAmountBeforeTaxRate").write[Int] and
+        (__ \ "revisedChargableAmountAfterTaxRate").write[Int] and
+        (__ \ "unusedAnnualAllowance").write[Int] and
         (__ \ "taxYearSchemes").write[List[InDatesTaxYearSchemeCalculation]]
     )(a =>
       (
         a.period,
-        a.originalCharge,
         a.memberCredit,
         a.schemeCredit,
         a.debit,
+        a.chargePaidByMember,
+        a.chargePaidBySchemes,
+        a.revisedChargableAmountBeforeTaxRate,
+        a.revisedChargableAmountAfterTaxRate,
+        a.unusedAnnualAllowance,
         a.taxYearSchemes
       )
     )

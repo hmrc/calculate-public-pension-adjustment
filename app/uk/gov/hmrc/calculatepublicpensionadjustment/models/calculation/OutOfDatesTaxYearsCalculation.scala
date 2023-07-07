@@ -22,6 +22,11 @@ case class OutOfDatesTaxYearsCalculation(
   period: Period,
   directCompensation: Int,
   indirectCompensation: Int,
+  chargePaidByMember: Int,
+  chargePaidBySchemes: Int,
+  revisedChargableAmountBeforeTaxRate: Int,
+  revisedChargableAmountAfterTaxRate: Int,
+  unusedAnnualAllowance: Int,
   taxYearSchemes: List[OutOfDatesTaxYearSchemeCalculation]
 )
 
@@ -35,6 +40,11 @@ object OutOfDatesTaxYearsCalculation {
       (__ \ "period").read[Period] and
         (__ \ "directCompensation").read[Int] and
         (__ \ "indirectCompensation").read[Int] and
+        (__ \ "chargePaidByMember").read[Int] and
+        (__ \ "chargePaidBySchemes").read[Int] and
+        (__ \ "revisedChargableAmountBeforeTaxRate").read[Int] and
+        (__ \ "revisedChargableAmountAfterTaxRate").read[Int] and
+        (__ \ "unusedAnnualAllowance").read[Int] and
         (__ \ "taxYearSchemes").read[List[OutOfDatesTaxYearSchemeCalculation]]
     )(OutOfDatesTaxYearsCalculation.apply _)
 
@@ -48,12 +58,22 @@ object OutOfDatesTaxYearsCalculation {
       (__ \ "period").write[Period] and
         (__ \ "directCompensation").write[Int] and
         (__ \ "indirectCompensation").write[Int] and
+        (__ \ "chargePaidByMember").write[Int] and
+        (__ \ "chargePaidBySchemes").write[Int] and
+        (__ \ "revisedChargableAmountBeforeTaxRate").write[Int] and
+        (__ \ "revisedChargableAmountAfterTaxRate").write[Int] and
+        (__ \ "unusedAnnualAllowance").write[Int] and
         (__ \ "taxYearSchemes").write[List[OutOfDatesTaxYearSchemeCalculation]]
     )(a =>
       (
         a.period,
         a.directCompensation,
         a.indirectCompensation,
+        a.chargePaidByMember,
+        a.chargePaidBySchemes,
+        a.revisedChargableAmountBeforeTaxRate,
+        a.revisedChargableAmountAfterTaxRate,
+        a.unusedAnnualAllowance,
         a.taxYearSchemes
       )
     )
