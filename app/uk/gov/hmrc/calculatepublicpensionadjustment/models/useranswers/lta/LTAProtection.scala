@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
+import play.api.libs.json.{Format, Json}
 
-sealed trait HowPaidLTACharge
+case class LTAProtection(protectionType: LTAProtectionType, protectionReference: String)
 
-object HowPaidLTACharge extends Enumerable.Implicits {
+object LTAProtection {
 
-  case object AnnualPayment extends HowPaidLTACharge
-  case object LumpSum extends HowPaidLTACharge
-
-  val values: Seq[HowPaidLTACharge] = Seq(
-    AnnualPayment,
-    LumpSum
-  )
-
-  implicit val enumerable: Enumerable[HowPaidLTACharge] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+  implicit lazy val format: Format[LTAProtection] = Json.format
 }

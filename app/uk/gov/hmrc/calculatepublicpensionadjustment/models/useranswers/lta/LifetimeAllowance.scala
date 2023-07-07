@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
 import play.api.libs.json.{Format, Json}
 
@@ -26,7 +26,7 @@ case class LifetimeAllowance(
   protection: List[LTAProtection],
   changedProtection: List[LTAProtection],
   charge: LTACharge
-) {}
+)
 
 object LifetimeAllowance {
 

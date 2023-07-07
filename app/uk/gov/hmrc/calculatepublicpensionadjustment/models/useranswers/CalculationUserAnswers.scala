@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers
 
 import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta.LifetimeAllowance
 
-case class LTACharge(amount: Int, who: WhoPaysLTACharge, chargePaidByScheme: Option[ChargePaidByScheme]) {
+case class CalculationUserAnswers(
+  resubmission: Resubmission,
+  annualAllowance: Option[AnnualAllowance],
+  lifetimeAllowance: Option[LifetimeAllowance]
+)
 
-}
+object CalculationUserAnswers {
 
-object LTACharge {
-
-  implicit lazy val format: Format[LTACharge] = Json.format
+  implicit lazy val format: Format[CalculationUserAnswers] = Json.format
 }

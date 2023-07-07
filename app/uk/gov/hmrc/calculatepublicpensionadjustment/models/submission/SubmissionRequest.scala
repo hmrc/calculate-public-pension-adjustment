@@ -18,7 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.CalculationUserAnswers
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.CalculationUserAnswers
 
 case class SubmissionRequest(userAnswers: CalculationUserAnswers, calculation: Option[CalculationResponse])
 

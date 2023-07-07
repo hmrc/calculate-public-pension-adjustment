@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
+import cats.data.EitherT
 import play.api.Logging
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
 import play.api.mvc.{Action, ControllerComponents, Request, Result}
@@ -46,14 +47,25 @@ class SubmissionController @Inject() (
 
   private val authorised = auth.authorizedAction(predicate)
 
-  def submit: Action[JsValue] = authorised(parse.json[SubmissionRequest]).async(parse.json) {
+  def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
+      val result = EitherT(submissionService.submit(submissionRequest.userAnswers, submissionRequest.calculation))
+      result.fold(
+        errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
+        uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
+      )
+    }
+  }
+
+  // TODO apply auth once unauthorised connectivity from frontend has been proven
+  def submitWithAuth: Action[JsValue] = authorised(parse.json[SubmissionRequest]).async(parse.json) {
     implicit identifiedRequest =>
       withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
-        submissionService
-          .submit(submissionRequest.userAnswers, submissionRequest.calculation)
-          .map { id =>
-            Ok(Json.toJson(SubmissionResponse(id)))
-          }
+        val result = EitherT(submissionService.submit(submissionRequest.userAnswers, submissionRequest.calculation))
+        result.fold(
+          errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
+          uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
+        )
       }
   }
 

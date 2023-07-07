@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
-import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
-case class ChargePaidByScheme (name: String, taxReference: String, howPaid: HowPaidLTACharge)
+sealed trait LTAChargeType
 
-object ChargePaidByScheme {
+object LTAChargeType extends Enumerable.Implicits {
 
-  implicit lazy val format: Format[ChargePaidByScheme] = Json.format
+  case object New extends LTAChargeType
+  case object Increased extends LTAChargeType
+  case object Decreased extends LTAChargeType
+
+  val values: Seq[LTAChargeType] = Seq(
+    New,
+    Increased,
+    Decreased
+  )
+
+  implicit lazy val enumerable: Enumerable[LTAChargeType] =
+    Enumerable(values.map(v => v.toString -> v): _*)
+
 }

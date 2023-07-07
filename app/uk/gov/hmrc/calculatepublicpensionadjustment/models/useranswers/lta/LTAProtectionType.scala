@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
-sealed trait ProtectionType
+sealed trait LTAProtectionType
 
-object ProtectionType extends Enumerable.Implicits {
+object LTAProtectionType extends Enumerable.Implicits {
 
-  case object EnhancedProtection extends ProtectionType
-  case object PrimaryProtection extends ProtectionType
-  case object FixedProtection extends ProtectionType
-  case object FixedProtection2014 extends ProtectionType
-  case object FixedProtection2016 extends ProtectionType
-  case object IndividualProtection2014 extends ProtectionType
-  case object IndividualProtection2016 extends ProtectionType
-  case object InternationalEnhancement extends ProtectionType
-  case object PensionCredit extends ProtectionType
+  case object EnhancedProtection extends LTAProtectionType
+  case object PrimaryProtection extends LTAProtectionType
+  case object FixedProtection extends LTAProtectionType
+  case object FixedProtection2014 extends LTAProtectionType
+  case object FixedProtection2016 extends LTAProtectionType
+  case object IndividualProtection2014 extends LTAProtectionType
+  case object IndividualProtection2016 extends LTAProtectionType
+  case object InternationalEnhancement extends LTAProtectionType
+  case object PensionCredit extends LTAProtectionType
 
-  val values: Seq[ProtectionType] = Seq(
+  val values: Seq[LTAProtectionType] = Seq(
     EnhancedProtection,
     PrimaryProtection,
     FixedProtection,
@@ -44,7 +44,7 @@ object ProtectionType extends Enumerable.Implicits {
     PensionCredit
   )
 
-  implicit val enumerable: Enumerable[ProtectionType] =
+  implicit val enumerable: Enumerable[LTAProtectionType] =
     Enumerable(values.map(v => v.toString -> v): _*)
 
 }

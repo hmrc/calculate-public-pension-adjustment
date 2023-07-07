@@ -24,7 +24,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditService @Inject()(
+class AuditService @Inject() (
   auditConnector: AuditConnector
 )(implicit ec: ExecutionContext) {
 

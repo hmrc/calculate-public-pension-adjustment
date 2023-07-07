@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers
 
 import play.api.libs.json.{Format, Json, Reads, __}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period

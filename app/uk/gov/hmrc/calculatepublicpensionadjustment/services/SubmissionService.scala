@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
+import cats.data.{EitherT, NonEmptyChain}
 import play.api.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers.CalculationUserAnswers
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.CalculationUserAnswers
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -37,15 +38,17 @@ class SubmissionService @Inject() (
   def submit(
     calculationUserAnswers: CalculationUserAnswers,
     calculationResponse: Option[CalculationResponse]
-  )(implicit hc: HeaderCarrier): Future[String] = {
+  )(implicit hc: HeaderCarrier): Future[Either[NonEmptyChain[String], String]] = {
 
     val uniqueId   = uuidService.random()
     val submission = buildSubmission(uniqueId, calculationUserAnswers, calculationResponse)
 
-    for {
-      _ <- submissionRepository.insert(submission)
-      _  = auditService.auditSubmitRequest(buildAudit(submission))
+    val result: EitherT[Future, NonEmptyChain[String], String] = for {
+      _ <- EitherT.liftF(Future.successful(auditService.auditSubmitRequest(buildAudit(submission))))
+      _ <- EitherT.liftF(submissionRepository.insert(submission))
     } yield submission.id
+
+    result.value
   }
 
   private def buildSubmission(

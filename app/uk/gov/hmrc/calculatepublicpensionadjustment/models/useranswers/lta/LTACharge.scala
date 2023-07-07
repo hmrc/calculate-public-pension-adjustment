@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
 import play.api.libs.json.{Format, Json}
 
-case class Resubmission (isResubmission: Boolean, reason: Option[String])
+case class LTACharge(amount: Int, who: LTAChargeWhoPays, chargePaidByScheme: Option[LTAChargePaidByScheme])
 
-object Resubmission {
+object LTACharge {
 
-  implicit lazy val format: Format[Resubmission] = Json.format
+  implicit lazy val format: Format[LTACharge] = Json.format
 }

@@ -16,11 +16,26 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
-import play.api.libs.json.{Format, Json}
+import cats.data.NonEmptyChain
+import play.api.libs.json.{Json, OFormat}
 
-case class SubmissionResponse(uniqueId: String)
+sealed trait SubmissionResponse extends Product with Serializable
 
 object SubmissionResponse {
 
-  implicit lazy val format: Format[SubmissionResponse] = Json.format
+  final case class Success(uniqueId: String) extends SubmissionResponse
+
+  object Success {
+    implicit lazy val format: OFormat[Success] = Json.format[Success]
+  }
+
+  final case class Failure(errors: Seq[String]) extends SubmissionResponse
+
+  object Failure {
+
+    def apply(errors: NonEmptyChain[String]): Failure =
+      Failure(errors.toChain.toVector)
+
+    implicit lazy val format: OFormat[Failure] = Json.format[Failure]
+  }
 }

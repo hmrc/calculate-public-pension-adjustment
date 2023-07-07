@@ -19,12 +19,14 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.Logging
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta.{LTACharge, LTAChargeHowPaid, LTAChargePaidByScheme, LTAChargeType, LTAChargeWhoPays, LTAProtection, LTAProtectionType, LifetimeAllowance}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.{CalculationUserAnswers, Resubmission}
 
 import java.time.LocalDate
 
-class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks {
+class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logging {
 
   "SubmissionRequest" - {
 
@@ -57,15 +59,15 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks {
       val ltaCharge =
         LTACharge(
           1234,
-          WhoPaysLTACharge.PensionScheme,
-          Some(ChargePaidByScheme("scheme1", "pstr1", HowPaidLTACharge.LumpSum))
+          LTAChargeWhoPays.PensionScheme,
+          Some(LTAChargePaidByScheme("scheme1", "pstr1", LTAChargeHowPaid.LumpSum))
         )
 
       val lifetimeAllowance = Some(
         LifetimeAllowance(
           LocalDate.now(),
           LTAChargeType.New,
-          List(LTAProtection(ProtectionType.FixedProtection, "123")),
+          List(LTAProtection(LTAProtectionType.FixedProtection, "123")),
           List.empty,
           ltaCharge
         )
@@ -75,7 +77,7 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks {
       val submissionRequest      = SubmissionRequest(calculationUserAnswers, Some(SubmissionTestData.calculationResponse))
       val json                   = Json.toJson(submissionRequest)
 
-      println(s"$json")
+      logger.info(s"\n ${json.toString()} \n")
     }
   }
 }

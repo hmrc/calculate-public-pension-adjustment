@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
+import cats.data.NonEmptyChain
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.{Mockito, MockitoSugar}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -28,8 +29,9 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.SubmissionRequest
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{SubmissionRequest, SubmissionResponse}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta.{LTACharge, LTAChargeHowPaid, LTAChargePaidByScheme, LTAChargeType, LTAChargeWhoPays, LTAProtection, LTAProtectionType, LifetimeAllowance}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.{CalculationUserAnswers, Resubmission}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.SubmissionService
 import uk.gov.hmrc.internalauth.client._
 import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
@@ -79,17 +81,9 @@ class SubmissionControllerSpec
         .thenReturn(Future.successful(Retrieval.Username("test-service")))
 
       when(mockSubmissionService.submit(any(), any())(any()))
-        .thenReturn(Future.successful("uniqueId"))
+        .thenReturn(Future.successful(Right("uniqueId")))
 
-      val ltaCharge =
-        LTACharge(1234, WhoPaysLTACharge.PensionScheme,
-          Some(ChargePaidByScheme("scheme1", "pstr1", HowPaidLTACharge.LumpSum)))
-
-      val lifetimeAllowance = Some(LifetimeAllowance(LocalDate.now(), LTAChargeType.New,
-        List(LTAProtection(ProtectionType.FixedProtection, "123")), List.empty, ltaCharge))
-
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, lifetimeAllowance)
-      val calculationResponse    = Some(CalculationResponse(List.empty, List.empty))
+      val calculationResponse = Some(CalculationResponse(List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.submit)
         .withHeaders(AUTHORIZATION -> "my-token")
@@ -98,73 +92,82 @@ class SubmissionControllerSpec
       val result = route(app, request).value
 
       status(result) mustEqual ACCEPTED
-      contentAsJson(result) mustEqual Json.obj("id" -> "submissionReference")
+      contentAsJson(result) mustEqual Json.obj("uniqueId" -> "uniqueId")
 
       verify(mockSubmissionService, times(1)).submit(eqTo(calculationUserAnswers), eqTo(calculationResponse))(any())
     }
 
-    //    "must fail when the submission fails" in {
-    //
-    //      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-    //        .thenReturn(Future.successful(Retrieval.Username("test-service")))
-    //
-    //      when(mockSubmissionService.submit(any(), any())(any()))
-    //        .thenReturn(Future.failed(new RuntimeException()))
-    //
-    //      val request = FakeRequest(routes.SubmissionController.submit)
-    //        .withHeaders(AUTHORIZATION -> "my-token")
-    //
-    //      route(app, request).value.failed.futureValue
-    //    }
+    "must fail when the submission fails" in {
 
-    //    "must return BAD_REQUEST when the submission service returns errors" in {
-    //
-    //      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-    //        .thenReturn(Future.successful(Retrieval.Username("test-service")))
-    //
-    //      when(mockSubmissionService.submit(any(), any())(any()))
-    //        .thenReturn(Future.successful(Left(NonEmptyChain.one("some error"))))
-    //
-    //
-    //
-    //      val request = FakeRequest(routes.SubmissionController.submit)
-    //        .withHeaders(AUTHORIZATION -> "my-token")
-    //
-    //
-    //      val result = route(app, request).value
-    //
-    //      status(result) mustEqual BAD_REQUEST
-    //      val responseBody = contentAsJson(result).as[SubmissionResponse.Failure]
-    //    }
+      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
+        .thenReturn(Future.successful(Retrieval.Username("test-service")))
 
-    //    "must return BAD_REQUEST when the user provides an invalid request" in {
-    //
-    //      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-    //        .thenReturn(Future.successful(Retrieval.Username("test-service")))
-    //
-    //      val request = FakeRequest(routes.SubmissionController.submit)
-    //        .withHeaders(AUTHORIZATION -> "my-token")
-    //
-    //      val result = route(app, request).value
-    //
-    //      status(result) mustEqual BAD_REQUEST
-    //      contentAsJson(result) mustEqual Json.toJson(SubmissionResponse("123"))
-    //      verify(mockSubmissionService, never()).submit(any(), any())(any())
-    //    }
+      when(mockSubmissionService.submit(any(), any())(any()))
+        .thenReturn(Future.failed(new RuntimeException()))
 
-    //    "must fail when the user is not authorised" in {
-    //
-    //      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.EmptyRetrieval))
-    //        .thenReturn(Future.failed(new RuntimeException()))
-    //
-    //      val request = FakeRequest(routes.SubmissionController.submit)
-    //        .withHeaders(AUTHORIZATION -> "my-token")
-    //
-    //
-    //      route(app, request).value.failed.futureValue
-    //
-    //      verify(mockSubmissionService, never()).submit(any(), any())(any())
-    //    }
-    //  }
+      val calculationResponse = Some(CalculationResponse(List.empty, List.empty))
+
+      val request = FakeRequest(routes.SubmissionController.submit)
+        .withHeaders(AUTHORIZATION -> "my-token")
+        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+
+      intercept[Exception](route(app, request).value.futureValue)
+    }
+
+    "must return BAD_REQUEST when the submission service returns errors" in {
+
+      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
+        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+
+      when(mockSubmissionService.submit(any(), any())(any()))
+        .thenReturn(Future.successful(Left(NonEmptyChain.one("some error"))))
+
+      val calculationResponse = Some(CalculationResponse(List.empty, List.empty))
+
+      val request = FakeRequest(routes.SubmissionController.submit)
+        .withHeaders(AUTHORIZATION -> "my-token")
+        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsJson(result).as[SubmissionResponse.Failure] mustEqual (SubmissionResponse.Failure(List("some error")))
+    }
+
+    "must return BAD_REQUEST when the user provides an invalid request" in {
+
+      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
+        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+
+      val request = FakeRequest(routes.SubmissionController.submit)
+        .withHeaders(AUTHORIZATION -> "my-token")
+        .withBody(Json.toJson("{\"invalid\":\"request\"}"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual "Invalid Submission"
+    }
+  }
+
+  private def calculationUserAnswers = {
+    val ltaCharge =
+      LTACharge(
+        1234,
+        LTAChargeWhoPays.PensionScheme,
+        Some(LTAChargePaidByScheme("scheme1", "pstr1", LTAChargeHowPaid.LumpSum))
+      )
+
+    val lifetimeAllowance = Some(
+      LifetimeAllowance(
+        LocalDate.now(),
+        LTAChargeType.New,
+        List(LTAProtection(LTAProtectionType.FixedProtection, "123")),
+        List.empty,
+        ltaCharge
+      )
+    )
+
+    CalculationUserAnswers(Resubmission(false, None), None, lifetimeAllowance)
   }
 }

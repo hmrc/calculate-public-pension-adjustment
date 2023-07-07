@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.useranswers
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
 
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Enumerable
 
-sealed trait WhoPaysLTACharge
+sealed trait LTAChargeHowPaid
 
-object WhoPaysLTACharge extends Enumerable.Implicits {
+object LTAChargeHowPaid extends Enumerable.Implicits {
 
-  case object You extends WhoPaysLTACharge
-  case object PensionScheme extends WhoPaysLTACharge
+  case object AnnualPayment extends LTAChargeHowPaid
+  case object LumpSum extends LTAChargeHowPaid
 
-  val values: Seq[WhoPaysLTACharge] = Seq(
-    You,
-    PensionScheme
+  val values: Seq[LTAChargeHowPaid] = Seq(
+    AnnualPayment,
+    LumpSum
   )
 
-  implicit val enumerable: Enumerable[WhoPaysLTACharge] =
+  implicit val enumerable: Enumerable[LTAChargeHowPaid] =
     Enumerable(values.map(v => v.toString -> v): _*)
-
 }
