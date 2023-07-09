@@ -45,8 +45,6 @@ class SubmissionController @Inject() (
     action = IAAction("WRITE")
   )
 
-  private val authorised = auth.authorizedAction(predicate)
-
   def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
       val result = EitherT(submissionService.submit(submissionRequest.userAnswers, submissionRequest.calculation))
@@ -55,18 +53,6 @@ class SubmissionController @Inject() (
         uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
       )
     }
-  }
-
-  // TODO apply auth once unauthorised connectivity from frontend has been proven
-  def submitWithAuth: Action[JsValue] = authorised(parse.json[SubmissionRequest]).async(parse.json) {
-    implicit identifiedRequest =>
-      withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
-        val result = EitherT(submissionService.submit(submissionRequest.userAnswers, submissionRequest.calculation))
-        result.fold(
-          errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
-          uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
-        )
-      }
   }
 
   private def withValidJson[T](
