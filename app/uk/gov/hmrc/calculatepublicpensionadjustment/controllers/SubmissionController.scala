@@ -48,9 +48,14 @@ class SubmissionController @Inject() (
   def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
       val result = EitherT(submissionService.submit(submissionRequest.userAnswers, submissionRequest.calculation))
+
       result.fold(
         errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
-        uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
+        uniqueId => {
+          logger.info(s"request.id : ${request.id}, uniqueId : $uniqueId")
+
+          Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
+        }
       )
     }
   }
