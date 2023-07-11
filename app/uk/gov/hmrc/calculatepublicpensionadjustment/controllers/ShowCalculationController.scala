@@ -20,10 +20,10 @@ import com.google.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationRequest
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationRequest, CalculationUserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.PaacService
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class ShowCalculationController @Inject() (
@@ -34,10 +34,17 @@ class ShowCalculationController @Inject() (
     with Logging {
 
   def showCalculation: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    withValidJson[CalculationRequest]("Calculation request") { calculationRequest =>
-      paacService.calculate(calculationRequest).map { calculationResponse =>
-        Ok(Json.toJson(calculationResponse))
-      }
+    withValidJson[CalculationUserAnswers]("Calculation UserAnswer") { calculationUserAnswers =>
+      calculationUserAnswers.annualAllowance
+        .map(aa =>
+          paacService
+            .calculate(CalculationRequest(calculationUserAnswers.resubmission, aa.scottishTaxYears, aa.taxYears))
+            .map { calculationResponse =>
+              Ok(Json.toJson(calculationResponse))
+            }
+        )
+        .getOrElse(Future.successful(BadRequest))
+
     }
 
   }
