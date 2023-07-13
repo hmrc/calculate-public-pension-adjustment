@@ -19,10 +19,9 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 import cats.data.EitherT
 import play.api.Logging
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, Submission, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.SubmissionService
-import uk.gov.hmrc.internalauth.client._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
 
 import javax.inject.{Inject, Singleton}
@@ -31,19 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubmissionController @Inject() (
   override val controllerComponents: ControllerComponents,
-  auth: BackendAuthComponents,
   submissionService: SubmissionService
 )(implicit ec: ExecutionContext)
     extends BackendBaseController
     with Logging {
-
-  private val predicate = Predicate.Permission(
-    resource = Resource(
-      resourceType = ResourceType("calculate-public-pension-adjustment"),
-      resourceLocation = ResourceLocation("submission")
-    ),
-    action = IAAction("WRITE")
-  )
 
   def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
@@ -60,7 +50,7 @@ class SubmissionController @Inject() (
     }
   }
 
-  def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async { implicit request =>
+  def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async {
     logger.info(s"uniqueId : $uniqueId")
 
     val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
