@@ -35,8 +35,6 @@ class SubmissionService @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  def retrieve(submissionUniqueId: String): Future[Option[Submission]] = submissionRepository.get(submissionUniqueId)
-
   def submit(
     calculationUserAnswers: CalculationUserAnswers,
     calculationResponse: Option[CalculationResponse]
@@ -52,6 +50,8 @@ class SubmissionService @Inject() (
 
     result.value
   }
+
+  def retrieve(submissionUniqueId: String): Future[Option[Submission]] = submissionRepository.get(submissionUniqueId)
 
   private def buildSubmission(
     uniqueId: String,

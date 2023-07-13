@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{CalculationUserAnswers, Resubmission}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{SubmissionRequest, SubmissionResponse}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{Submission, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta.{LTACharge, LTAChargeHowPaid, LTAChargePaidByScheme, LTAChargeType, LTAChargeWhoPays, LTAProtection, LTAProtectionType, LifetimeAllowance}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.SubmissionService
 import uk.gov.hmrc.internalauth.client._
@@ -95,6 +95,54 @@ class SubmissionControllerSpec
       contentAsJson(result) mustEqual Json.obj("uniqueId" -> "uniqueId")
 
       verify(mockSubmissionService, times(1)).submit(eqTo(calculationUserAnswers), eqTo(calculationResponse))(any())
+    }
+
+    "must return Submission when a valid uniqueId is specified" in {
+
+      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
+        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+
+      when(mockSubmissionService.retrieve("uniqueId"))
+        .thenReturn(
+          Future.successful(
+            Some(Submission("uniqueId", CalculationUserAnswers(Resubmission(false, None), None, None), None))
+          )
+        )
+
+      val calculationResponse = Some(CalculationResponse(List.empty, List.empty))
+
+      val request = FakeRequest(routes.SubmissionController.retrieveSubmission("uniqueId"))
+        .withHeaders(AUTHORIZATION -> "my-token")
+        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+      contentAsJson(result) mustEqual Json.parse("{\"userAnswers\":{\"resubmission\":{\"isResubmission\":false}}}")
+
+      verify(mockSubmissionService, times(1)).retrieve(eqTo("uniqueId"))
+    }
+
+    "must return BadRequest when an unknown uniqueId is specified" in {
+
+      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
+        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+
+      when(mockSubmissionService.retrieve("unknownId"))
+        .thenReturn(Future.successful(None))
+
+      val calculationResponse = Some(CalculationResponse(List.empty, List.empty))
+
+      val request = FakeRequest(routes.SubmissionController.retrieveSubmission("unknownId"))
+        .withHeaders(AUTHORIZATION -> "my-token")
+        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual ""
+
+      verify(mockSubmissionService, times(1)).retrieve(eqTo("unknownId"))
     }
 
     "must fail when the submission fails" in {
