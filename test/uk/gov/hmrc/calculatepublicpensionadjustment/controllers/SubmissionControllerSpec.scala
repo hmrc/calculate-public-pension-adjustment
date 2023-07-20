@@ -28,15 +28,13 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{CalculationUserAnswers, Resubmission}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationResponse, Resubmission => CalculationResubmission, TotalAmounts}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.LifeTimeAllowance
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse, Resubmission, TotalAmounts}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{Submission, SubmissionRequest, SubmissionResponse}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta.{LTACharge, LTAChargeHowPaid, LTAChargePaidByScheme, LTAChargeType, LTAChargeWhoPays, LTAProtection, LTAProtectionType, LifetimeAllowance}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.SubmissionService
 import uk.gov.hmrc.internalauth.client._
 import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
 
-import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -84,18 +82,18 @@ class SubmissionControllerSpec
         .thenReturn(Future.successful(Right("uniqueId")))
 
       val calculationResponse =
-        Some(CalculationResponse(CalculationResubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
+        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.submit)
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse)))
 
       val result = route(app, request).value
 
       status(result) mustEqual ACCEPTED
       contentAsJson(result) mustEqual Json.obj("uniqueId" -> "uniqueId")
 
-      verify(mockSubmissionService, times(1)).submit(eqTo(calculationUserAnswers), eqTo(calculationResponse))(any())
+      verify(mockSubmissionService, times(1)).submit(eqTo(calculationInputs), eqTo(calculationResponse))(any())
     }
 
     "must return Submission when a valid uniqueId is specified" in {
@@ -106,21 +104,23 @@ class SubmissionControllerSpec
       when(mockSubmissionService.retrieve("uniqueId"))
         .thenReturn(
           Future.successful(
-            Some(Submission("uniqueId", CalculationUserAnswers(Resubmission(false, None), None, None), None))
+            Some(Submission("uniqueId", CalculationInputs(Resubmission(false, None), None, None), None))
           )
         )
 
       val calculationResponse =
-        Some(CalculationResponse(CalculationResubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
+        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.retrieveSubmission("uniqueId"))
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse)))
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
-      contentAsJson(result) mustEqual Json.parse("{\"userAnswers\":{\"resubmission\":{\"isResubmission\":false}}}")
+      contentAsJson(result) mustEqual Json.parse(
+        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false}}}"
+      )
 
       verify(mockSubmissionService, times(1)).retrieve(eqTo("uniqueId"))
     }
@@ -134,11 +134,11 @@ class SubmissionControllerSpec
         .thenReturn(Future.successful(None))
 
       val calculationResponse =
-        Some(CalculationResponse(CalculationResubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
+        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.retrieveSubmission("unknownId"))
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse)))
 
       val result = route(app, request).value
 
@@ -157,11 +157,11 @@ class SubmissionControllerSpec
         .thenReturn(Future.failed(new RuntimeException()))
 
       val calculationResponse =
-        Some(CalculationResponse(CalculationResubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
+        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.submit)
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse)))
 
       intercept[Exception](route(app, request).value.futureValue)
     }
@@ -175,11 +175,11 @@ class SubmissionControllerSpec
         .thenReturn(Future.successful(Left(NonEmptyChain.one("some error"))))
 
       val calculationResponse =
-        Some(CalculationResponse(CalculationResubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
+        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.submit)
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(Json.toJson(SubmissionRequest(calculationUserAnswers, calculationResponse)))
+        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse)))
 
       val result = route(app, request).value
 
@@ -203,24 +203,6 @@ class SubmissionControllerSpec
     }
   }
 
-  private def calculationUserAnswers = {
-    val ltaCharge =
-      LTACharge(
-        1234,
-        LTAChargeWhoPays.PensionScheme,
-        Some(LTAChargePaidByScheme("scheme1", "pstr1", LTAChargeHowPaid.LumpSum))
-      )
-
-    val lifetimeAllowance = Some(
-      LifetimeAllowance(
-        LocalDate.now(),
-        LTAChargeType.New,
-        List(LTAProtection(LTAProtectionType.FixedProtection, "123")),
-        List.empty,
-        ltaCharge
-      )
-    )
-
-    CalculationUserAnswers(Resubmission(false, None), None, lifetimeAllowance)
-  }
+  private def calculationInputs =
+    CalculationInputs(Resubmission(false, None), None, Some(LifeTimeAllowance("placeholder")))
 }

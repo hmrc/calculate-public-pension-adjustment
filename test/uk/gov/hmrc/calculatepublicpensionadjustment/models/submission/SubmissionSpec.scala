@@ -21,61 +21,41 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Logging
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{CalculationUserAnswers, Resubmission}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta.{LTACharge, LTAChargeHowPaid, LTAChargePaidByScheme, LTAChargeType, LTAChargeWhoPays, LTAProtection, LTAProtectionType, LifetimeAllowance}
-
-import java.time.LocalDate
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, Resubmission}
 
 class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logging {
 
   "SubmissionRequest" - {
 
     "must serialise to expected Json" in {
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, None)
-      val submissionRequest      = SubmissionRequest(calculationUserAnswers, None)
+      val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
+      val submissionRequest = SubmissionRequest(calculationInputs, None)
 
       val serialised: JsValue = Json.toJson(submissionRequest)
 
       val expectedJson = Json.obj(
-        "userAnswers" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false))
+        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false))
       )
       serialised mustEqual expectedJson
     }
 
     "must de-serialise from valid Json with userAnswers" in {
       val json = Json.obj(
-        "userAnswers" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false))
+        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false))
       )
 
       val deserialised: JsResult[SubmissionRequest] = json.validate[SubmissionRequest]
 
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, None)
-      val submissionRequest      = SubmissionRequest(calculationUserAnswers, None)
+      val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
+      val submissionRequest = SubmissionRequest(calculationInputs, None)
       deserialised mustEqual (JsSuccess(submissionRequest))
     }
 
     "serialise" in {
 
-      val ltaCharge =
-        LTACharge(
-          1234,
-          LTAChargeWhoPays.PensionScheme,
-          Some(LTAChargePaidByScheme("scheme1", "pstr1", LTAChargeHowPaid.LumpSum))
-        )
-
-      val lifetimeAllowance = Some(
-        LifetimeAllowance(
-          LocalDate.now(),
-          LTAChargeType.New,
-          List(LTAProtection(LTAProtectionType.FixedProtection, "123")),
-          List.empty,
-          ltaCharge
-        )
-      )
-
-      val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, lifetimeAllowance)
-      val submissionRequest      = SubmissionRequest(calculationUserAnswers, Some(SubmissionTestData.calculationResponse))
-      val json                   = Json.toJson(submissionRequest)
+      val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
+      val submissionRequest = SubmissionRequest(calculationInputs, Some(SubmissionTestData.calculationResponse))
+      val json              = Json.toJson(submissionRequest)
 
       logger.info(s"\n ${json.toString()} \n")
     }

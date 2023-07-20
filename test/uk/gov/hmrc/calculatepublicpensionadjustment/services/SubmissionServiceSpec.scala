@@ -25,8 +25,10 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import requests.CalculationResponses
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationInputs
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Resubmission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{CalculationUserAnswers, Done, Resubmission}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -68,7 +70,7 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.successful(Done))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationUserAnswers(Resubmission(false, None), None, None), None)(hc)
+          service.submit(CalculationInputs(Resubmission(false, None), None, None), None)(hc)
 
         result.futureValue mustBe Right("uniqueId")
       }
@@ -79,7 +81,7 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.failed(new RuntimeException("exception")))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationUserAnswers(Resubmission(false, None), None, None), None)(hc)
+          service.submit(CalculationInputs(Resubmission(false, None), None, None), None)(hc)
 
         an[RuntimeException] mustBe thrownBy(result.futureValue)
       }
@@ -88,7 +90,7 @@ class SubmissionServiceSpec
     "retrieve" - {
 
       "must return a submission when it exists in the repository" in {
-        val submission = Submission("uniqueId", CalculationUserAnswers(Resubmission(false, None), None, None), None)
+        val submission = Submission("uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
 
         when(mockSubmissionRepository.get(any())).thenReturn(Future.successful(Some(submission)))
 

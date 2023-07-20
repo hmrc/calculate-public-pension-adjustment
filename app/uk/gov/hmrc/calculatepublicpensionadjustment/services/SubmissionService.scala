@@ -18,8 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import cats.data.{EitherT, NonEmptyChain}
 import play.api.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.CalculationUserAnswers
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,12 +35,12 @@ class SubmissionService @Inject() (
     extends Logging {
 
   def submit(
-    calculationUserAnswers: CalculationUserAnswers,
+    calculationInputs: CalculationInputs,
     calculationResponse: Option[CalculationResponse]
   )(implicit hc: HeaderCarrier): Future[Either[NonEmptyChain[String], String]] = {
 
     val uniqueId   = uuidService.random()
-    val submission = buildSubmission(uniqueId, calculationUserAnswers, calculationResponse)
+    val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse)
 
     val result: EitherT[Future, NonEmptyChain[String], String] = for {
       _ <- EitherT.liftF(Future.successful(auditService.auditSubmitRequest(buildAudit(submission))))
@@ -55,9 +54,9 @@ class SubmissionService @Inject() (
 
   private def buildSubmission(
     uniqueId: String,
-    calculationUserAnswers: CalculationUserAnswers,
+    calculationInputs: CalculationInputs,
     calculationResponse: Option[CalculationResponse]
-  ) = Submission(uniqueId, calculationUserAnswers, calculationResponse)
+  ) = Submission(uniqueId, calculationInputs, calculationResponse)
 
   private def buildAudit(submission: Submission): PPASubmissionEvent = PPASubmissionEvent(submission.uniqueId)
 }

@@ -37,7 +37,7 @@ class SubmissionController @Inject() (
 
   def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
-      val result = EitherT(submissionService.submit(submissionRequest.userAnswers, submissionRequest.calculation))
+      val result = EitherT(submissionService.submit(submissionRequest.calculationInputs, submissionRequest.calculation))
 
       result.fold(
         errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
@@ -54,7 +54,7 @@ class SubmissionController @Inject() (
     submission.map(s =>
       s match {
         case Some(submission) =>
-          Ok(Json.toJson(RetrieveSubmissionResponse(submission.userAnswers, submission.calculation)))
+          Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
         case None             => BadRequest
       }
     )

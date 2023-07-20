@@ -7,9 +7,10 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{CalculationUserAnswers, Done, Resubmission}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, Resubmission}
 
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
@@ -28,8 +29,8 @@ class SubmissionRepositorySpec
   private val instant            = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock   = Clock.fixed(instant, ZoneId.systemDefault)
 
-  private val calculationUserAnswers = CalculationUserAnswers(Resubmission(false, None), None, None)
-  private val submission: Submission = Submission("submissionUniqueId", calculationUserAnswers, None)
+  private val calculationInputs      = CalculationInputs(Resubmission(false, None), None, None)
+  private val submission: Submission = Submission("submissionUniqueId", calculationInputs, None)
 
   protected override val repository = new SubmissionRepository(
     mongoComponent = mongoComponent,
@@ -42,7 +43,7 @@ class SubmissionRepositorySpec
 
       val expectedResult = Submission(
         submissionUniqueId,
-        calculationUserAnswers,
+        calculationInputs,
         None,
         Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
       )
@@ -63,7 +64,7 @@ class SubmissionRepositorySpec
 
         val submission = Submission(
           submissionUniqueId,
-          calculationUserAnswers,
+          calculationInputs,
           None,
           Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
         )

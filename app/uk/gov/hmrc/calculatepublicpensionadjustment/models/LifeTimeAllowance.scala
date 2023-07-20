@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.useranswers.lta
+package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json._
 
-import java.time.LocalDate
+case class LifeTimeAllowance(placeHolder: String)
 
-case class LifetimeAllowance(
-  benefitCrystallisationEventDate: LocalDate,
-  chargeType: LTAChargeType,
-  protection: List[LTAProtection],
-  changedProtection: List[LTAProtection],
-  charge: LTACharge
-)
+object LifeTimeAllowance {
 
-object LifetimeAllowance {
-
-  implicit lazy val format: Format[LifetimeAllowance] = Json.format
+  implicit lazy val formats: Format[LifeTimeAllowance] = Json.format
 }

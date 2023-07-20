@@ -19,7 +19,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.Resubmission
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Resubmission
 
 import scala.io.Source
 
@@ -29,10 +29,10 @@ class SubmissionRequestParsingSpec extends AnyFreeSpec with Matchers {
 
     "must parse a SubmissionRequest in alignment with calculate frontend" in {
       val request: SubmissionRequest = readSubmissionRequest("test/resources/SubmissionRequest.json")
-      request.userAnswers.resubmission mustBe (Resubmission(false, None))
+      request.calculationInputs.resubmission mustBe (Resubmission(false, None))
 
-      request.userAnswers.annualAllowance.get.scottishTaxYears mustBe List.empty
-      request.userAnswers.annualAllowance.get.taxYears.size mustBe 3
+      request.calculationInputs.annualAllowance.get.scottishTaxYears mustBe List.empty
+      request.calculationInputs.annualAllowance.get.taxYears.size mustBe 3
     }
   }
 
