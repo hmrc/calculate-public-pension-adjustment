@@ -10,7 +10,7 @@
           "pensionInputAmount": 2,
           "taxYearSchemes": [
             {
-              "name": "Schem1",
+              "name": "Scheme1",
               "pensionSchemeTaxReference": "00348916RT",
               "originalPensionInputAmount": 1,
               "revisedPensionInputAmount": 2,

@@ -41,17 +41,13 @@ class SubmissionController @Inject() (
 
       result.fold(
         errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
-        uniqueId => {
-          logger.info(s"request.id : ${request.id}, uniqueId : $uniqueId")
-
-          Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
-        }
+        uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
       )
     }
   }
 
   def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async {
-    logger.info(s"uniqueId : $uniqueId")
+    logger.debug(s"uniqueId : $uniqueId")
 
     val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
 

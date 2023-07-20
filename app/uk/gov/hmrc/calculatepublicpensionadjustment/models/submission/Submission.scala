@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
-import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.CalculationUserAnswers
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationResponse
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, Reads, Writes, __}
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 
@@ -31,5 +33,21 @@ case class Submission(
 
 object Submission {
 
-  implicit lazy val format: Format[Submission] = Json.format
+  val reads: Reads[Submission] =
+    (
+      (__ \ "uniqueId").read[String] and
+        (__ \ "userAnswers").read[CalculationUserAnswers] and
+        (__ \ "calculation").readNullable[CalculationResponse] and
+        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
+    )(Submission.apply _)
+
+  val writes: Writes[Submission] =
+    (
+      (__ \ "uniqueId").write[String] and
+        (__ \ "userAnswers").write[CalculationUserAnswers] and
+        (__ \ "calculation").writeNullable[CalculationResponse] and
+        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
+    )(unlift(Submission.unapply))
+
+  implicit val format: Format[Submission] = Format(reads, writes)
 }

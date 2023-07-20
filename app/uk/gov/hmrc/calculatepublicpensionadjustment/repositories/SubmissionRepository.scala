@@ -38,10 +38,15 @@ class SubmissionRepository @Inject() (
       domainFormat = Submission.format,
       indexes = Seq(
         IndexModel(
-          Indexes.ascending("created"),
+          Indexes.ascending("lastUpdated"),
           IndexOptions()
-            .name("createdIdx")
-            .expireAfter(30, TimeUnit.DAYS)
+            .name("lastUpdatedIdx")
+            .expireAfter(1, TimeUnit.DAYS)
+        ),
+        IndexModel(
+          Indexes.ascending("uniqueId"),
+          IndexOptions()
+            .name("uniqueIdx")
         )
       )
     ) {
