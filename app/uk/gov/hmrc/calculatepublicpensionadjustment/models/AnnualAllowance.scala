@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
-import play.api.inject.Binding
-import play.api.{Configuration, Environment}
+import play.api.libs.json.{Format, Json, Reads, __}
 
-import java.time.Clock
+case class AnnualAllowance(scottishTaxYears: List[Period], taxYears: List[TaxYear])
 
-class Module extends play.api.inject.Module {
+object AnnualAllowance {
 
-  override def bindings(environment: Environment, configuration: Configuration): collection.Seq[Binding[_]] =
-    Seq(
-      bind[AppConfig].toSelf.eagerly(),
-      bind[Clock].toInstance(Clock.systemUTC())
-    )
+  implicit lazy val reads: Reads[AnnualAllowance] = {
+
+    import play.api.libs.functional.syntax._
+
+    ((__ \ "scottishTaxYears").read[List[Period]] and
+      (__ \ "taxYears").read[List[TaxYear]])(AnnualAllowance(_, _))
+  }
+
+  implicit lazy val formats: Format[AnnualAllowance] = Json.format
 }

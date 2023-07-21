@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
+package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
-case class CalculationUserAnswers(resubmission: Resubmission, annualAllowance: Option[AnnualAllowance])
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 
-import play.api.libs.json.{Format, Json}
-
-object CalculationUserAnswers {
-
-  implicit lazy val format: Format[CalculationUserAnswers] = Json.format
+@Singleton
+class UuidService @Inject() () {
+  def random(): String = UUID.randomUUID().toString
 }

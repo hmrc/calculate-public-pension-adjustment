@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
+import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.LifeTimeAllowance
 
-import play.api.inject.Binding
-import play.api.{Configuration, Environment}
+case class CalculationInputs(
+  resubmission: Resubmission,
+  annualAllowance: Option[AnnualAllowance],
+  lifeTimeAllowance: Option[LifeTimeAllowance]
+)
 
-import java.time.Clock
+object CalculationInputs {
 
-class Module extends play.api.inject.Module {
-
-  override def bindings(environment: Environment, configuration: Configuration): collection.Seq[Binding[_]] =
-    Seq(
-      bind[AppConfig].toSelf.eagerly(),
-      bind[Clock].toInstance(Clock.systemUTC())
-    )
+  implicit lazy val format: Format[CalculationInputs] = Json.format
 }
