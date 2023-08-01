@@ -527,13 +527,13 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             preAccessDefinedContributionInputAmount,
             postAccessDefinedContributionInputAmount,
-            _,
+            taxYearSchemes,
             _,
             _,
             period
           ) =>
         PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount,
+          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
           preAccessDefinedContributionInputAmount,
           postAccessDefinedContributionInputAmount,
           period
@@ -544,11 +544,13 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             definedContributionInputAmount,
             _,
             _,
-            _,
+            taxYearSchemes,
             period
           ) =>
         PaacTaxYear2016PreAlignment.NormalTaxYear(
-          definedBenefitInputAmount + definedContributionInputAmount,
+          definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
+            .map(_.revisedPensionInputAmount)
+            .sum,
           period
         )
 
@@ -565,11 +567,11 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             postAccessDefinedContributionInputAmount,
             _,
             _,
-            _,
+            taxYearSchemes,
             period
           ) =>
         PaacTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount,
+          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
           preAccessDefinedContributionInputAmount,
           postAccessDefinedContributionInputAmount,
           period
@@ -580,11 +582,13 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             definedContributionInputAmount,
             _,
             _,
-            _,
+            taxYearSchemes,
             period
           ) if oFlexiblyAccessedTaxYear.forall(p => List(period, p) == List(period, p).sorted) =>
         PaacTaxYear2016PostAlignment.NormalTaxYear(
-          definedBenefitInputAmount + definedContributionInputAmount,
+          definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
+            .map(_.revisedPensionInputAmount)
+            .sum,
           period
         )
 
@@ -593,11 +597,11 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             definedContributionInputAmount,
             _,
             _,
-            _,
+            taxYearSchemes,
             period
           ) =>
         PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount,
+          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
           definedContributionInputAmount,
           period
         )
@@ -617,11 +621,11 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             income,
             _,
             _,
-            _,
+            taxYearSchemes,
             period
           ) =>
         PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount,
+          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
           preAccessDefinedContributionInputAmount,
           postAccessDefinedContributionInputAmount,
           income,
@@ -634,11 +638,13 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             income,
             _,
             _,
-            _,
+            taxYearSchemes,
             period
           ) if oFlexiblyAccessedTaxYear.forall(p => List(period, p) == List(period, p).sorted) =>
         PaacTaxYear2017ToCurrent.NormalTaxYear(
-          definedBenefitInputAmount + definedContributionInputAmount,
+          definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
+            .map(_.revisedPensionInputAmount)
+            .sum,
           income,
           period
         )
@@ -649,11 +655,11 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             income,
             _,
             _,
-            _,
+            taxYearSchemes,
             period
           ) =>
         PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount,
+          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
           definedContributionInputAmount,
           income,
           period
