@@ -286,15 +286,15 @@ class PaacServiceSpec
         PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
         PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
-        PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(16000, 6000, 10000, Period._2016PreAlignment),
-        PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(16000, 20000, Period._2016PostAlignment),
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(12000, 19000, AboveThreshold(21000), Period._2017),
+        PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(36000, 6000, 10000, Period._2016PreAlignment),
+        PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(36000, 20000, Period._2016PostAlignment),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(32000, 19000, AboveThreshold(21000), Period._2017),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018),
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2019),
-        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, BelowThreshold, Period._2020),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, BelowThreshold, Period._2020),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2022),
-        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, AboveThreshold(24000), Period._2023)
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, AboveThreshold(24000), Period._2023)
       ),
       Period._2023
     )
@@ -306,13 +306,13 @@ class PaacServiceSpec
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
         PaacTaxYear2016PreAlignment.NormalTaxYear(10000, Period._2016PreAlignment),
         PaacTaxYear2016PostAlignment.NormalTaxYear(10000, Period._2016PostAlignment),
-        PaacTaxYear2017ToCurrent.NormalTaxYear(31000, AboveThreshold(21000), Period._2017),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(51000, AboveThreshold(21000), Period._2017),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018),
-        PaacTaxYear2017ToCurrent.NormalTaxYear(45000, AboveThreshold(24000), Period._2019),
-        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, BelowThreshold, Period._2020),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(65000, AboveThreshold(24000), Period._2019),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, BelowThreshold, Period._2020),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2022),
-        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, AboveThreshold(24000), Period._2023)
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, AboveThreshold(24000), Period._2023)
       ),
       Period._2023
     )
@@ -323,14 +323,14 @@ class PaacServiceSpec
         PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
         PaacTaxYear2016PreAlignment.NormalTaxYear(10000, Period._2016PreAlignment),
-        PaacTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, Period._2016PostAlignment),
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(12000, 19000, AboveThreshold(21000), Period._2017),
+        PaacTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, Period._2016PostAlignment),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(32000, 19000, AboveThreshold(21000), Period._2017),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018),
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2019),
-        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, BelowThreshold, Period._2020),
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2019),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, BelowThreshold, Period._2020),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(23000, 22000, AboveThreshold(24000), Period._2022),
-        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(23000, 6000, 10000, AboveThreshold(24000), Period._2023)
+        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(43000, 22000, AboveThreshold(24000), Period._2022),
+        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(43000, 6000, 10000, AboveThreshold(24000), Period._2023)
       ),
       Period._2023
     )
@@ -340,15 +340,15 @@ class PaacServiceSpec
         PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
         PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
-        PaacTaxYear2016PreAlignment.NormalTaxYear(10000, Period._2016PreAlignment),
-        PaacTaxYear2016PostAlignment.NormalTaxYear(36000, Period._2016PostAlignment),
-        PaacTaxYear2017ToCurrent.NormalTaxYear(31000, AboveThreshold(21000), Period._2017),
+        PaacTaxYear2016PreAlignment.NormalTaxYear(30000, Period._2016PreAlignment),
+        PaacTaxYear2016PostAlignment.NormalTaxYear(56000, Period._2016PostAlignment),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(51000, AboveThreshold(21000), Period._2017),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2018),
-        PaacTaxYear2017ToCurrent.NormalTaxYear(45000, AboveThreshold(24000), Period._2019),
-        PaacTaxYear2017ToCurrent.NormalTaxYear(22000, BelowThreshold, Period._2020),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(65000, AboveThreshold(24000), Period._2019),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(42000, BelowThreshold, Period._2020),
         PaacTaxYear2017ToCurrent.NormalTaxYear(10000, AboveThreshold(24000), Period._2021),
-        PaacTaxYear2017ToCurrent.NormalTaxYear(45000, AboveThreshold(24000), Period._2022),
-        PaacTaxYear2017ToCurrent.NormalTaxYear(14000, AboveThreshold(24000), Period._2023)
+        PaacTaxYear2017ToCurrent.NormalTaxYear(65000, AboveThreshold(24000), Period._2022),
+        PaacTaxYear2017ToCurrent.NormalTaxYear(34000, AboveThreshold(24000), Period._2023)
       ),
       Period._2023
     )
