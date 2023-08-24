@@ -204,5 +204,5 @@ class SubmissionControllerSpec
   }
 
   private def calculationInputs =
-    CalculationInputs(Resubmission(false, None), None, Some(LifeTimeAllowance("placeholder")))
+    CalculationInputs(Resubmission(false, None), None, None)
 }
