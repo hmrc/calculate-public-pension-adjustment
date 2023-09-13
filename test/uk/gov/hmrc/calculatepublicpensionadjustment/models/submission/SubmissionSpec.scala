@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, startWith}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Logging
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
@@ -52,12 +52,11 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
     }
 
     "serialise" in {
-
       val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
       val submissionRequest = SubmissionRequest(calculationInputs, Some(SubmissionTestData.calculationResponse))
-      val json              = Json.toJson(submissionRequest)
+      val json: String      = Json.toJson(submissionRequest).toString
 
-      logger.info(s"\n ${json.toString()} \n")
+      json must startWith("{\"calculationInputs\":{")
     }
   }
 }
