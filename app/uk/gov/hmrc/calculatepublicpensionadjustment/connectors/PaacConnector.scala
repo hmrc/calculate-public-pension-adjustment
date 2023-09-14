@@ -41,8 +41,15 @@ class PaacConnector @Inject() (config: AppConfig, httpClient1: HttpClient, httpC
           case OK =>
             Future.successful(response.json.as[PaacResponse])
           case _  =>
-            logger.error(s"Unexpected response from Paac with status ${response.status}")
-            Future.failed(UpstreamErrorResponse("Unexpected response from Paac", response.status))
+            logger.error(
+              s"Unexpected response from /pension-annual-allowance-calculator/calculate with status : ${response.status}"
+            )
+            Future.failed(
+              UpstreamErrorResponse(
+                "Unexpected response from /pension-annual-allowance-calculator/calculate",
+                response.status
+              )
+            )
         }
       }
 

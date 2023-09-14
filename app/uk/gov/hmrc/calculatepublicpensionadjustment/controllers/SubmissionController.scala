@@ -47,8 +47,6 @@ class SubmissionController @Inject() (
   }
 
   def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async {
-    logger.debug(s"uniqueId : $uniqueId")
-
     val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
 
     submission.map(s =>
