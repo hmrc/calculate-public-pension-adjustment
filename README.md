@@ -24,7 +24,7 @@ sm2 --start CALCULATE_PUBLIC_PENSION_ADJUSTMENT
 
 Run `sm2 -s` to check what services are running.
 
-### Launching the service locally
+## Launching the service locally
 To bring up the service on the configured port 12802, use
 
 ```
@@ -43,5 +43,5 @@ sbt clean coverage test it:test coverageReport
 To prevent formatting failures in a GitHub pull request,
 run the command ``sbt scalafmtAll`` before pushing to the remote repository.
 
-## License
+### License
 This code is open source software licensed under the [Apache 2.0 License]("https://www.apache.org/licenses/LICENSE-2.0.html").
