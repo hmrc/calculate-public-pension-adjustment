@@ -1,10 +1,8 @@
 
 # Calculate Public Pension Adjustment Backend
-
 This service provides the backend for the Calculate Public Pension Adjustment Frontend.
 
 ## Frontend
-
 [Calculate Public Pension Adjustment Frontend](https://github.com/hmrc/calculate-public-pension-adjustment-frontend)
 
 ## Persistence
@@ -36,6 +34,14 @@ sbt run
 ## Testing the service
 This service uses sbt-scoverage to provide test coverage reports.
 
+Use the following command to run the tests with coverage and generate a report.
+```
+sbt clean coverage test it:test coverageReport
+```
+
 ## Scalafmt
 To prevent formatting failures in a GitHub pull request,
 run the command ``sbt scalafmtAll`` before pushing to the remote repository.
+
+### License
+This code is open source software licensed under the [Apache 2.0 License]("https://www.apache.org/licenses/LICENSE-2.0.html").
