@@ -17,12 +17,12 @@ The service also depends on mongodb.
 
 ## Running the service
 Using service manager (sm or sm2)
-Use the CALCULATE_PUBLIC_PENSION_ADJUSTMENT service to bring up a services using the latest tagged release
+Use the PUBLIC_PENSION_ADJUSTMENT_ALL profile to bring up all services using the latest tagged releases
 ```
-sm2 --start CALCULATE_PUBLIC_PENSION_ADJUSTMENT
+sm2 --start PUBLIC_PENSION_ADJUSTMENT_ALL
 ```
 
-Run `sm2 -s` to check what services are running.
+Run `sm2 -s` to check what services are running
 
 ## Launching the service locally
 To bring up the service on the configured port 12802, use
