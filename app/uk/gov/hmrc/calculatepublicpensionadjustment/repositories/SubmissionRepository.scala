@@ -17,6 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.repositories
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
+import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.mongo.MongoComponent
@@ -30,6 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubmissionRepository @Inject() (
   mongoComponent: MongoComponent,
+  appConfig: AppConfig,
   clock: Clock
 )(implicit ec: ExecutionContext)
     extends PlayMongoRepository[Submission](
@@ -41,7 +43,7 @@ class SubmissionRepository @Inject() (
           Indexes.ascending("lastUpdated"),
           IndexOptions()
             .name("lastUpdatedIdx")
-            .expireAfter(1, TimeUnit.DAYS)
+            .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
         ),
         IndexModel(
           Indexes.ascending("uniqueId"),
