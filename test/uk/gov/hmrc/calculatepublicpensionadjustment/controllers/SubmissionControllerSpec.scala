@@ -125,10 +125,8 @@ class SubmissionControllerSpec
                       Some("2134567801"),
                       true,
                       Some(ExcessLifetimeAllowancePaid.Annualpayment),
-                      Some(20000),
                       Some(WhoPaidLTACharge.PensionScheme),
                       Some(SchemeNameAndTaxRef("Scheme 1", "00348916RT")),
-                      30000,
                       Some(WhoPayingExtraLtaCharge.You),
                       None
                     )
@@ -155,8 +153,8 @@ class SubmissionControllerSpec
           "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"changeInTaxCharge\":\"increasedCharge\",\"lifetimeAllowanceProtectionOrEnhancements\":\"protection\"," +
           "\"protectionType\":\"fixedProtection2014\",\"protectionReference\":\"R41AB678TR23355\",\"protectionTypeOrEnhancementChangedFlag\":true," +
           "\"newProtectionTypeOrEnhancement\":\"individualProtection2016\",\"newProtectionTypeOrEnhancementReference\":\"2134567801\",\"previousLifetimeAllowanceChargeFlag\":true," +
-          "\"previousLifetimeAllowanceChargePaymentMethod\":\"annualPayment\",\"previousLifetimeAllowanceChargeAmount\":20000,\"previousLifetimeAllowanceChargePaidBy\":\"pensionScheme\"," +
-          "\"previousLifetimeAllowanceChargeSchemeNameAndTaxRef\":{\"name\":\"Scheme 1\",\"taxRef\":\"00348916RT\"},\"newLifetimeAllowanceChargeAmount\":30000,\"newLifetimeAllowanceChargeWillBePaidBy\":\"you\"}}} "
+          "\"previousLifetimeAllowanceChargePaymentMethod\":\"annualPayment\",\"previousLifetimeAllowanceChargePaidBy\":\"pensionScheme\"," +
+          "\"previousLifetimeAllowanceChargeSchemeNameAndTaxRef\":{\"name\":\"Scheme 1\",\"taxRef\":\"00348916RT\"},\"newLifetimeAllowanceChargeWillBePaidBy\":\"you\"}}} "
       )
 
       verify(mockSubmissionService, times(1)).retrieve(eqTo("uniqueId"))
@@ -258,10 +256,8 @@ class SubmissionControllerSpec
           Some("2134567801"),
           true,
           Some(ExcessLifetimeAllowancePaid.Annualpayment),
-          Some(20000),
           Some(WhoPaidLTACharge.PensionScheme),
           Some(SchemeNameAndTaxRef("Scheme 1", "00348916RT")),
-          30000,
           Some(WhoPayingExtraLtaCharge.You),
           None
         )
