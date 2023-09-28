@@ -120,7 +120,7 @@ class SubmissionControllerSpec
                       LtaProtectionOrEnhancements.Protection,
                       ProtectionType.FixedProtection2014,
                       "R41AB678TR23355",
-                      true,
+                      ProtectionEnhancedChanged.Protection,
                       Some(WhatNewProtectionTypeEnhancement.IndividualProtection2016),
                       Some("2134567801"),
                       true,
@@ -128,7 +128,24 @@ class SubmissionControllerSpec
                       Some(WhoPaidLTACharge.PensionScheme),
                       Some(SchemeNameAndTaxRef("Scheme 1", "00348916RT")),
                       Some(WhoPayingExtraLtaCharge.You),
-                      None
+                      None,
+                      NewLifeTimeAllowanceAdditions(
+                        false,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None
+                      )
                     )
                   )
                 ),
@@ -151,10 +168,11 @@ class SubmissionControllerSpec
       contentAsJson(result) mustEqual Json.parse(
         "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"lifeTimeAllowance\":{\"benefitCrystallisationEventFlag\":true,\"benefitCrystallisationEventDate\":\"2018-11-28\"," +
           "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"changeInTaxCharge\":\"increasedCharge\",\"lifetimeAllowanceProtectionOrEnhancements\":\"protection\"," +
-          "\"protectionType\":\"fixedProtection2014\",\"protectionReference\":\"R41AB678TR23355\",\"protectionTypeOrEnhancementChangedFlag\":true," +
+          "\"protectionType\":\"fixedProtection2014\",\"protectionReference\":\"R41AB678TR23355\",\"protectionTypeEnhancementChanged\":\"protection\"," +
           "\"newProtectionTypeOrEnhancement\":\"individualProtection2016\",\"newProtectionTypeOrEnhancementReference\":\"2134567801\",\"previousLifetimeAllowanceChargeFlag\":true," +
           "\"previousLifetimeAllowanceChargePaymentMethod\":\"annualPayment\",\"previousLifetimeAllowanceChargePaidBy\":\"pensionScheme\"," +
-          "\"previousLifetimeAllowanceChargeSchemeNameAndTaxRef\":{\"name\":\"Scheme 1\",\"taxRef\":\"00348916RT\"},\"newLifetimeAllowanceChargeWillBePaidBy\":\"you\"}}} "
+          "\"previousLifetimeAllowanceChargeSchemeNameAndTaxRef\":{\"name\":\"Scheme 1\",\"taxRef\":\"00348916RT\"}," +
+          "\"newLifetimeAllowanceChargeWillBePaidBy\":\"you\",\"newLifeTimeAllowanceAdditions\":{\"multipleBenefitCrystallisationEventFlag\":false}}}} "
       )
 
       verify(mockSubmissionService, times(1)).retrieve(eqTo("uniqueId"))
@@ -251,7 +269,7 @@ class SubmissionControllerSpec
           LtaProtectionOrEnhancements.Protection,
           ProtectionType.FixedProtection2014,
           "R41AB678TR23355",
-          true,
+          ProtectionEnhancedChanged.Protection,
           Some(WhatNewProtectionTypeEnhancement.IndividualProtection2016),
           Some("2134567801"),
           true,
@@ -259,7 +277,24 @@ class SubmissionControllerSpec
           Some(WhoPaidLTACharge.PensionScheme),
           Some(SchemeNameAndTaxRef("Scheme 1", "00348916RT")),
           Some(WhoPayingExtraLtaCharge.You),
-          None
+          None,
+          NewLifeTimeAllowanceAdditions(
+            false,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None
+          )
         )
       )
     )
