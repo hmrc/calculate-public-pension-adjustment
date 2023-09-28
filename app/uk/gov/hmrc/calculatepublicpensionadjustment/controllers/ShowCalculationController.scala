@@ -35,7 +35,6 @@ class ShowCalculationController @Inject() (
 
   def showCalculation: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[CalculationInputs]("Calculation Inputs") { calculationInputs =>
-      println(s"========= Sandy ======== ${Json.prettyPrint(Json.toJson(calculationInputs))}     ===================")
       calculationInputs.annualAllowance
         .map(aa =>
           paacService
