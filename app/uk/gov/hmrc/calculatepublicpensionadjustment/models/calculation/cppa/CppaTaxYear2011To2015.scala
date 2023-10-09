@@ -19,14 +19,14 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 import play.api.libs.json._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
-case class CppaTaxYear2013To2015(
+case class CppaTaxYear2011To2015(
   pensionInputAmount: Int,
   period: Period
 ) extends CppaTaxYear
 
-object CppaTaxYear2013To2015 {
+object CppaTaxYear2011To2015 {
 
-  implicit lazy val reads: Reads[CppaTaxYear2013To2015] = {
+  implicit lazy val reads: Reads[CppaTaxYear2011To2015] = {
 
     import play.api.libs.functional.syntax._
 
@@ -35,7 +35,7 @@ object CppaTaxYear2013To2015 {
     (__ \ "period")
       .read[Period]
       .flatMap[Period] {
-        case p if p >= Period._2013 && p <= Period._2015 =>
+        case p if p >= Period._2011 && p <= Period._2015 =>
           Reads(_ => JsSuccess(p))
         case _                                           =>
           Reads(_ => JsError("taxYear must fall between `2013`-`2015`"))
@@ -43,11 +43,11 @@ object CppaTaxYear2013To2015 {
       (
         (__ \ "pensionInputAmount").read[Int] and
           (__ \ "period").read[Period]
-      )(CppaTaxYear2013To2015.apply _)
+      )(CppaTaxYear2011To2015.apply _)
     }
   }
 
-  implicit lazy val writes: Writes[CppaTaxYear2013To2015] = {
+  implicit lazy val writes: Writes[CppaTaxYear2011To2015] = {
 
     import play.api.libs.functional.syntax._
 

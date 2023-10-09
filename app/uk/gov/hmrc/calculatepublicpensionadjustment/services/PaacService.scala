@@ -513,7 +513,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     }
 
     val paacTaxYears: List[PaacTaxYear] = calculationRequest.taxYears.map {
-      case CppaTaxYear2013To2015(pensionInputAmount, period) =>
+      case CppaTaxYear2011To2015(pensionInputAmount, period) =>
         PaacTaxYear2011To2015.NormalTaxYear(pensionInputAmount, period)
 
       case CppaTaxYear2016PreAlignment.NormalTaxYear(pensionInputAmount, _, _, _, period) =>
