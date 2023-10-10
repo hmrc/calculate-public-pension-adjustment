@@ -38,14 +38,14 @@ object CppaTaxYear {
     implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
       a.map(identity)
 
-    CppaTaxYear2013To2015.reads or
+    CppaTaxYear2011To2015.reads or
       CppaTaxYear2016PreAlignment.reads or
       CppaTaxYear2016PostAlignment.reads or
       CppaTaxYear2017ToCurrent.reads
   }
 
   implicit lazy val writes: Writes[CppaTaxYear] = Writes {
-    case year: CppaTaxYear2013To2015        => Json.toJson(year)(CppaTaxYear2013To2015.writes)
+    case year: CppaTaxYear2011To2015        => Json.toJson(year)(CppaTaxYear2011To2015.writes)
     case year: CppaTaxYear2016PreAlignment  => Json.toJson(year)(CppaTaxYear2016PreAlignment.writes)
     case year: CppaTaxYear2016PostAlignment => Json.toJson(year)(CppaTaxYear2016PostAlignment.writes)
     case year: CppaTaxYear2017ToCurrent     => Json.toJson(year)(CppaTaxYear2017ToCurrent.writes)

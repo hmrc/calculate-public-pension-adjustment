@@ -59,9 +59,9 @@ class PaacServiceSpec
       Resubmission(isResubmission = true, Some("Change in amounts")),
       List(Period._2017, Period._2019, Period._2021),
       List(
-        CppaTaxYear2013To2015(10000, Period._2013),
-        CppaTaxYear2013To2015(11000, Period._2014),
-        CppaTaxYear2013To2015(12000, Period._2015),
+        CppaTaxYear2011To2015(10000, Period._2013),
+        CppaTaxYear2011To2015(11000, Period._2014),
+        CppaTaxYear2011To2015(12000, Period._2015),
         CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
           16000,
           LocalDate.parse("2015-05-25"),
@@ -1683,9 +1683,9 @@ class PaacServiceSpec
         Resubmission(isResubmission = false, None),
         List(Period._2017, Period._2018, Period._2021),
         List(
-          CppaTaxYear2013To2015(10000, Period._2013),
-          CppaTaxYear2013To2015(11000, Period._2014),
-          CppaTaxYear2013To2015(12000, Period._2015),
+          CppaTaxYear2011To2015(10000, Period._2013),
+          CppaTaxYear2011To2015(11000, Period._2014),
+          CppaTaxYear2011To2015(12000, Period._2015),
           CppaTaxYear2016PreAlignment.NormalTaxYear(
             18000,
             List(

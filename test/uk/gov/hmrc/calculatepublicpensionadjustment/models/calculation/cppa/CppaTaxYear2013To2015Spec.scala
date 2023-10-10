@@ -38,7 +38,7 @@ class CppaTaxYear2013To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        json.validate[CppaTaxYear2013To2015] mustEqual JsSuccess(CppaTaxYear2013To2015(v.pensionInputAmount, v.period))
+        json.validate[CppaTaxYear2011To2015] mustEqual JsSuccess(CppaTaxYear2011To2015(v.pensionInputAmount, v.period))
       }
     }
 
@@ -49,7 +49,7 @@ class CppaTaxYear2013To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        json.validate[CppaTaxYear2013To2015] mustEqual JsError("taxYear must fall between `2013`-`2015`")
+        json.validate[CppaTaxYear2011To2015] mustEqual JsError("taxYear must fall between `2013`-`2015`")
       }
     }
 
@@ -60,7 +60,7 @@ class CppaTaxYear2013To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        Json.toJson[CppaTaxYear2013To2015](CppaTaxYear2013To2015(v.pensionInputAmount, v.period)) mustEqual json
+        Json.toJson[CppaTaxYear2011To2015](CppaTaxYear2011To2015(v.pensionInputAmount, v.period)) mustEqual json
       }
     }
   }
