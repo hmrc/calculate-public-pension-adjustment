@@ -73,7 +73,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByScheme
     )
 
-  lazy val genCppaTaxYear2013To2015ForPeriod: Period => Gen[CppaTaxYear2011To2015] = (period: Period) =>
+  lazy val genCppaTaxYear2011To2015ForPeriod: Period => Gen[CppaTaxYear2011To2015] = (period: Period) =>
     for {
       pensionInputAmount <- genPensionInputAmount
     } yield CppaTaxYear2011To2015(pensionInputAmount, period)

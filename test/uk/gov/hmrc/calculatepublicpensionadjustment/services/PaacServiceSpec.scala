@@ -59,6 +59,7 @@ class PaacServiceSpec
       Resubmission(isResubmission = true, Some("Change in amounts")),
       List(Period._2017, Period._2019, Period._2021),
       List(
+        CppaTaxYear2011To2015(9000, Period._2011),
         CppaTaxYear2011To2015(10000, Period._2013),
         CppaTaxYear2011To2015(11000, Period._2014),
         CppaTaxYear2011To2015(12000, Period._2015),
@@ -283,6 +284,7 @@ class PaacServiceSpec
 
     val validPaacRequestWithAllYears = PaacRequest(
       List(
+        PaacTaxYear2011To2015.NormalTaxYear(9000, Period._2011),
         PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
         PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
@@ -301,6 +303,7 @@ class PaacServiceSpec
 
     val validPaacRequestWith2020InitialFlexiblyAccessedTaxYear = PaacRequest(
       List(
+        PaacTaxYear2011To2015.NormalTaxYear(9000, Period._2011),
         PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
         PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
@@ -319,6 +322,7 @@ class PaacServiceSpec
 
     val validPaacRequestWith2016PostAlignmentInitialFlexiblyAccessedTaxYear = PaacRequest(
       List(
+        PaacTaxYear2011To2015.NormalTaxYear(9000, Period._2011),
         PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
         PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
@@ -337,6 +341,7 @@ class PaacServiceSpec
 
     val validPaacRequestWithNoInitialFlexiblyAccessedTaxYear = PaacRequest(
       List(
+        PaacTaxYear2011To2015.NormalTaxYear(9000, Period._2011),
         PaacTaxYear2011To2015.NormalTaxYear(10000, Period._2013),
         PaacTaxYear2011To2015.NormalTaxYear(11000, Period._2014),
         PaacTaxYear2011To2015.NormalTaxYear(12000, Period._2015),
