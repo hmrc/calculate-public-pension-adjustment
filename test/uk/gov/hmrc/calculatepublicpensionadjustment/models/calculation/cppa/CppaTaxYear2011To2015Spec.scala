@@ -24,15 +24,15 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
-class CppaTaxYear2013To2015Spec extends AnyFreeSpec with ScalaCheckPropertyChecks with CppaModelGenerators {
+class CppaTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyChecks with CppaModelGenerators {
 
-  private val genValidCppaTaxYear2013To2015Period   = Gen.choose(2013, 2015).map(Period.Year)
-  private val genInvalidCppaTaxYear2013To2015Period = Gen.choose(2017, 2023).map(Period.Year)
+  private val genValidCppaTaxYear2011To2015Period   = Gen.choose(2011, 2015).map(Period.Year)
+  private val genInvalidCppaTaxYear2011To2015Period = Gen.choose(2017, 2023).map(Period.Year)
 
-  "CppaTaxYear2013To2015" - {
+  "CppaTaxYear2011To2015" - {
 
-    "must deserialise a period fall within 2013 - 2015" in {
-      forAll(genValidCppaTaxYear2013To2015Period.flatMap(genCppaTaxYear2013To2015ForPeriod(_))) { v =>
+    "must deserialise a period fall within 2011 - 2015" in {
+      forAll(genValidCppaTaxYear2011To2015Period.flatMap(genCppaTaxYear2011To2015ForPeriod(_))) { v =>
         val json = Json.obj(
           "pensionInputAmount" -> v.pensionInputAmount,
           "period"             -> v.period.toString
@@ -42,19 +42,19 @@ class CppaTaxYear2013To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
       }
     }
 
-    "must fail to deserialise a period fall outside 2013 - 2015" in {
-      forAll(genInvalidCppaTaxYear2013To2015Period.flatMap(genCppaTaxYear2013To2015ForPeriod(_))) { v =>
+    "must fail to deserialise a period fall outside 2011 - 2015" in {
+      forAll(genInvalidCppaTaxYear2011To2015Period.flatMap(genCppaTaxYear2011To2015ForPeriod(_))) { v =>
         val json = Json.obj(
           "pensionInputAmount" -> v.pensionInputAmount,
           "period"             -> v.period.toString
         )
 
-        json.validate[CppaTaxYear2011To2015] mustEqual JsError("taxYear must fall between `2013`-`2015`")
+        json.validate[CppaTaxYear2011To2015] mustEqual JsError("taxYear must fall between `2011`-`2015`")
       }
     }
 
-    "must serialise a period fall within 2013 - 2015" in {
-      forAll(genValidCppaTaxYear2013To2015Period.flatMap(genCppaTaxYear2013To2015ForPeriod(_))) { v =>
+    "must serialise a period fall within 2011 - 2015" in {
+      forAll(genValidCppaTaxYear2011To2015Period.flatMap(genCppaTaxYear2011To2015ForPeriod(_))) { v =>
         val json = Json.obj(
           "pensionInputAmount" -> v.pensionInputAmount,
           "period"             -> v.period.toString

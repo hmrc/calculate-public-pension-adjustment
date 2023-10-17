@@ -38,7 +38,7 @@ object CppaTaxYear2011To2015 {
         case p if p >= Period._2011 && p <= Period._2015 =>
           Reads(_ => JsSuccess(p))
         case _                                           =>
-          Reads(_ => JsError("taxYear must fall between `2013`-`2015`"))
+          Reads(_ => JsError("taxYear must fall between `2011`-`2015`"))
       } andKeep {
       (
         (__ \ "pensionInputAmount").read[Int] and
