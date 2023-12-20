@@ -51,6 +51,7 @@ class SubmissionRepository @Inject() (
           Indexes.ascending("uniqueId"),
           IndexOptions()
             .name("uniqueIdx")
+            .unique(true)
         )
       )
     ) {
