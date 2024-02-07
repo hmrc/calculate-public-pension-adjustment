@@ -76,7 +76,7 @@ class PaacServiceSpec
           0,
           Period._2016PreAlignment
         ),
-        CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
+        CppaTaxYear2016.PostFlexiblyAccessedTaxYear(
           16000,
           20000,
           90000,
@@ -87,7 +87,7 @@ class PaacServiceSpec
           ),
           Period._2016PostAlignment
         ),
-        CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+        CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
           12000,
           19000,
           AboveThreshold(21000),
@@ -99,7 +99,7 @@ class PaacServiceSpec
           ),
           Period._2017
         ),
-        CppaTaxYear2017ToCurrent.NormalTaxYear(
+        CppaTaxYear2016To2023.NormalTaxYear(
           10000,
           AboveThreshold(24000),
           100000,
@@ -110,7 +110,7 @@ class PaacServiceSpec
           ),
           Period._2018
         ),
-        CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+        CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
           23000,
           22000,
           AboveThreshold(24000),
@@ -122,7 +122,7 @@ class PaacServiceSpec
           ),
           Period._2019
         ),
-        CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
+        CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
           23000,
           LocalDate.parse("2019-12-22"),
           6000,
@@ -136,7 +136,7 @@ class PaacServiceSpec
           ),
           Period._2020
         ),
-        CppaTaxYear2017ToCurrent.NormalTaxYear(
+        CppaTaxYear2016To2023.NormalTaxYear(
           10000,
           AboveThreshold(24000),
           90000,
@@ -147,7 +147,7 @@ class PaacServiceSpec
           ),
           Period._2021
         ),
-        CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+        CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
           23000,
           22000,
           AboveThreshold(24000),
@@ -159,7 +159,7 @@ class PaacServiceSpec
           ),
           Period._2022
         ),
-        CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
+        CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
           23000,
           LocalDate.parse("2023-02-21"),
           6000,
@@ -190,7 +190,7 @@ class PaacServiceSpec
           0,
           Period._2016PreAlignment
         ),
-        CppaTaxYear2016PostAlignment.NormalTaxYear(
+        CppaTaxYear2016.NormalTaxYear(
           10000,
           100000,
           0,
@@ -219,7 +219,7 @@ class PaacServiceSpec
           0,
           Period._2016PreAlignment
         ),
-        CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
+        CppaTaxYear2016.InitialFlexiblyAccessedTaxYear(
           23000,
           LocalDate.parse("2016-02-21"),
           6000,
@@ -253,7 +253,7 @@ class PaacServiceSpec
           ),
           Period._2016PreAlignment
         ),
-        CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+        CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
           12000,
           10000,
           BelowThreshold,
@@ -265,7 +265,7 @@ class PaacServiceSpec
           ),
           Period._2020
         ),
-        CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+        CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
           8000,
           6000,
           AboveThreshold(24000),
@@ -1701,7 +1701,7 @@ class PaacServiceSpec
             0,
             Period._2016PreAlignment
           ),
-          CppaTaxYear2016PostAlignment.NormalTaxYear(
+          CppaTaxYear2016.NormalTaxYear(
             18000,
             90000,
             4000,
@@ -1711,7 +1711,7 @@ class PaacServiceSpec
             ),
             Period._2016PostAlignment
           ),
-          CppaTaxYear2017ToCurrent.NormalTaxYear(
+          CppaTaxYear2016To2023.NormalTaxYear(
             18000,
             AboveThreshold(21000),
             100000,
@@ -1722,7 +1722,7 @@ class PaacServiceSpec
             ),
             Period._2017
           ),
-          CppaTaxYear2017ToCurrent.NormalTaxYear(
+          CppaTaxYear2016To2023.NormalTaxYear(
             10000,
             AboveThreshold(24000),
             100000,
@@ -1733,7 +1733,7 @@ class PaacServiceSpec
             ),
             Period._2018
           ),
-          CppaTaxYear2017ToCurrent.NormalTaxYear(
+          CppaTaxYear2016To2023.NormalTaxYear(
             10000,
             BelowThreshold,
             90000,
@@ -1744,7 +1744,7 @@ class PaacServiceSpec
             ),
             Period._2019
           ),
-          CppaTaxYear2017ToCurrent.NormalTaxYear(
+          CppaTaxYear2016To2023.NormalTaxYear(
             10000,
             AboveThreshold(24000),
             90000,
@@ -1755,7 +1755,7 @@ class PaacServiceSpec
             ),
             Period._2020
           ),
-          CppaTaxYear2017ToCurrent.NormalTaxYear(
+          CppaTaxYear2016To2023.NormalTaxYear(
             10000,
             BelowThreshold,
             90000,
@@ -1766,7 +1766,7 @@ class PaacServiceSpec
             ),
             Period._2021
           ),
-          CppaTaxYear2017ToCurrent.NormalTaxYear(
+          CppaTaxYear2016To2023.NormalTaxYear(
             10000,
             AboveThreshold(24000),
             90000,
@@ -1777,7 +1777,7 @@ class PaacServiceSpec
             ),
             Period._2022
           ),
-          CppaTaxYear2017ToCurrent.NormalTaxYear(
+          CppaTaxYear2016To2023.NormalTaxYear(
             10000,
             AboveThreshold(24000),
             90000,

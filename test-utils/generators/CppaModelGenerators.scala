@@ -111,14 +111,14 @@ trait CppaModelGenerators extends ModelGenerators {
       Period._2016PreAlignment
     )
 
-  lazy val genCppaTaxYear2016PostAlignmentNormalTaxYear: Gen[CppaTaxYear2016PostAlignment.NormalTaxYear] =
+  lazy val genCppaTaxYear2016PostAlignmentNormalTaxYear: Gen[CppaTaxYear2016.NormalTaxYear] =
     for {
       pensionInputAmount <- genPensionInputAmount
       totalIncome        <- genTotalIncome
       chargePaidByMember <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes <- Gen.oneOf(1, 5)
       taxYearSchemes     <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
-    } yield CppaTaxYear2016PostAlignment.NormalTaxYear(
+    } yield CppaTaxYear2016.NormalTaxYear(
       pensionInputAmount,
       totalIncome,
       chargePaidByMember,
@@ -127,7 +127,7 @@ trait CppaModelGenerators extends ModelGenerators {
     )
 
   lazy val genCppaTaxYear2016PostAlignmentInitialFlexiblyAccessedTaxYear
-    : Gen[CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear] =
+    : Gen[CppaTaxYear2016.InitialFlexiblyAccessedTaxYear] =
     for {
       definedBenefitInputAmount                <- genDefinedBenefitInputAmount
       flexiAccessDate                          <- genFlexiAccessDate(Period._2016PostAlignment)
@@ -137,7 +137,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember                       <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes                       <- Gen.oneOf(1, 5)
       taxYearSchemes                           <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
-    } yield CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
+    } yield CppaTaxYear2016.InitialFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       flexiAccessDate,
       preAccessDefinedContributionInputAmount,
@@ -149,7 +149,7 @@ trait CppaModelGenerators extends ModelGenerators {
     )
 
   lazy val genCppaTaxYear2016PostAlignmentPostFlexiblyAccessedTaxYear
-    : Gen[CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear] =
+    : Gen[CppaTaxYear2016.PostFlexiblyAccessedTaxYear] =
     for {
       definedBenefitInputAmount      <- genDefinedBenefitInputAmount
       definedContributionInputAmount <- genDefinedContributionInputAmount
@@ -157,7 +157,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember             <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes             <- Gen.oneOf(1, 5)
       taxYearSchemes                 <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
-    } yield CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
+    } yield CppaTaxYear2016.PostFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       definedContributionInputAmount,
       totalIncome,
@@ -166,7 +166,7 @@ trait CppaModelGenerators extends ModelGenerators {
       Period._2016PostAlignment
     )
 
-  lazy val genCppaTaxYear2017ToCurrentNormalTaxYearForPeriod: Period => Gen[CppaTaxYear2017ToCurrent.NormalTaxYear] =
+  lazy val genCppaTaxYear2017ToCurrentNormalTaxYearForPeriod: Period => Gen[CppaTaxYear2016To2023.NormalTaxYear] =
     (period: Period) =>
       for {
         pensionInputAmount <- genPensionInputAmount
@@ -175,7 +175,7 @@ trait CppaModelGenerators extends ModelGenerators {
         chargePaidByMember <- genChargePaidBySchemeOrMember
         noOfTaxYearSchemes <- Gen.oneOf(1, 5)
         taxYearSchemes     <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
-      } yield CppaTaxYear2017ToCurrent.NormalTaxYear(
+      } yield CppaTaxYear2016To2023.NormalTaxYear(
         pensionInputAmount,
         income,
         totalIncome,
@@ -185,7 +185,7 @@ trait CppaModelGenerators extends ModelGenerators {
       )
 
   lazy val genCppaTaxYear2017ToCurrentInitialFlexiblyAccessedTaxYearForPeriod
-    : Period => Gen[CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear] = (period: Period) =>
+    : Period => Gen[CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear] = (period: Period) =>
     for {
       definedBenefitInputAmount                <- genDefinedBenefitInputAmount
       flexiAccessDate                          <- genFlexiAccessDate(period)
@@ -196,7 +196,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember                       <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes                       <- Gen.oneOf(1, 5)
       taxYearSchemes                           <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
-    } yield CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
+    } yield CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       flexiAccessDate,
       preAccessDefinedContributionInputAmount,
@@ -209,7 +209,7 @@ trait CppaModelGenerators extends ModelGenerators {
     )
 
   lazy val genCppaTaxYear2017ToCurrentPostFlexiblyAccessedTaxYearForPeriod
-    : Period => Gen[CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear] = (period: Period) =>
+    : Period => Gen[CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear] = (period: Period) =>
     for {
       definedBenefitInputAmount      <- genDefinedBenefitInputAmount
       definedContributionInputAmount <- genDefinedContributionInputAmount
@@ -218,7 +218,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember             <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes             <- Gen.oneOf(1, 5)
       taxYearSchemes                 <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
-    } yield CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+    } yield CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       definedContributionInputAmount,
       income,

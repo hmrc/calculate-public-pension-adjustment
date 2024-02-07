@@ -48,6 +48,7 @@ object Period extends Logging {
   val _2013: Period = Period.Year(2013)
   val _2014: Period = Period.Year(2014)
   val _2015: Period = Period.Year(2015)
+  val _2016: Period = Period.Year(2016)
   val _2017: Period = Period.Year(2017)
   val _2018: Period = Period.Year(2018)
   val _2019: Period = Period.Year(2019)

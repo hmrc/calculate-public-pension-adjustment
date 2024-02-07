@@ -19,11 +19,13 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 import com.google.inject.Inject
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.BelowThreshold
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math._
 
@@ -39,21 +41,35 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
   def calculateCompensation(calculationRequest: CalculationRequest, paacResponse: PaacResponse): CalculationResponse = {
 
-    val requestResponseMapByPeriod: Map[Period, (CppaTaxYear, Option[PaacResponseRow])] = calculationRequest.taxYears
-      .map { cppaTaxYear =>
-        val oPaacResponseRow = paacResponse.rows.find { paacResponseRow =>
-          paacResponseRow.taxYear.period == cppaTaxYear.period
+    val requestResponseMapByPeriod: Map[Period, (CppaTaxYear, Option[PaacResponseRow], Option[PaacResponseRow])] =
+      calculationRequest.taxYears
+        .map { cppaTaxYear =>
+          if (cppaTaxYear.period == Period._2016) {
+            val oPaacResponseRow = paacResponse.rows.find { paacResponseRow =>
+              paacResponseRow.taxYear.period == Period._2016PreAlignment
+            }
+
+            val oPaacResponse2016PostRow = paacResponse.rows.find { paacResponseRow =>
+              paacResponseRow.taxYear.period == Period._2016PostAlignment
+            }
+
+            cppaTaxYear.period -> (cppaTaxYear, oPaacResponseRow, oPaacResponse2016PostRow)
+          } else {
+            val oPaacResponseRow = paacResponse.rows.find { paacResponseRow =>
+              paacResponseRow.taxYear.period == cppaTaxYear.period
+            }
+
+            cppaTaxYear.period -> (cppaTaxYear, oPaacResponseRow, None)
+          }
         }
-        cppaTaxYear.period -> (cppaTaxYear, oPaacResponseRow)
-      }
-      .toMap
-      .filterNot(v => v._1 == Period._2013 | v._1 == Period._2014 | v._1 == Period._2015)
+        .toMap
+        .filterNot(v => v._1 == Period._2013 | v._1 == Period._2014 | v._1 == Period._2015)
 
     val outDates = requestResponseMapByPeriod.flatMap { v =>
       (v._1, v._2._1) match {
         case (
-              Period._2016PreAlignment,
-              CppaTaxYear2016PreAlignment.NormalTaxYear(_, taxYearSchemes, totalIncome, chargePaidByMember, _)
+              Period._2016 | Period._2017 | Period._2018 | Period._2019,
+              CppaTaxYear2016To2023.NormalTaxYear(_, taxYearSchemes, totalIncome, chargePaidByMember, _, _, _)
             ) =>
           Some(
             buildOutOfDatesTaxYearsCalculationResult(
@@ -62,13 +78,14 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
               totalIncome,
               chargePaidByMember,
               taxYearSchemes,
-              v._2._2
+              v._2._2,
+              v._2._3
             )
           )
 
         case (
-              Period._2016PreAlignment,
-              CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
+              Period._2016 | Period._2017 | Period._2018 | Period._2019,
+              CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
                 _,
                 _,
                 _,
@@ -76,6 +93,10 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 taxYearSchemes,
                 totalIncome,
                 chargePaidByMember,
+                _,
+                _,
+                _,
+                _,
                 _
               )
             ) =>
@@ -86,18 +107,22 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
               totalIncome,
               chargePaidByMember,
               taxYearSchemes,
-              v._2._2
+              v._2._2,
+              v._2._3
             )
           )
 
         case (
-              Period._2016PreAlignment,
-              CppaTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(
+              Period._2016 | Period._2017 | Period._2018 | Period._2019,
+              CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
                 _,
                 _,
                 totalIncome,
                 chargePaidByMember,
                 taxYearSchemes,
+                _,
+                _,
+                _,
                 _
               )
             ) =>
@@ -108,131 +133,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
               totalIncome,
               chargePaidByMember,
               taxYearSchemes,
-              v._2._2
-            )
-          )
-
-        case (
-              Period._2016PostAlignment,
-              CppaTaxYear2016PostAlignment.NormalTaxYear(_, totalIncome, chargePaidByMember, taxYearSchemes, _)
-            ) =>
-          Some(
-            buildOutOfDatesTaxYearsCalculationResult(
-              v._1,
-              calculationRequest.scottishTaxYears,
-              totalIncome,
-              chargePaidByMember,
-              taxYearSchemes,
-              v._2._2
-            )
-          )
-
-        case (
-              Period._2016PostAlignment,
-              CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
-                _,
-                _,
-                _,
-                _,
-                totalIncome,
-                chargePaidByMember,
-                taxYearSchemes,
-                _
-              )
-            ) =>
-          Some(
-            buildOutOfDatesTaxYearsCalculationResult(
-              v._1,
-              calculationRequest.scottishTaxYears,
-              totalIncome,
-              chargePaidByMember,
-              taxYearSchemes,
-              v._2._2
-            )
-          )
-
-        case (
-              Period._2016PostAlignment,
-              CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
-                _,
-                _,
-                totalIncome,
-                chargePaidByMember,
-                taxYearSchemes,
-                _
-              )
-            ) =>
-          Some(
-            buildOutOfDatesTaxYearsCalculationResult(
-              v._1,
-              calculationRequest.scottishTaxYears,
-              totalIncome,
-              chargePaidByMember,
-              taxYearSchemes,
-              v._2._2
-            )
-          )
-
-        case (
-              Period._2017 | Period._2018 | Period._2019,
-              CppaTaxYear2017ToCurrent.NormalTaxYear(_, _, totalIncome, chargePaidByMember, taxYearSchemes, _)
-            ) =>
-          Some(
-            buildOutOfDatesTaxYearsCalculationResult(
-              v._1,
-              calculationRequest.scottishTaxYears,
-              totalIncome,
-              chargePaidByMember,
-              taxYearSchemes,
-              v._2._2
-            )
-          )
-
-        case (
-              Period._2017 | Period._2018 | Period._2019,
-              CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
-                _,
-                _,
-                _,
-                _,
-                _,
-                totalIncome,
-                chargePaidByMember,
-                taxYearSchemes,
-                _
-              )
-            ) =>
-          Some(
-            buildOutOfDatesTaxYearsCalculationResult(
-              v._1,
-              calculationRequest.scottishTaxYears,
-              totalIncome,
-              chargePaidByMember,
-              taxYearSchemes,
-              v._2._2
-            )
-          )
-
-        case (
-              Period._2017 | Period._2018 | Period._2019,
-              CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
-                _,
-                _,
-                _,
-                totalIncome,
-                chargePaidByMember,
-                taxYearSchemes,
-                _
-              )
-            ) =>
-          Some(
-            buildOutOfDatesTaxYearsCalculationResult(
-              v._1,
-              calculationRequest.scottishTaxYears,
-              totalIncome,
-              chargePaidByMember,
-              taxYearSchemes,
-              v._2._2
+              v._2._2,
+              v._2._3
             )
           )
 
@@ -245,7 +147,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       (v._1, v._2._1) match {
         case (
               Period._2020 | Period._2021 | Period._2022 | Period._2023,
-              CppaTaxYear2017ToCurrent.NormalTaxYear(_, _, totalIncome, chargePaidByMember, taxYearSchemes, _)
+              CppaTaxYear2016To2023.NormalTaxYear(_, taxYearSchemes, totalIncome, chargePaidByMember, _, _, _)
             ) =>
           Some(
             buildInDatesTaxYearsCalculationResult(
@@ -260,15 +162,18 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
         case (
               Period._2020 | Period._2021 | Period._2022 | Period._2023,
-              CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
+              CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
                 _,
                 _,
                 _,
                 _,
-                _,
+                taxYearSchemes,
                 totalIncome,
                 chargePaidByMember,
-                taxYearSchemes,
+                _,
+                _,
+                _,
+                _,
                 _
               )
             ) =>
@@ -285,13 +190,15 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
         case (
               Period._2020 | Period._2021 | Period._2022 | Period._2023,
-              CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
-                _,
+              CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
                 _,
                 _,
                 totalIncome,
                 chargePaidByMember,
                 taxYearSchemes,
+                _,
+                _,
+                _,
                 _
               )
             ) =>
@@ -326,12 +233,19 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     totalIncome: Int,
     chargePaidByMember: Int,
     taxYearSchemes: List[TaxYearScheme],
-    oPaacResponseRow: Option[PaacResponseRow]
+    oPaacResponseRow: Option[PaacResponseRow],
+    oPaacResponse2016PostRow: Option[PaacResponseRow]
   ): OutOfDatesTaxYearsCalculation = {
 
     val originalCharge = calculateOriginalCharge(chargePaidByMember, taxYearSchemes)
 
-    val chargeableAmount = oPaacResponseRow.map(_.chargeableAmount).getOrElse(0)
+    val chargeableAmount =
+      if (period == Period._2016)
+        oPaacResponseRow
+          .map(_.chargeableAmount)
+          .getOrElse(0) + oPaacResponse2016PostRow.map(_.chargeableAmount).getOrElse(0)
+      else
+        oPaacResponseRow.map(_.chargeableAmount).getOrElse(0)
 
     val revisedCharge = calculateRevisedCharge(scottishTaxYears, period, totalIncome, chargeableAmount)
 
@@ -344,25 +258,33 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         0
 
     val directCompensation =
-      if (chargePaidByMember != 0) {
+      if (chargePaidByMember != 0)
         ceil((chargePaidByMember.toDouble / originalCharge.toDouble) * adjustedCompensation).toInt
-      } else {
+      else
         0
-      }
 
     val compensationToSchemes: List[OutOfDatesTaxYearSchemeCalculation] = taxYearSchemes.map { s =>
       OutOfDatesTaxYearSchemeCalculation(
         s.name,
         s.pensionSchemeTaxReference,
-        if (s.chargePaidByScheme != 0) {
+        if (s.chargePaidByScheme != 0)
           ceil((s.chargePaidByScheme.toDouble / originalCharge.toDouble) * adjustedCompensation).toInt
-        } else {
+        else
           0
-        }
       )
     }
 
     val indirectCompensation = compensationToSchemes.map(_.compensation).sum
+
+    val unusedAnnualAllowance: Option[Int] =
+      if (period == Period._2016) {
+        oPaacResponse2016PostRow
+          .map(_.predictedFutureUnusedAllowance) match {
+          case a @ Some(_) => a
+          case None        => oPaacResponseRow.map(_.predictedFutureUnusedAllowance)
+        }
+      } else
+        oPaacResponseRow.map(_.predictedFutureUnusedAllowance)
 
     OutOfDatesTaxYearsCalculation(
       period,
@@ -372,7 +294,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       taxYearSchemes.map(_.chargePaidByScheme).sum,
       chargeableAmount,
       floor(revisedCharge).toInt,
-      oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0),
+      unusedAnnualAllowance.getOrElse(0),
       compensationToSchemes
     )
   }
@@ -433,10 +355,10 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     chargeableAmount: Int
   ): Double =
     (period, chargeableAmount > 0) match {
-      case (Period._2016PreAlignment | Period._2016PostAlignment | Period._2017 | Period._2018 | Period._2019, true) =>
+      case (Period._2016 | Period._2017 | Period._2018 | Period._2019, true) =>
         chargeableAmount * findTaxRate(scottishTaxYears, period, totalIncome)
 
-      case (Period._2016PreAlignment | Period._2016PostAlignment | Period._2017 | Period._2018 | Period._2019, false) =>
+      case (Period._2016 | Period._2017 | Period._2018 | Period._2019, false) =>
         0
 
       case (Period._2020 | Period._2021 | Period._2022 | Period._2023, _) =>
@@ -445,11 +367,9 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
   def findTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int): Double =
     (scottishTaxYears.contains(period), period) match {
-      case (true, Period._2016PreAlignment | Period._2016PostAlignment) =>
-        ScottishTaxRateTill2018._2016().getTaxRate(totalIncome)
+      case (true, Period._2016) => ScottishTaxRateTill2018._2016().getTaxRate(totalIncome)
 
-      case (false, Period._2016PreAlignment | Period._2016PostAlignment) =>
-        NonScottishTaxRate._2016().getTaxRate(totalIncome)
+      case (false, Period._2016) => NonScottishTaxRate._2016().getTaxRate(totalIncome)
 
       case (true, Period._2017) => ScottishTaxRateTill2018._2017().getTaxRate(totalIncome)
 
@@ -505,24 +425,61 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   def buildPaacRequest(calculationRequest: CalculationRequest): PaacRequest = {
 
     val oFlexiblyAccessedTaxYear: Option[Period] = calculationRequest.taxYears collectFirst {
-      case CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, _)      =>
-        Period._2016PreAlignment
-      case CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, _)     =>
-        Period._2016PostAlignment
-      case CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, _, period) => period
+      case CppaTaxYear2016To2023
+            .InitialFlexiblyAccessedTaxYear(_, Some(flexiAccessDate), _, _, _, _, _, Period._2016, _, _, _, _) =>
+        if (flexiAccessDate.isAfter(LocalDate.of(2015, 4, 5)) && flexiAccessDate.isBefore(LocalDate.of(2015, 7, 9)))
+          Period._2016PreAlignment
+        else
+          Period._2016PostAlignment
+
+      case CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, period, _, _, _, _) => period
     }
 
-    val paacTaxYears: List[PaacTaxYear] = calculationRequest.taxYears.map {
+    val paacTaxYears: List[PaacTaxYear] = calculationRequest.taxYears.flatMap {
       case CppaTaxYear2011To2015(pensionInputAmount, period) =>
-        PaacTaxYear2011To2015.NormalTaxYear(pensionInputAmount, period)
+        List(PaacTaxYear2011To2015.NormalTaxYear(pensionInputAmount, period))
 
-      case CppaTaxYear2016PreAlignment.NormalTaxYear(pensionInputAmount, _, _, _, period) =>
-        PaacTaxYear2016PreAlignment.NormalTaxYear(
-          pensionInputAmount,
-          period
+      case CppaTaxYear2016To2023
+            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, None) =>
+        List(
+          PaacTaxYear2016PreAlignment.NormalTaxYear(
+            pensionInputAmount,
+            Period._2016PreAlignment
+          )
         )
 
-      case CppaTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
+      case CppaTaxYear2016To2023
+            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, Some(0)) =>
+        List(
+          PaacTaxYear2016PreAlignment.NormalTaxYear(
+            pensionInputAmount,
+            Period._2016PreAlignment
+          )
+        )
+
+      case CppaTaxYear2016To2023
+            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, Some(pensionInput2016PostAmount)) =>
+        List(
+          PaacTaxYear2016PreAlignment.NormalTaxYear(
+            pensionInputAmount,
+            Period._2016PreAlignment
+          ),
+          PaacTaxYear2016PostAlignment.NormalTaxYear(
+            pensionInput2016PostAmount,
+            Period._2016PostAlignment
+          )
+        )
+
+      case CppaTaxYear2016To2023.NormalTaxYear(pensionInputAmount, _, _, _, period, income, _) =>
+        List(
+          PaacTaxYear2017ToCurrent.NormalTaxYear(
+            pensionInputAmount,
+            income.getOrElse(BelowThreshold),
+            period
+          )
+        )
+
+      case CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
             definedBenefitInputAmount,
             _,
             preAccessDefinedContributionInputAmount,
@@ -530,139 +487,147 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             taxYearSchemes,
             _,
             _,
-            period
-          ) =>
-        PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
-          preAccessDefinedContributionInputAmount,
-          postAccessDefinedContributionInputAmount,
-          period
-        )
-
-      case CppaTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(
-            definedBenefitInputAmount,
-            definedContributionInputAmount,
+            Period._2016,
             _,
-            _,
-            taxYearSchemes,
-            period
-          ) =>
-        PaacTaxYear2016PreAlignment.NormalTaxYear(
-          definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
-            .map(_.revisedPensionInputAmount)
-            .sum,
-          period
+            definedBenefitInput2016PostAmount,
+            definedContributionInput2016PostAmount,
+            _
+          ) if oFlexiblyAccessedTaxYear.contains(Period._2016PreAlignment) =>
+        List(
+          PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
+            definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+            preAccessDefinedContributionInputAmount,
+            postAccessDefinedContributionInputAmount,
+            Period._2016PreAlignment
+          ),
+          PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
+            definedBenefitInput2016PostAmount
+              .getOrElse(0) + taxYearSchemes.map(_.revisedPensionInput2016PostAmount.getOrElse(0)).sum,
+            definedContributionInput2016PostAmount.getOrElse(0),
+            Period._2016PostAlignment
+          )
         )
 
-      case CppaTaxYear2016PostAlignment.NormalTaxYear(pensionInputAmount, _, _, _, period) =>
-        PaacTaxYear2016PostAlignment.NormalTaxYear(
-          pensionInputAmount,
-          period
-        )
-
-      case CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
+      case CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
             definedBenefitInputAmount,
             _,
             preAccessDefinedContributionInputAmount,
             postAccessDefinedContributionInputAmount,
-            _,
-            _,
             taxYearSchemes,
-            period
-          ) =>
-        PaacTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
-          preAccessDefinedContributionInputAmount,
-          postAccessDefinedContributionInputAmount,
-          period
+            _,
+            _,
+            Period._2016,
+            _,
+            definedBenefitInput2016PostAmount,
+            definedContributionInput2016PostAmount,
+            postAccessDefinedContributionInput2016PostAmount
+          ) if oFlexiblyAccessedTaxYear.contains(Period._2016PostAlignment) =>
+        List(
+          PaacTaxYear2016PreAlignment.NormalTaxYear(
+            definedBenefitInputAmount + preAccessDefinedContributionInputAmount + postAccessDefinedContributionInputAmount + taxYearSchemes
+              .map(_.revisedPensionInputAmount)
+              .sum,
+            Period._2016PreAlignment
+          ),
+          PaacTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
+            definedBenefitInput2016PostAmount.getOrElse(0) + taxYearSchemes
+              .map(_.revisedPensionInput2016PostAmount.getOrElse(0))
+              .sum,
+            definedContributionInput2016PostAmount.getOrElse(0),
+            postAccessDefinedContributionInput2016PostAmount.getOrElse(0),
+            Period._2016PostAlignment
+          )
         )
 
-      case CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
+      case CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
+            definedBenefitInputAmount,
+            _,
+            preAccessDefinedContributionInputAmount,
+            postAccessDefinedContributionInputAmount,
+            taxYearSchemes,
+            _,
+            _,
+            period,
+            income,
+            _,
+            _,
+            _
+          ) =>
+        List(
+          PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
+            definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
+            preAccessDefinedContributionInputAmount,
+            postAccessDefinedContributionInputAmount,
+            income.getOrElse(BelowThreshold),
+            period
+          )
+        )
+
+      case CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
             definedBenefitInputAmount,
             definedContributionInputAmount,
             _,
             _,
             taxYearSchemes,
-            period
+            Period._2016,
+            _,
+            definedBenefitInput2016PostAmount,
+            definedContributionInput2016PostAmount
+          ) =>
+        List(
+          PaacTaxYear2016PreAlignment.NormalTaxYear(
+            definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
+              .map(_.revisedPensionInputAmount)
+              .sum,
+            Period._2016PreAlignment
+          ),
+          PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
+            definedBenefitInput2016PostAmount
+              .getOrElse(0) + taxYearSchemes.map(_.revisedPensionInput2016PostAmount.getOrElse(0)).sum,
+            definedContributionInput2016PostAmount.getOrElse(0),
+            Period._2016PostAlignment
+          )
+        )
+
+      case CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
+            definedBenefitInputAmount,
+            definedContributionInputAmount,
+            _,
+            _,
+            taxYearSchemes,
+            period,
+            income,
+            _,
+            _
           ) if oFlexiblyAccessedTaxYear.forall(p => List(period, p) == List(period, p).sorted) =>
-        PaacTaxYear2016PostAlignment.NormalTaxYear(
-          definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
-            .map(_.revisedPensionInputAmount)
-            .sum,
-          period
+        List(
+          PaacTaxYear2017ToCurrent.NormalTaxYear(
+            definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
+              .map(_.revisedPensionInputAmount)
+              .sum,
+            income.getOrElse(BelowThreshold),
+            period
+          )
         )
 
-      case CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
+      case CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
             definedBenefitInputAmount,
             definedContributionInputAmount,
             _,
             _,
             taxYearSchemes,
-            period
-          ) =>
-        PaacTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
-          definedContributionInputAmount,
-          period
-        )
-
-      case CppaTaxYear2017ToCurrent.NormalTaxYear(pensionInputAmount, income, _, _, _, period) =>
-        PaacTaxYear2017ToCurrent.NormalTaxYear(
-          pensionInputAmount,
-          income,
-          period
-        )
-
-      case CppaTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
-            definedBenefitInputAmount,
-            _,
-            preAccessDefinedContributionInputAmount,
-            postAccessDefinedContributionInputAmount,
+            period,
             income,
             _,
-            _,
-            taxYearSchemes,
-            period
+            _
           ) =>
-        PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
-          preAccessDefinedContributionInputAmount,
-          postAccessDefinedContributionInputAmount,
-          income,
-          period
-        )
-
-      case CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
-            definedBenefitInputAmount,
+        List(
+          PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
+            definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
             definedContributionInputAmount,
-            income,
-            _,
-            _,
-            taxYearSchemes,
+            income.getOrElse(BelowThreshold),
             period
-          ) if oFlexiblyAccessedTaxYear.forall(p => List(period, p) == List(period, p).sorted) =>
-        PaacTaxYear2017ToCurrent.NormalTaxYear(
-          definedBenefitInputAmount + definedContributionInputAmount + taxYearSchemes
-            .map(_.revisedPensionInputAmount)
-            .sum,
-          income,
-          period
-        )
-
-      case CppaTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
-            definedBenefitInputAmount,
-            definedContributionInputAmount,
-            income,
-            _,
-            _,
-            taxYearSchemes,
-            period
-          ) =>
-        PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
-          definedBenefitInputAmount + taxYearSchemes.map(_.revisedPensionInputAmount).sum,
-          definedContributionInputAmount,
-          income,
-          period
+          )
         )
 
     }

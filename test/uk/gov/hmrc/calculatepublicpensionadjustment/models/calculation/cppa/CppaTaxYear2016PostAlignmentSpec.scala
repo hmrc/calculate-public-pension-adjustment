@@ -37,9 +37,9 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"             -> v.period
         )
 
-        json.validate[CppaTaxYear2016PostAlignment] mustEqual
+        json.validate[CppaTaxYear2016] mustEqual
           JsSuccess(
-            CppaTaxYear2016PostAlignment
+            CppaTaxYear2016
               .NormalTaxYear(v.pensionInputAmount, v.totalIncome, v.chargePaidByMember, v.taxYearSchemes, v.period)
           )
       }
@@ -55,7 +55,7 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"             -> Period._2016PreAlignment.toString
         )
 
-        json.validate[CppaTaxYear2016PostAlignment] mustEqual JsError("tax year must be `2016-post`")
+        json.validate[CppaTaxYear2016] mustEqual JsError("tax year must be `2016-post`")
       }
     }
 
@@ -69,8 +69,8 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"             -> Period._2016PostAlignment.toString
         )
 
-        Json.toJson[CppaTaxYear2016PostAlignment](
-          CppaTaxYear2016PostAlignment.NormalTaxYear(
+        Json.toJson[CppaTaxYear2016](
+          CppaTaxYear2016.NormalTaxYear(
             v.pensionInputAmount,
             v.totalIncome,
             v.chargePaidByMember,
@@ -98,9 +98,9 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"                                   -> v.period
         )
 
-        json.validate[CppaTaxYear2016PostAlignment] mustEqual
+        json.validate[CppaTaxYear2016] mustEqual
           JsSuccess(
-            CppaTaxYear2016PostAlignment
+            CppaTaxYear2016
               .InitialFlexiblyAccessedTaxYear(
                 v.definedBenefitInputAmount,
                 v.flexiAccessDate,
@@ -128,7 +128,7 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"                                   -> Period._2016PreAlignment.toString
         )
 
-        json.validate[CppaTaxYear2016PostAlignment] mustEqual JsError("tax year must be `2016-post`")
+        json.validate[CppaTaxYear2016] mustEqual JsError("tax year must be `2016-post`")
       }
     }
 
@@ -145,8 +145,8 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"                                   -> Period._2016PostAlignment.toString
         )
 
-        Json.toJson[CppaTaxYear2016PostAlignment](
-          CppaTaxYear2016PostAlignment.InitialFlexiblyAccessedTaxYear(
+        Json.toJson[CppaTaxYear2016](
+          CppaTaxYear2016.InitialFlexiblyAccessedTaxYear(
             v.definedBenefitInputAmount,
             v.flexiAccessDate,
             v.preAccessDefinedContributionInputAmount,
@@ -175,9 +175,9 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"                         -> v.period
         )
 
-        json.validate[CppaTaxYear2016PostAlignment] mustEqual
+        json.validate[CppaTaxYear2016] mustEqual
           JsSuccess(
-            CppaTaxYear2016PostAlignment
+            CppaTaxYear2016
               .PostFlexiblyAccessedTaxYear(
                 v.definedBenefitInputAmount,
                 v.definedContributionInputAmount,
@@ -201,7 +201,7 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"                         -> Period._2016PreAlignment.toString
         )
 
-        json.validate[CppaTaxYear2016PostAlignment] mustEqual JsError("tax year must be `2016-post`")
+        json.validate[CppaTaxYear2016] mustEqual JsError("tax year must be `2016-post`")
       }
     }
 
@@ -216,8 +216,8 @@ class CppaTaxYear2016PostAlignmentSpec extends AnyFreeSpec with ScalaCheckProper
           "period"                         -> Period._2016PostAlignment.toString
         )
 
-        Json.toJson[CppaTaxYear2016PostAlignment](
-          CppaTaxYear2016PostAlignment.PostFlexiblyAccessedTaxYear(
+        Json.toJson[CppaTaxYear2016](
+          CppaTaxYear2016.PostFlexiblyAccessedTaxYear(
             v.definedBenefitInputAmount,
             v.definedContributionInputAmount,
             v.totalIncome,
