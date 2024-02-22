@@ -22,24 +22,10 @@ trait CalculationResponses {
 
   val allTaxYearsWithNormalTaxYearResponse: CalculationResponse = CalculationResponse(
     Resubmission(false, None),
-    TotalAmounts(13002, 0, 26000),
+    TotalAmounts(11002, 0, 26000),
     List(
       OutOfDatesTaxYearsCalculation(
-        Period._2016PreAlignment,
-        0,
-        2000,
-        0,
-        2000,
-        0,
-        0,
-        10000,
-        List(
-          OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
-          OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
-      ),
-      OutOfDatesTaxYearsCalculation(
-        Period._2016PostAlignment,
+        Period._2016,
         1334,
         668,
         4000,
@@ -549,34 +535,20 @@ trait CalculationResponses {
 
   val withAllYearsResponse = CalculationResponse(
     Resubmission(true, Some("Change in amounts")),
-    TotalAmounts(42401, 0, 23002),
+    TotalAmounts(34400, 0, 23002),
     List(
       OutOfDatesTaxYearsCalculation(
-        Period._2016PreAlignment,
+        Period._2016,
         0,
         2000,
         0,
         2000,
+        10000,
         0,
         0,
-        20000,
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
-      ),
-      OutOfDatesTaxYearsCalculation(
-        Period._2016PostAlignment,
-        2667,
-        5334,
-        4000,
-        8000,
-        10000,
-        4000,
-        0,
-        List(
-          OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1334),
-          OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 4000)
         )
       ),
       OutOfDatesTaxYearsCalculation(
