@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.config
+package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.mvc.{Request, WrappedRequest}
 
-import javax.inject.{Inject, Singleton}
-
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
-
-  val appName: String = config.get[String]("appName")
-
-  lazy val paacServiceUrl: String = servicesConfig.baseUrl("pension-annual-allowance-calculator")
-
-  val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
-
-  val userAnswerTtlInDays: Int = config.get[Int]("mongodb.userAnswersTtlInDays")
-}
+final case class IdentifierRequest[A](request: Request[A], userId: String, nino: Option[String])
+  extends WrappedRequest[A](request)
