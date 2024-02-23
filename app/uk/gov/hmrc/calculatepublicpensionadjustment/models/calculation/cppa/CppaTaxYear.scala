@@ -39,16 +39,12 @@ object CppaTaxYear {
       a.map(identity)
 
     CppaTaxYear2011To2015.reads or
-      CppaTaxYear2016PreAlignment.reads or
-      CppaTaxYear2016PostAlignment.reads or
-      CppaTaxYear2017ToCurrent.reads
+      CppaTaxYear2016To2023.reads
   }
 
   implicit lazy val writes: Writes[CppaTaxYear] = Writes {
-    case year: CppaTaxYear2011To2015        => Json.toJson(year)(CppaTaxYear2011To2015.writes)
-    case year: CppaTaxYear2016PreAlignment  => Json.toJson(year)(CppaTaxYear2016PreAlignment.writes)
-    case year: CppaTaxYear2016PostAlignment => Json.toJson(year)(CppaTaxYear2016PostAlignment.writes)
-    case year: CppaTaxYear2017ToCurrent     => Json.toJson(year)(CppaTaxYear2017ToCurrent.writes)
-    case _                                  => throw new Exception("Tax year period is invalid")
+    case year: CppaTaxYear2011To2015 => Json.toJson(year)(CppaTaxYear2011To2015.writes)
+    case year: CppaTaxYear2016To2023 => Json.toJson(year)(CppaTaxYear2016To2023.writes)
+    case _                           => throw new Exception("Tax year period is invalid")
   }
 }
