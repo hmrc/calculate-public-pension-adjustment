@@ -1,10 +1,10 @@
 # microservice specific routes
 
-GET         /user-answers              uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.get
-POST        /user-answers              uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.set
-DELETE      /user-answers              uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.clear
+GET         /user-answers                uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.get
+POST        /user-answers                uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.set
+DELETE      /user-answers                uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.clear
 
-POST        /user-answers/keep-alive   uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.keepAlive
+POST        /user-answers/keep-alive     uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.keepAlive
 
 POST        /show-calculation            uk.gov.hmrc.calculatepublicpensionadjustment.controllers.ShowCalculationController.showCalculation
 

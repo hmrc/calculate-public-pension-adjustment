@@ -25,11 +25,11 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.Instant
 
 final case class UserAnswers(
-                              id: String,
-                              data: JsObject,
-                              lastUpdated: Instant,
-                              authenticated: Boolean = false
-                            )
+  id: String,
+  data: JsObject,
+  lastUpdated: Instant,
+  authenticated: Boolean = false
+)
 
 object UserAnswers {
 
@@ -42,7 +42,7 @@ object UserAnswers {
         (__ \ "data").read[JsObject] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat) and
         (__ \ "authenticated").read[Boolean]
-      )(UserAnswers.apply _)
+    )(UserAnswers.apply _)
   }
 
   val writes: OWrites[UserAnswers] = {
@@ -54,7 +54,7 @@ object UserAnswers {
         (__ \ "data").write[JsObject] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat) and
         (__ \ "authenticated").write[Boolean]
-      )(unlift(UserAnswers.unapply))
+    )(unlift(UserAnswers.unapply))
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)
@@ -72,7 +72,7 @@ object UserAnswers {
           (__ \ "data").read[SensitiveString] and
           (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat) and
           (__ \ "authenticated").read[Boolean]
-        )((id, data, lastUpdated, authenticated) =>
+      )((id, data, lastUpdated, authenticated) =>
         UserAnswers(id, Json.parse(data.decryptedValue).as[JsObject], lastUpdated, authenticated)
       )
 
@@ -82,7 +82,7 @@ object UserAnswers {
           (__ \ "data").write[SensitiveString] and
           (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat) and
           (__ \ "authenticated").write[Boolean]
-        )(ua => (ua.id, SensitiveString(Json.stringify(ua.data)), ua.lastUpdated, ua.authenticated))
+      )(ua => (ua.id, SensitiveString(Json.stringify(ua.data)), ua.lastUpdated, ua.authenticated))
 
     OFormat(encryptedReads orElse reads, encryptedWrites)
   }

@@ -28,11 +28,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class UserAnswersController @Inject() (
-                                        cc: ControllerComponents,
-                                        identify: IdentifierAction,
-                                        repository: UserAnswersRepository
-                                      )(implicit ec: ExecutionContext)
-  extends BackendController(cc) {
+  cc: ControllerComponents,
+  identify: IdentifierAction,
+  repository: UserAnswersRepository
+)(implicit ec: ExecutionContext)
+    extends BackendController(cc) {
 
   def get: Action[AnyContent] = identify.async { request =>
     repository

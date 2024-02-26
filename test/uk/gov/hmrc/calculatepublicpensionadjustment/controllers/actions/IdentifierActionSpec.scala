@@ -117,16 +117,16 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
 
   class FakeAuthConnector[T](value: T) extends AuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
-                                                                             hc: HeaderCarrier,
-                                                                             ec: ExecutionContext
+      hc: HeaderCarrier,
+      ec: ExecutionContext
     ): Future[A] =
       Future.fromTry(Try(value.asInstanceOf[A]))
   }
 
   class FakeFailingAuthConnector(exceptionToReturn: Throwable) extends AuthConnector {
     override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
-                                                                             hc: HeaderCarrier,
-                                                                             ec: ExecutionContext
+      hc: HeaderCarrier,
+      ec: ExecutionContext
     ): Future[A] =
       Future.failed(exceptionToReturn)
   }

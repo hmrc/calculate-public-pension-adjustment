@@ -36,7 +36,7 @@ import java.time.{Clock, Instant, ZoneId}
 import scala.concurrent.Future
 
 class UserAnswersControllerSpec
-  extends AnyFreeSpec
+    extends AnyFreeSpec
     with Matchers
     with MockitoSugar
     with OptionValues

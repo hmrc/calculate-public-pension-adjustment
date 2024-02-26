@@ -33,23 +33,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserAnswersRepository @Inject() (
-                                        mongoComponent: MongoComponent,
-                                        appConfig: AppConfig,
-                                        clock: Clock
-                                      )(implicit ec: ExecutionContext, crypto: Encrypter with Decrypter)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "user-answers",
-    mongoComponent = mongoComponent,
-    domainFormat = UserAnswers.format,
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("last-updated-index")
-          .expireAfter(appConfig.userAnswerTtlInDays, TimeUnit.DAYS)
+  mongoComponent: MongoComponent,
+  appConfig: AppConfig,
+  clock: Clock
+)(implicit ec: ExecutionContext, crypto: Encrypter with Decrypter)
+    extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers",
+      mongoComponent = mongoComponent,
+      domainFormat = UserAnswers.format,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("last-updated-index")
+            .expireAfter(appConfig.userAnswerTtlInDays, TimeUnit.DAYS)
+        )
       )
-    )
-  ) {
+    ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 

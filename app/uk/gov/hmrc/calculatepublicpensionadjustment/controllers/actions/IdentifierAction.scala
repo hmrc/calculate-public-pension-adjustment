@@ -29,10 +29,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IdentifierAction @Inject() (
-                                   val authConnector: AuthConnector,
-                                   val parser: BodyParsers.Default
-                                 )(implicit val executionContext: ExecutionContext)
-  extends ActionBuilder[IdentifierRequest, AnyContent]
+  val authConnector: AuthConnector,
+  val parser: BodyParsers.Default
+)(implicit val executionContext: ExecutionContext)
+    extends ActionBuilder[IdentifierRequest, AnyContent]
     with ActionFunction[Request, IdentifierRequest]
     with AuthorisedFunctions {
 

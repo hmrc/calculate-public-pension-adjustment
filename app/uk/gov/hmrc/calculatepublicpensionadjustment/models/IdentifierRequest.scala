@@ -19,4 +19,4 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models
 import play.api.mvc.{Request, WrappedRequest}
 
 final case class IdentifierRequest[A](request: Request[A], userId: String, nino: Option[String])
-  extends WrappedRequest[A](request)
+    extends WrappedRequest[A](request)
