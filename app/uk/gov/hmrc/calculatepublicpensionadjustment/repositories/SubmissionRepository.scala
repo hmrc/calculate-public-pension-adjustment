@@ -24,7 +24,7 @@ import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.Clock
+import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -69,4 +69,17 @@ class SubmissionRepository @Inject() (
       .find(byUniqueId(uniqueId))
       .headOption()
 
+  def set(submission: Submission, uniqueId: String): Future[Done] = {
+
+    val updatedSubmission = submission.copy(lastUpdated = Instant.now(clock))
+
+    collection
+      .replaceOne(
+        filter = byUniqueId(uniqueId),
+        replacement = updatedSubmission,
+        options = ReplaceOptions().upsert(true)
+      )
+      .toFuture()
+      .map(_ => Done)
+  }
 }

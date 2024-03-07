@@ -18,10 +18,10 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import cats.data.EitherT
 import play.api.Logging
-import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
+import play.api.libs.json.{JsSuccess, JsValue, Json, Reads, __}
 import play.api.mvc._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, Submission, SubmissionRequest, SubmissionResponse}
-import uk.gov.hmrc.calculatepublicpensionadjustment.services.SubmissionService
+import uk.gov.hmrc.calculatepublicpensionadjustment.services.{SubmissionService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
 
 import javax.inject.{Inject, Singleton}
@@ -30,14 +30,18 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubmissionController @Inject() (
   override val controllerComponents: ControllerComponents,
-  submissionService: SubmissionService
+  submissionService: SubmissionService,
+  userAnswersService: UserAnswersService
 )(implicit ec: ExecutionContext)
     extends BackendBaseController
     with Logging {
 
   def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
-      val result = EitherT(submissionService.submit(submissionRequest.calculationInputs, submissionRequest.calculation))
+      val result = EitherT(
+        submissionService
+          .submit(submissionRequest.calculationInputs, submissionRequest.calculation, submissionRequest.sessionId)
+      )
 
       result.fold(
         errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
@@ -48,17 +52,25 @@ class SubmissionController @Inject() (
 
   def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async {
     val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
-
-    submission.map(s =>
-      s match {
-        case Some(submission) =>
-          Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
-        case None             => BadRequest
-      }
-    )
+    submission.flatMap {
+      case Some(submission) =>
+        userAnswersService.updateSubmissionStartedToTrue(uniqueId).map {
+          case true  =>
+            println(
+              Json.prettyPrint(
+                Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation))
+              )
+            )
+            Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
+          case false =>
+            BadRequest
+        }
+      case None             =>
+        Future.successful(BadRequest)
+    }
   }
 
-  private def withValidJson[T](
+  def withValidJson[T](
     errMessage: String
   )(f: T => Future[Result])(implicit request: Request[JsValue], reads: Reads[T]): Future[Result] =
     request.body.validate[T] match {
