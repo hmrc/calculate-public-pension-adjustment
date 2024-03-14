@@ -56,11 +56,6 @@ class SubmissionController @Inject() (
       case Some(submission) =>
         userAnswersService.updateSubmissionStartedToTrue(uniqueId).map {
           case true  =>
-            println(
-              Json.prettyPrint(
-                Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation))
-              )
-            )
             Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
           case false =>
             BadRequest
