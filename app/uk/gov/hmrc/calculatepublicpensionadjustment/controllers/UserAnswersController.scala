@@ -22,6 +22,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions.IdentifierAction
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.UserAnswers
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
+import uk.gov.hmrc.calculatepublicpensionadjustment.services.UserAnswersService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -30,7 +31,8 @@ import scala.concurrent.ExecutionContext
 class UserAnswersController @Inject() (
   cc: ControllerComponents,
   identify: IdentifierAction,
-  repository: UserAnswersRepository
+  repository: UserAnswersRepository,
+  userAnswersService: UserAnswersService
 )(implicit ec: ExecutionContext)
     extends BackendController(cc) {
 
@@ -59,5 +61,14 @@ class UserAnswersController @Inject() (
     repository
       .clear(request.userId)
       .map(_ => NoContent)
+  }
+
+  def updateSubmissionLander(uniqueId: String): Action[AnyContent] = Action.async {
+    userAnswersService.updateSubmissionStartedToFalse(uniqueId).map {
+      case true  =>
+        Ok
+      case false =>
+        BadRequest
+    }
   }
 }

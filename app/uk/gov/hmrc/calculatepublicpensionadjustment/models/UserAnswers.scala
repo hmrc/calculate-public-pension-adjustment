@@ -28,7 +28,8 @@ final case class UserAnswers(
   id: String,
   data: JsObject,
   lastUpdated: Instant,
-  authenticated: Boolean = false
+  authenticated: Boolean = false,
+  submissionStarted: Boolean = false
 )
 
 object UserAnswers {
@@ -41,7 +42,8 @@ object UserAnswers {
       (__ \ "_id").read[String] and
         (__ \ "data").read[JsObject] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat) and
-        (__ \ "authenticated").read[Boolean]
+        (__ \ "authenticated").read[Boolean] and
+        (__ \ "submissionStarted").read[Boolean]
     )(UserAnswers.apply _)
   }
 
@@ -53,7 +55,8 @@ object UserAnswers {
       (__ \ "_id").write[String] and
         (__ \ "data").write[JsObject] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat) and
-        (__ \ "authenticated").write[Boolean]
+        (__ \ "authenticated").write[Boolean] and
+        (__ \ "submissionStarted").write[Boolean]
     )(unlift(UserAnswers.unapply))
   }
 
@@ -71,9 +74,10 @@ object UserAnswers {
         (__ \ "_id").read[String] and
           (__ \ "data").read[SensitiveString] and
           (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat) and
-          (__ \ "authenticated").read[Boolean]
-      )((id, data, lastUpdated, authenticated) =>
-        UserAnswers(id, Json.parse(data.decryptedValue).as[JsObject], lastUpdated, authenticated)
+          (__ \ "authenticated").read[Boolean] and
+          (__ \ "submissionStarted").read[Boolean]
+      )((id, data, lastUpdated, authenticated, submissionStarted) =>
+        UserAnswers(id, Json.parse(data.decryptedValue).as[JsObject], lastUpdated, authenticated, submissionStarted)
       )
 
     val encryptedWrites: OWrites[UserAnswers] =
@@ -81,8 +85,9 @@ object UserAnswers {
         (__ \ "_id").write[String] and
           (__ \ "data").write[SensitiveString] and
           (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat) and
-          (__ \ "authenticated").write[Boolean]
-      )(ua => (ua.id, SensitiveString(Json.stringify(ua.data)), ua.lastUpdated, ua.authenticated))
+          (__ \ "authenticated").write[Boolean] and
+          (__ \ "submissionStarted").write[Boolean]
+      )(ua => (ua.id, SensitiveString(Json.stringify(ua.data)), ua.lastUpdated, ua.authenticated, ua.submissionStarted))
 
     OFormat(encryptedReads orElse reads, encryptedWrites)
   }

@@ -29,31 +29,34 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
 
     "must serialise to expected Json" in {
       val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
-      val submissionRequest = SubmissionRequest(calculationInputs, None)
+      val submissionRequest = SubmissionRequest(calculationInputs, None, "sessionId")
 
       val serialised: JsValue = Json.toJson(submissionRequest)
 
       val expectedJson = Json.obj(
-        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false))
+        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false)),
+        "sessionId"         -> "sessionId"
       )
       serialised mustEqual expectedJson
     }
 
     "must de-serialise from valid Json with userAnswers" in {
       val json = Json.obj(
-        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false))
+        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false)),
+        "sessionId"         -> "sessionId"
       )
 
       val deserialised: JsResult[SubmissionRequest] = json.validate[SubmissionRequest]
 
       val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
-      val submissionRequest = SubmissionRequest(calculationInputs, None)
+      val submissionRequest = SubmissionRequest(calculationInputs, None, "sessionId")
       deserialised mustEqual (JsSuccess(submissionRequest))
     }
 
     "serialise" in {
       val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
-      val submissionRequest = SubmissionRequest(calculationInputs, Some(SubmissionTestData.calculationResponse))
+      val submissionRequest =
+        SubmissionRequest(calculationInputs, Some(SubmissionTestData.calculationResponse), "sessionId")
       val json: String      = Json.toJson(submissionRequest).toString
 
       json must startWith("{\"calculationInputs\":{")

@@ -10,3 +10,5 @@ POST        /show-calculation            uk.gov.hmrc.calculatepublicpensionadjus
 
 GET         /submission/:uniqueId        uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.retrieveSubmission(uniqueId: String)
 POST        /submission                  uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.submit
+
+GET         /submission-status-update/:uniqueId         uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.updateSubmissionLander(uniqueId: String)
