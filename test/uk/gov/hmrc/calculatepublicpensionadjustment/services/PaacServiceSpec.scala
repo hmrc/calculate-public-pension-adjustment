@@ -259,6 +259,52 @@ class PaacServiceSpec
       validCalculationRequestWithAllYears.copy(taxYears = uTaxYears.sortBy(_.period))
     }
 
+    val validCalculationRequestWithNoInitialFlexiblyAccessedTaxYear2 = {
+
+      val uTaxYears = validCalculationRequestWithAllYears.taxYears.filterNot(v =>
+        v.period == Period._2016 | v.period == Period._2020 | v.period == Period._2023
+      ) ++ List(
+        CppaTaxYear2016To2023.NormalTaxYear(
+          6000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 9000, None, None),
+            TaxYearScheme("Scheme 2", "pstrTest2", 12000, 10000, 9000, None, None)
+          ),
+          100000,
+          4000,
+          Period._2016,
+          None,
+          Some(0)
+        ),
+        CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
+          12000,
+          10000,
+          90000,
+          3000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 3000, None, None),
+            TaxYearScheme("Scheme 2", "pstrTest2", 18000, 10000, 6000, None, None)
+          ),
+          Period._2020,
+          Some(BelowThreshold)
+        ),
+        CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
+          8000,
+          6000,
+          90000,
+          3000,
+          List(
+            TaxYearScheme("Scheme 1", "pstrTest1", 12000, 10000, 3000, None, None),
+            TaxYearScheme("Scheme 2", "pstrTest2", 18000, 10000, 6000, None, None)
+          ),
+          Period._2023,
+          Some(AboveThreshold(24000))
+        )
+      )
+
+      validCalculationRequestWithAllYears.copy(taxYears = uTaxYears.sortBy(_.period))
+    }
+
     val validPaacRequestWithAllYears = PaacRequest(
       List(
         PaacTaxYear2011To2015.NormalTaxYear(9000, Period._2011),
@@ -564,6 +610,13 @@ class PaacServiceSpec
       "must return valid PaacRequest for given valid CalculationRequest with no InitialFlexiblyAccessedTaxYear" in {
 
         val result = service.buildPaacRequest(validCalculationRequestWithNoInitialFlexiblyAccessedTaxYear)
+
+        result mustEqual validPaacRequestWithNoInitialFlexiblyAccessedTaxYear
+      }
+
+      "must return valid PaacRequest for given valid CalculationRequest with no InitialFlexiblyAccessedTaxYear and pensionInput2016PostAmount = Some(0) for CppaTaxYear2016To2023.NormalTaxYear for period 2016" in {
+
+        val result = service.buildPaacRequest(validCalculationRequestWithNoInitialFlexiblyAccessedTaxYear2)
 
         result mustEqual validPaacRequestWithNoInitialFlexiblyAccessedTaxYear
       }
