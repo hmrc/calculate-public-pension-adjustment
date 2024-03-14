@@ -64,8 +64,7 @@ class UserAnswersController @Inject() (
   }
 
   def updateSubmissionLander(uniqueId: String): Action[AnyContent] = Action.async {
-    val update = userAnswersService.updateSubmissionStartedToFalse(uniqueId)
-    update.map {
+    userAnswersService.updateSubmissionStartedToFalse(uniqueId).map {
       case true  =>
         Ok
       case false =>

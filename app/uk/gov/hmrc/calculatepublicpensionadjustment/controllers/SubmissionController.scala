@@ -38,12 +38,10 @@ class SubmissionController @Inject() (
 
   def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
-      val result = EitherT(
+      EitherT(
         submissionService
           .submit(submissionRequest.calculationInputs, submissionRequest.calculation, submissionRequest.sessionId)
-      )
-
-      result.fold(
+      ).fold(
         errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
         uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
       )
@@ -51,8 +49,7 @@ class SubmissionController @Inject() (
   }
 
   def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async {
-    val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
-    submission.flatMap {
+    submissionService.retrieve(uniqueId) flatMap {
       case Some(submission) =>
         userAnswersService.updateSubmissionStartedToTrue(uniqueId).map {
           case true  =>

@@ -17,9 +17,8 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import play.api.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
-import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.{SubmissionRepository, UserAnswersRepository}
+import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,37 +38,29 @@ class UserAnswersService @Inject() (
       case _    => false
     }
 
-  def updateSubmissionStartedToTrue(uniqueId: String): Future[Boolean] = {
-    val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
-    submission.flatMap {
+  def updateSubmissionStartedToTrue(uniqueId: String): Future[Boolean] =
+    submissionService.retrieve(uniqueId).flatMap {
       case Some(submission) =>
-        val userAnswers = retrieveUserAnswers(submission.sessionId)
-        userAnswers.flatMap {
+        retrieveUserAnswers(submission.sessionId).flatMap {
           case Some(userAnswers) =>
-            val updatedUserAnswers = userAnswers.copy(submissionStarted = true)
-            updateUserAnswers(updatedUserAnswers)
+            updateUserAnswers(userAnswers.copy(submissionStarted = true))
           case None              =>
             Future.successful(false)
         }
       case None             =>
         Future.successful(false)
     }
-  }
 
-  def updateSubmissionStartedToFalse(uniqueId: String): Future[Boolean] = {
-    val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
-    submission.flatMap {
+  def updateSubmissionStartedToFalse(uniqueId: String): Future[Boolean] =
+    submissionService.retrieve(uniqueId).flatMap {
       case Some(submission) =>
-        val userAnswers = retrieveUserAnswers(submission.sessionId)
-        userAnswers.flatMap {
+        retrieveUserAnswers(submission.sessionId).flatMap {
           case Some(userAnswers) =>
-            val updatedUserAnswers = userAnswers.copy(submissionStarted = false)
-            updateUserAnswers(updatedUserAnswers)
+            updateUserAnswers(userAnswers.copy(submissionStarted = false))
           case None              =>
             Future.successful(false)
         }
       case None             =>
         Future.successful(false)
     }
-  }
 }
