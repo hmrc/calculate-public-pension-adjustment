@@ -223,6 +223,90 @@ class SubmissionControllerSpec
       verify(mockSubmissionService, times(1)).retrieve(eqTo("unknownId"))
     }
 
+    "must return a bad request when a submission but no user answers exists" in {
+
+      when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
+        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+
+      when(mockSubmissionService.retrieve("uniqueId"))
+        .thenReturn(
+          Future.successful(
+            Some(
+              Submission(
+                "uniqueId",
+                "sessionId",
+                CalculationInputs(
+                  Resubmission(false, None),
+                  None,
+                  Some(
+                    LifeTimeAllowance(
+                      true,
+                      LocalDate.parse("2018-11-28"),
+                      true,
+                      ChangeInTaxCharge.IncreasedCharge,
+                      LtaProtectionOrEnhancements.Protection,
+                      Some(ProtectionType.FixedProtection2014),
+                      Some("R41AB678TR23355"),
+                      ProtectionEnhancedChanged.Protection,
+                      Some(WhatNewProtectionTypeEnhancement.IndividualProtection2016),
+                      Some("2134567801"),
+                      true,
+                      Some(ExcessLifetimeAllowancePaid.Annualpayment),
+                      Some(WhoPaidLTACharge.PensionScheme),
+                      Some(SchemeNameAndTaxRef("Scheme 1", "00348916RT")),
+                      Some(WhoPayingExtraLtaCharge.You),
+                      None,
+                      NewLifeTimeAllowanceAdditions(
+                        false,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None
+                      )
+                    )
+                  )
+                ),
+                None
+              )
+            )
+          )
+        )
+
+      when(mockUserAnswersService.retrieveUserAnswers("uniqueId"))
+        .thenReturn(
+          Future.successful(
+            None
+          )
+        )
+
+      when(mockUserAnswersService.updateSubmissionStartedToTrue("uniqueId"))
+        .thenReturn(
+          Future.successful(false)
+        )
+
+      val calculationResponse =
+        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
+
+      val request = FakeRequest(routes.SubmissionController.retrieveSubmission("uniqueId"))
+        .withHeaders(AUTHORIZATION -> "my-token")
+        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse, "sessionId")))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+
+    }
+
     "must fail when the submission fails" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
