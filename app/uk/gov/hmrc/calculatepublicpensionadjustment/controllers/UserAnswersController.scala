@@ -71,4 +71,15 @@ class UserAnswersController @Inject() (
         BadRequest
     }
   }
+  def checkSubmissionStartedWithId(id: String): Action[AnyContent] = Action.async {
+    userAnswersService
+      .checkSubmissionStartedWithId(id)
+      .map(submissionStarted =>
+        if (submissionStarted.isEmpty) {
+          NotFound
+        } else {
+          Ok(Json.toJson(submissionStarted))
+        }
+      )
+  }
 }

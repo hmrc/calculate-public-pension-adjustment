@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import play.api.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, UserAnswers}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, SubmissionStatusResponse, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
 
 import javax.inject.{Inject, Singleton}
@@ -69,5 +69,13 @@ class UserAnswersService @Inject() (
         updateUserAnswers(userAnswers.copy(submissionStarted = false))
       case None              =>
         Future.successful(false)
+    }
+
+  def checkSubmissionStartedWithId(id: String): Future[Option[SubmissionStatusResponse]] =
+    retrieveUserAnswers(id).flatMap {
+      case Some(userAnswers) =>
+        Future.successful(Some(SubmissionStatusResponse(userAnswers.uniqueId, userAnswers.submissionStarted)))
+      case None              =>
+        Future.successful(None)
     }
 }
