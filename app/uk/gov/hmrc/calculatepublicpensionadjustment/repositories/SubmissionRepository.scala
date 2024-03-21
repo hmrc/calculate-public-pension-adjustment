@@ -82,4 +82,10 @@ class SubmissionRepository @Inject() (
       .toFuture()
       .map(_ => Done)
   }
+  def clear(uniqueId: String): Future[Done] =
+    collection
+      .deleteOne(byUniqueId(uniqueId))
+      .toFuture()
+      .map(_ => Done)
+}
 }

@@ -69,4 +69,10 @@ class SubmissionController @Inject() (
       case JsSuccess(value, _) => f(value)
       case _                   => Future.successful(BadRequest(s"Invalid $errMessage"))
     }
+
+  def clear(uniqueId: String): Action[AnyContent] = identify.async { request =>
+    repository
+      .clear(uniqueId)
+      .map(_ => NoContent)
+  }
 }
