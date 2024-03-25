@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.MockitoSugar
+import org.mockito.{Mockito, MockitoSugar}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -25,14 +25,18 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
+import play.api.test.{FakeRequest, Helpers}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
+import uk.gov.hmrc.calculatepublicpensionadjustment.services.UserAnswersService
+import uk.gov.hmrc.internalauth.client.BackendAuthComponents
+import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
 
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class UserAnswersControllerSpec
@@ -43,7 +47,9 @@ class UserAnswersControllerSpec
     with ScalaFutures
     with BeforeAndAfterEach {
 
-  private val mockRepo = mock[UserAnswersRepository]
+  private val mockRepo               = mock[UserAnswersRepository]
+  private val mockUserAnswersService = mock[UserAnswersService]
+  private val mockStubBehaviour      = mock[StubBehaviour]
 
   private val instant   = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock = Clock.fixed(instant, ZoneId.systemDefault)
@@ -51,11 +57,16 @@ class UserAnswersControllerSpec
   private val userData  = UserAnswers(userId, Json.obj("bar" -> "baz"), Instant.now(stubClock))
 
   override def beforeEach(): Unit = {
-    reset(mockRepo)
     super.beforeEach()
+    Mockito.reset[Any](mockRepo, mockStubBehaviour, mockUserAnswersService)
   }
 
-  private val app = new GuiceApplicationBuilder().overrides(bind[UserAnswersRepository].toInstance(mockRepo)).build()
+  private val app = new GuiceApplicationBuilder()
+    .overrides(
+      bind[UserAnswersRepository].toInstance(mockRepo),
+      bind[UserAnswersService].toInstance(mockUserAnswersService)
+    )
+    .build()
 
   ".get" - {
 
@@ -201,5 +212,51 @@ class UserAnswersControllerSpec
 
       status(result) mustEqual BAD_REQUEST
     }
+  }
+
+  ".updateSubmissionLander must return OK when user answer found with uniqueID" in {
+
+    when(mockUserAnswersService.retrieveUserAnswers("uniqueId"))
+      .thenReturn(
+        Future.successful(
+          Some(
+            UserAnswers("uniqueId", Json.obj("foo" -> "bar"), Instant.now(stubClock), true, true)
+          )
+        )
+      )
+
+    when(mockUserAnswersService.updateSubmissionStartedToFalse("uniqueId"))
+      .thenReturn(
+        Future.successful(true)
+      )
+
+    val request = FakeRequest(routes.UserAnswersController.updateSubmissionLander("uniqueId"))
+      .withHeaders(HeaderNames.xSessionId -> "foo")
+
+    val result = route(app, request).value
+
+    status(result) mustBe OK
+  }
+
+  ".updateSubmissionLander must return bad request when user answer not found" in {
+
+    when(mockUserAnswersService.retrieveUserAnswers("uniqueId"))
+      .thenReturn(
+        Future.successful(
+          None
+        )
+      )
+
+    when(mockUserAnswersService.updateSubmissionStartedToFalse("uniqueId"))
+      .thenReturn(
+        Future.successful(false)
+      )
+
+    val request = FakeRequest(routes.UserAnswersController.updateSubmissionLander("uniqueId"))
+      .withHeaders(HeaderNames.xSessionId -> "foo")
+
+    val result = route(app, request).value
+
+    status(result) mustBe BAD_REQUEST
   }
 }

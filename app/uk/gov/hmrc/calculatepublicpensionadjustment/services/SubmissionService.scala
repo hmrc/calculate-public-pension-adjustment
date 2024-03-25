@@ -54,12 +54,6 @@ class SubmissionService @Inject() (
 
   def retrieve(submissionUniqueId: String): Future[Option[Submission]] = submissionRepository.get(submissionUniqueId)
 
-  def update(uniqueId: String, submission: Submission): Future[Boolean] =
-    submissionRepository.set(submission, uniqueId) map {
-      case Done => true
-      case _    => false
-    }
-
   private def buildSubmission(
     uniqueId: String,
     calculationInputs: CalculationInputs,
