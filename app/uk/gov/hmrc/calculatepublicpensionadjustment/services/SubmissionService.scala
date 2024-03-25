@@ -38,10 +38,10 @@ class SubmissionService @Inject() (
   def submit(
     calculationInputs: CalculationInputs,
     calculationResponse: Option[CalculationResponse],
-    sessionId: String
+    sessionId: String,
+    uniqueId: String
   )(implicit hc: HeaderCarrier): Future[Either[NonEmptyChain[String], String]] = {
 
-    val uniqueId   = uuidService.random()
     val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse, sessionId)
 
     val result: EitherT[Future, NonEmptyChain[String], String] = for {

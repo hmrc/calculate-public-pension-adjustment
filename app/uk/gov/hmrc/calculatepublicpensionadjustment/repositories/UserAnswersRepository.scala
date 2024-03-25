@@ -55,6 +55,9 @@ class UserAnswersRepository @Inject() (
 
   private def byId(id: String): Bson = Filters.equal("_id", id)
 
+  private def byUniqueIdAndNotId(uniqueId: String, id: String): Bson =
+    Filters.and(Filters.equal("uniqueId", uniqueId), Filters.ne("_id", id))
+
   def keepAlive(id: String): Future[Done] =
     collection
       .updateOne(
@@ -88,6 +91,12 @@ class UserAnswersRepository @Inject() (
   def clear(id: String): Future[Done] =
     collection
       .deleteOne(byId(id))
+      .toFuture()
+      .map(_ => Done)
+
+  def clearByUniqueIdAndNotId(uniqueId: String, id: String): Future[Done] =
+    collection
+      .deleteOne(byUniqueIdAndNotId(uniqueId, id))
       .toFuture()
       .map(_ => Done)
 }

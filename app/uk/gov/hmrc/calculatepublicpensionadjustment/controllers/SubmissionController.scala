@@ -20,6 +20,7 @@ import cats.data.EitherT
 import play.api.Logging
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads, __}
 import play.api.mvc._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.RetrieveSubmissionInfo
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, Submission, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.{SubmissionService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
@@ -40,7 +41,12 @@ class SubmissionController @Inject() (
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
       EitherT(
         submissionService
-          .submit(submissionRequest.calculationInputs, submissionRequest.calculation, submissionRequest.sessionId)
+          .submit(
+            submissionRequest.calculationInputs,
+            submissionRequest.calculation,
+            submissionRequest.sessionId,
+            submissionRequest.uniqueId
+          )
       ).fold(
         errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
         uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
@@ -48,17 +54,19 @@ class SubmissionController @Inject() (
     }
   }
 
-  def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async {
-    submissionService.retrieve(uniqueId) flatMap {
-      case Some(submission) =>
-        userAnswersService.updateSubmissionStartedToTrue(uniqueId).map {
-          case true  =>
-            Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
-          case false =>
-            BadRequest
-        }
-      case None             =>
-        Future.successful(BadRequest)
+  def retrieveSubmission: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    withValidJson[RetrieveSubmissionInfo]("RetrieveSubmissionInfo") { retrieveSubmissionInfo =>
+      submissionService.retrieve(retrieveSubmissionInfo.submissionUniqueId.value) flatMap {
+        case Some(submission) =>
+          userAnswersService.updateSubmissionStartedToTrue(retrieveSubmissionInfo).map {
+            case true  =>
+              Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
+            case false =>
+              BadRequest
+          }
+        case None             =>
+          Future.successful(BadRequest)
+      }
     }
   }
 

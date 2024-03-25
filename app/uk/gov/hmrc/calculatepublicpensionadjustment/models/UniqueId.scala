@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
+package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
-import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse}
+import play.api.libs.json._
 
-case class SubmissionRequest(
-  calculationInputs: CalculationInputs,
-  calculation: Option[CalculationResponse],
-  sessionId: String,
-  uniqueId: String
-)
+case class UniqueId(value: String)
 
-object SubmissionRequest {
-
-  implicit lazy val format: Format[SubmissionRequest] = Json.format
+object UniqueId {
+  implicit val format = Json.format[UniqueId]
 }
