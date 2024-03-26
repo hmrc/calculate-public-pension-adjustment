@@ -220,7 +220,7 @@ class UserAnswersControllerSpec
       .thenReturn(
         Future.successful(
           Some(
-            UserAnswers("uniqueId", Json.obj("foo" -> "bar"), Instant.now(stubClock), true, true)
+            UserAnswers("uniqueId", Json.obj("foo" -> "bar"), "uniqueId", Instant.now(stubClock), true, true)
           )
         )
       )

@@ -227,6 +227,8 @@ class SubmissionControllerSpec
 
     "must return a bad request when a submission but no user answers exists" in {
 
+      val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
+
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
         .thenReturn(Future.successful(Retrieval.Username("test-service")))
 
@@ -291,7 +293,7 @@ class SubmissionControllerSpec
           )
         )
 
-      when(mockUserAnswersService.updateSubmissionStartedToTrue("uniqueId"))
+      when(mockUserAnswersService.updateSubmissionStartedToTrue(retrieveSubmissionInfo))
         .thenReturn(
           Future.successful(false)
         )
@@ -299,9 +301,9 @@ class SubmissionControllerSpec
       val calculationResponse =
         Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
-      val request = FakeRequest(routes.SubmissionController.retrieveSubmission("uniqueId"))
+      val request = FakeRequest(routes.SubmissionController.retrieveSubmission)
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse, "sessionId")))
+        .withBody(Json.toJson(SubmissionRequest(calculationInputs, calculationResponse, "sessionId", "uniqueId")))
 
       val result = route(app, request).value
 

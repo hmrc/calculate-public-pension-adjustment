@@ -29,7 +29,8 @@ import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationInputs
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Resubmission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, UniqueId, UserAnswers}
+
 import java.time.Instant
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.{SubmissionRepository, UserAnswersRepository}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -66,7 +67,7 @@ class UserAnswersServiceSpec
 
       "must return a submission when it exists in the userAnswersRepository" in {
 
-        val userAnswers = UserAnswers("uniqueId", Json.obj(), Instant.now)
+        val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
         when(mockUserAnswersRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -86,19 +87,24 @@ class UserAnswersServiceSpec
 
       "must return a submission when it exists in the userAnswersRepository" in {
 
+        val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
+
         val submission =
           Submission("uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
 
-        val userAnswers = UserAnswers("uniqueId", Json.obj(), Instant.now)
+        val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
         when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
         when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(Some(userAnswers)))
         when(mockUserAnswersRepository.set(any())) thenReturn (Future.successful(Done))
+        when(mockUserAnswersRepository.clearByUniqueIdAndNotId(any(), any())) thenReturn (Future.successful(Done))
 
-        service.updateSubmissionStartedToTrue("uniqueId").futureValue mustBe true
+        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue mustBe true
       }
 
       "must return a false if no userAnswer exist for the session id" in {
+
+        val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
 
         val submission =
           Submission("uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
@@ -107,14 +113,16 @@ class UserAnswersServiceSpec
         when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(None))
         when(mockUserAnswersRepository.set(any())) thenReturn Future.successful(Done)
 
-        service.updateSubmissionStartedToTrue("uniqueId").futureValue mustBe false
+        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue mustBe false
       }
 
       "must return a false if no submission exist for the unique id" in {
 
+        val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
+
         when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(None))
 
-        service.updateSubmissionStartedToTrue("uniqueId").futureValue mustBe false
+        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue mustBe false
       }
 
     }
@@ -122,34 +130,16 @@ class UserAnswersServiceSpec
     "updateSubmissionStartedToFalse" - {
 
       "must return a submission when it exists in the userAnswersRepository" in {
+        val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
-        val submission =
-          Submission("uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
-
-        val userAnswers = UserAnswers("uniqueId", Json.obj(), Instant.now)
-
-        when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
-        when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.get("uniqueId")).thenReturn(Future.successful(Some(userAnswers)))
         when(mockUserAnswersRepository.set(any())) thenReturn (Future.successful(Done))
 
         service.updateSubmissionStartedToFalse("uniqueId").futureValue mustBe true
       }
 
       "must return a false if no userAnswer exist for the session id" in {
-
-        val submission =
-          Submission("uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
-
-        when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
-        when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(None))
-        when(mockUserAnswersRepository.set(any())) thenReturn Future.successful(Done)
-
-        service.updateSubmissionStartedToFalse("uniqueId").futureValue mustBe false
-      }
-
-      "must return a false if no submission exist for the unique id" in {
-
-        when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.get("uniqueId")).thenReturn(Future.successful(None))
 
         service.updateSubmissionStartedToFalse("uniqueId").futureValue mustBe false
       }
