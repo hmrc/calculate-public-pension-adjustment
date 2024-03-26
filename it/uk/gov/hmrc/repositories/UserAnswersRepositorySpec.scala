@@ -53,7 +53,8 @@ class UserAnswersRepositorySpec
     clock = stubClock
   )
 
-  val userAnswers = UserAnswers(userAnswersUniqueId, Json.obj("foo" -> "bar"), Instant.now(stubClock), true, true)
+  val userAnswers =
+    UserAnswers(userAnswersUniqueId, Json.obj("foo" -> "bar"), "uniqueId", Instant.now(stubClock), true, true)
 
   ".get" - {
 

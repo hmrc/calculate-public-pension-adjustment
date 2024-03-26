@@ -54,7 +54,7 @@ class UserAnswersControllerSpec
   private val instant   = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock = Clock.fixed(instant, ZoneId.systemDefault)
   private val userId    = "foo"
-  private val userData  = UserAnswers(userId, Json.obj("bar" -> "baz"), Instant.now(stubClock))
+  private val userData  = UserAnswers(userId, Json.obj("bar" -> "baz"), "uniqueId", Instant.now(stubClock))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -220,7 +220,7 @@ class UserAnswersControllerSpec
       .thenReturn(
         Future.successful(
           Some(
-            UserAnswers("uniqueId", Json.obj("foo" -> "bar"), Instant.now(stubClock), true, true)
+            UserAnswers("uniqueId", Json.obj("foo" -> "bar"), "uniqueId", Instant.now(stubClock), true, true)
           )
         )
       )

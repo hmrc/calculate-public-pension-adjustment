@@ -70,7 +70,7 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.successful(Done))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "sessionId")(hc)
+          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "sessionId", "uniqueId")(hc)
 
         result.futureValue mustBe Right("uniqueId")
       }
@@ -81,7 +81,7 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.failed(new RuntimeException("exception")))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "sessionId")(hc)
+          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "sessionId", "uniqueId")(hc)
 
         an[RuntimeException] mustBe thrownBy(result.futureValue)
       }

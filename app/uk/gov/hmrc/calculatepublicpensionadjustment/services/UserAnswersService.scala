@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import play.api.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
 
 import javax.inject.{Inject, Singleton}
@@ -38,13 +38,24 @@ class UserAnswersService @Inject() (
       case _    => false
     }
 
-  def updateSubmissionStartedToTrue(uniqueId: String): Future[Boolean] =
-    submissionService.retrieve(uniqueId).flatMap {
+  def updateSubmissionStartedToTrue(retrieveSubmissionInfo: RetrieveSubmissionInfo): Future[Boolean] =
+    submissionService.retrieve(retrieveSubmissionInfo.submissionUniqueId.value).flatMap {
       case Some(submission) =>
         retrieveUserAnswers(submission.sessionId).flatMap {
-          case Some(userAnswers) =>
-            updateUserAnswers(userAnswers.copy(submissionStarted = true))
-          case None              =>
+          case Some(rUserAnswers) =>
+            for {
+              _ <-
+                updateUserAnswers(rUserAnswers.copy(id = retrieveSubmissionInfo.internalId, submissionStarted = true))
+              r <- userAnswers.clearByUniqueIdAndNotId(
+                     retrieveSubmissionInfo.submissionUniqueId.value,
+                     retrieveSubmissionInfo.internalId
+                   )
+            } yield r match {
+              case Done => true
+              case _    => false
+            }
+
+          case None =>
             Future.successful(false)
         }
       case None             =>
@@ -52,15 +63,10 @@ class UserAnswersService @Inject() (
     }
 
   def updateSubmissionStartedToFalse(uniqueId: String): Future[Boolean] =
-    submissionService.retrieve(uniqueId).flatMap {
-      case Some(submission) =>
-        retrieveUserAnswers(submission.sessionId).flatMap {
-          case Some(userAnswers) =>
-            updateUserAnswers(userAnswers.copy(submissionStarted = false))
-          case None              =>
-            Future.successful(false)
-        }
-      case None             =>
+    retrieveUserAnswers(uniqueId).flatMap {
+      case Some(userAnswers) =>
+        updateUserAnswers(userAnswers.copy(submissionStarted = false))
+      case None              =>
         Future.successful(false)
     }
 }

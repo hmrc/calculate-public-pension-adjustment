@@ -8,7 +8,7 @@ POST        /user-answers/keep-alive     uk.gov.hmrc.calculatepublicpensionadjus
 
 POST        /show-calculation            uk.gov.hmrc.calculatepublicpensionadjustment.controllers.ShowCalculationController.showCalculation
 
-GET         /submission/:uniqueId        uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.retrieveSubmission(uniqueId: String)
+POST        /retrieve-submission          uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.retrieveSubmission
 POST        /submission                  uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.submit
 
 GET         /submission-status-update/:uniqueId         uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.updateSubmissionLander(uniqueId: String)
