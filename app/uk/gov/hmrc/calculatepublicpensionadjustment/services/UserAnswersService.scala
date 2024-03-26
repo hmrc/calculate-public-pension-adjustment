@@ -46,6 +46,7 @@ class UserAnswersService @Inject() (
             for {
               _ <-
                 updateUserAnswers(rUserAnswers.copy(id = retrieveSubmissionInfo.internalId, submissionStarted = true))
+              _ <- submissionService.updateSubmission(submission.copy(sessionId = retrieveSubmissionInfo.internalId))
               r <- userAnswers.clearByUniqueIdAndNotId(
                      retrieveSubmissionInfo.submissionUniqueId.value,
                      retrieveSubmissionInfo.internalId

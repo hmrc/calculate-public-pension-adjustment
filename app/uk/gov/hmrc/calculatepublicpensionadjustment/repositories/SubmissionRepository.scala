@@ -68,4 +68,19 @@ class SubmissionRepository @Inject() (
     collection
       .find(byUniqueId(uniqueId))
       .headOption()
+
+  def set(submission: Submission): Future[Done] = {
+
+    val updatedSubmission = submission copy (lastUpdated = Instant.now(clock))
+
+    collection
+      .replaceOne(
+        filter = byUniqueId(updatedSubmission.uniqueId),
+        replacement = updatedSubmission,
+        options = ReplaceOptions().upsert(true)
+      )
+      .toFuture()
+      .map(_ => Done)
+  }
+
 }
