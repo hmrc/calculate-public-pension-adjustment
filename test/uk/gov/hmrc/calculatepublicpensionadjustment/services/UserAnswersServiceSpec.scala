@@ -95,6 +95,7 @@ class UserAnswersServiceSpec
         val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
         when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
+        when(mockSubmissionService.updateSubmission(any())).thenReturn(Future.successful(Done))
         when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(Some(userAnswers)))
         when(mockUserAnswersRepository.set(any())) thenReturn (Future.successful(Done))
         when(mockUserAnswersRepository.clearByUniqueIdAndNotId(any(), any())) thenReturn (Future.successful(Done))
