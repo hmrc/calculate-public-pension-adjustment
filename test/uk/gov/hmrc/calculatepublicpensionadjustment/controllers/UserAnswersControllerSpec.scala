@@ -25,18 +25,16 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.{FakeRequest, Helpers}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, SubmissionStatusResponse, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.UserAnswersService
-import uk.gov.hmrc.internalauth.client.BackendAuthComponents
-import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
+import uk.gov.hmrc.internalauth.client.test.StubBehaviour
 
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class UserAnswersControllerSpec
@@ -54,7 +52,7 @@ class UserAnswersControllerSpec
   private val instant   = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock = Clock.fixed(instant, ZoneId.systemDefault)
   private val userId    = "foo"
-  private val userData  = UserAnswers(userId, Json.obj("bar" -> "baz"), "uniqueId", Instant.now(stubClock))
+  private val userData  = UserAnswers(userId, Json.obj("bar" -> "baz"), "uniqueId", Instant.now(stubClock), true, true)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -258,5 +256,35 @@ class UserAnswersControllerSpec
     val result = route(app, request).value
 
     status(result) mustBe BAD_REQUEST
+  }
+
+  "checkSubmissionStarted" - {
+    "must return OK when record have been found" - {
+
+      val submissionStatusResponse = SubmissionStatusResponse("uniqueId", true)
+      when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) thenReturn
+        Future.successful(Some(submissionStatusResponse))
+
+      val request =
+        FakeRequest(GET, routes.UserAnswersController.checkSubmissionStartedWithId(userId).url)
+          .withHeaders(HeaderNames.xSessionId -> userId)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+      contentAsJson(result) mustEqual Json.parse("{\"uniqueId\":\"uniqueId\",\"submissionStarted\":true}")
+    }
+
+    "must return Not Found when the no records have been found" - {
+      when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) thenReturn Future.successful(None)
+
+      val request =
+        FakeRequest(GET, routes.UserAnswersController.checkSubmissionStartedWithId(userId).url)
+          .withHeaders(HeaderNames.xSessionId -> userId)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual NOT_FOUND
+    }
   }
 }

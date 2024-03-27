@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
-import cats.data.NonEmptyChain
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.MockitoSugar
@@ -25,7 +24,6 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.libs.json.Json
-import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationInputs
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Resubmission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
@@ -37,7 +35,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.matching.Regex
+import play.api.libs.json.JsObject
+import requests.CalculationResponses
 
 class UserAnswersServiceSpec
     extends AnyFreeSpec
@@ -148,4 +147,28 @@ class UserAnswersServiceSpec
     }
   }
 
+  "UserAnswersService" - {
+
+    "checkSubmissionStarted" - {
+
+      "must return submission started when it exists in repository" - {
+        val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
+
+        when(mockUserAnswersRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val result = service.checkSubmissionStartedWithId("ID")
+
+        result.futureValue.get.uniqueId mustBe "uniqueId"
+        result.futureValue.get.submissionStarted mustBe true
+      }
+
+      "must return submission started empty when it does not exists in repository" - {
+        when(mockUserAnswersRepository.get(any())).thenReturn(Future.successful(None))
+
+        val result = service.checkSubmissionStartedWithId("ID")
+
+        result.futureValue mustBe None
+      }
+    }
+  }
 }
