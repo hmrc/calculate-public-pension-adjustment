@@ -20,8 +20,10 @@ import cats.data.EitherT
 import play.api.Logging
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads, __}
 import play.api.mvc._
+import uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions.IdentifierAction
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.RetrieveSubmissionInfo
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, Submission, SubmissionRequest, SubmissionResponse}
+import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.{SubmissionService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
 
@@ -32,6 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubmissionController @Inject() (
   override val controllerComponents: ControllerComponents,
   submissionService: SubmissionService,
+  identify: IdentifierAction,
+  repository: SubmissionRepository,
   userAnswersService: UserAnswersService
 )(implicit ec: ExecutionContext)
     extends BackendBaseController
@@ -77,4 +81,10 @@ class SubmissionController @Inject() (
       case JsSuccess(value, _) => f(value)
       case _                   => Future.successful(BadRequest(s"Invalid $errMessage"))
     }
+
+  def clear: Action[AnyContent] = identify.async { request =>
+    repository
+      .clear(request.userId)
+      .map(_ => NoContent)
+  }
 }
