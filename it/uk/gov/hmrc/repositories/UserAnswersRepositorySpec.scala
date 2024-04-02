@@ -29,10 +29,11 @@ class UserAnswersRepositorySpec
     with OptionValues
     with MockitoSugar {
 
-  private val userAnswersUniqueId = "userAnswersUniqueId"
-  private val instant             = Instant.now.truncatedTo(ChronoUnit.MILLIS)
-  private val stubClock: Clock    = Clock.fixed(instant, ZoneId.systemDefault)
-  private val mockAppConfig       = mock[AppConfig]
+  private val userAnswersUniqueId  = "userAnswersUniqueId"
+  private val userAnswersUniqueId2 = "userAnswersUniqueId2"
+  private val instant              = Instant.now.truncatedTo(ChronoUnit.MILLIS)
+  private val stubClock: Clock     = Clock.fixed(instant, ZoneId.systemDefault)
+  private val mockAppConfig        = mock[AppConfig]
 
   private val aesKey = {
     val aesKey = new Array[Byte](32)
@@ -99,6 +100,19 @@ class UserAnswersRepositorySpec
       insert(userAnswers).futureValue
 
       repository.keepAlive(userAnswersUniqueId).futureValue mustBe Done
+    }
+  }
+
+  ".clearByUniqueIdAndNotId" - {
+
+    "must clear user answers with UniqueId with different Id" in {
+
+      insert(userAnswers).futureValue
+      insert(userAnswers.copy(id = userAnswersUniqueId2)).futureValue
+
+      repository.clearByUniqueIdAndNotId("uniqueId", userAnswersUniqueId).futureValue
+      repository.get(userAnswersUniqueId).futureValue mustBe defined
+      repository.get(userAnswersUniqueId2).futureValue must not be defined
     }
   }
 }
