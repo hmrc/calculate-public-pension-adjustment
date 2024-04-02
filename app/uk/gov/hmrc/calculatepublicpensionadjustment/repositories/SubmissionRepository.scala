@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.repositories
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model._
+import org.mongodb.scala.model.{IndexModel, _}
 import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
@@ -52,6 +52,12 @@ class SubmissionRepository @Inject() (
           IndexOptions()
             .name("uniqueIdx")
             .unique(true)
+        ),
+        IndexModel(
+          Indexes.ascending("sessionId"),
+          IndexOptions()
+            .name("sessionIdx")
+            .unique(true)
         )
       )
     ) {
@@ -63,6 +69,8 @@ class SubmissionRepository @Inject() (
       .map(_ => Done)
 
   private def byUniqueId(uniqueId: String): Bson = Filters.equal("uniqueId", uniqueId)
+
+  private def bySessionId(sessionId: String): Bson = Filters.equal("sessionId", sessionId)
 
   def get(uniqueId: String): Future[Option[Submission]] =
     collection
@@ -82,5 +90,11 @@ class SubmissionRepository @Inject() (
       .toFuture()
       .map(_ => Done)
   }
+
+  def clear(sessionId: String): Future[Done] =
+    collection
+      .deleteOne(bySessionId(sessionId))
+      .toFuture()
+      .map(_ => Done)
 
 }

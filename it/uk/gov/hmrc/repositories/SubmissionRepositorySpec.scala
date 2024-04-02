@@ -191,4 +191,22 @@ class SubmissionRepositorySpec
       }
     }
   }
+
+  ".clear" - {
+
+    "must clear user answers" in {
+
+      val submission = Submission(
+        submissionUniqueId,
+        "sessionId",
+        calculationInputs,
+        calculation,
+        Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
+      )
+
+      insert(submission).futureValue
+      repository.clear("sessionId").futureValue
+      repository.get(submissionUniqueId).futureValue must not be defined
+    }
+  }
 }

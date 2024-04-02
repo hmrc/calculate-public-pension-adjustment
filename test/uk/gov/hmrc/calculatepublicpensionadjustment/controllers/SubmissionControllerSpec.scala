@@ -31,7 +31,9 @@ import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse, Resubmission, TotalAmounts}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{Submission, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models._
+import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.{SubmissionService, UserAnswersService}
+import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.internalauth.client._
 import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
 
@@ -51,11 +53,12 @@ class SubmissionControllerSpec
 
   override def beforeEach(): Unit                          = {
     super.beforeEach()
-    Mockito.reset[Any](mockSubmissionService, mockStubBehaviour, mockUserAnswersService)
+    Mockito.reset[Any](mockSubmissionService, mockStubBehaviour, mockUserAnswersService, mockSubmissionRepository)
   }
   private val mockSubmissionService                        = mock[SubmissionService]
   private val mockUserAnswersService                       = mock[UserAnswersService]
   private val mockStubBehaviour                            = mock[StubBehaviour]
+  private val mockSubmissionRepository                     = mock[SubmissionRepository]
   private val backendAuthComponents: BackendAuthComponents =
     BackendAuthComponentsStub(mockStubBehaviour)(Helpers.stubControllerComponents(), global)
 
@@ -71,6 +74,7 @@ class SubmissionControllerSpec
     .overrides(
       bind[SubmissionService].toInstance(mockSubmissionService),
       bind[UserAnswersService].toInstance(mockUserAnswersService),
+      bind[SubmissionRepository].toInstance(mockSubmissionRepository),
       bind[BackendAuthComponents].toInstance(backendAuthComponents)
     )
     .build()
@@ -363,6 +367,33 @@ class SubmissionControllerSpec
 
       status(result) mustEqual BAD_REQUEST
       contentAsString(result) mustEqual "Invalid Submission"
+    }
+  }
+
+  ".clear" - {
+
+    "must return No Content when data is cleared" in {
+
+      when(mockSubmissionRepository.clear(eqTo("sessionId"))) thenReturn Future.successful(Done)
+
+      val request =
+        FakeRequest(DELETE, routes.SubmissionController.clear.url)
+          .withHeaders(HeaderNames.xSessionId -> "sessionId")
+
+      val result = route(app, request).value
+
+      status(result) mustEqual NO_CONTENT
+      verify(mockSubmissionRepository, times(1)).clear(eqTo("sessionId"))
+    }
+
+    "must return Bad Request when the request does not have a session id" in {
+
+      val request =
+        FakeRequest(DELETE, routes.SubmissionController.clear.url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
     }
   }
 
