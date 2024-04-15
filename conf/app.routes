@@ -15,3 +15,5 @@ DELETE      /submission                  uk.gov.hmrc.calculatepublicpensionadjus
 GET         /submission-status-update/:uniqueId         uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.updateSubmissionLander(uniqueId: String)
 
 GET         /check-submission-status/:id          uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.checkSubmissionStartedWithId(id: String)
+
+POST        /test-only/user-answers               uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.testOnlyset

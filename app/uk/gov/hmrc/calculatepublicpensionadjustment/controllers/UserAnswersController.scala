@@ -51,6 +51,12 @@ class UserAnswersController @Inject() (
       .map(_ => NoContent)
   }
 
+  def testOnlyset: Action[UserAnswers] = Action.async(parse.json[UserAnswers]) { request =>
+    repository
+      .set(request.body)
+      .map(_ => NoContent)
+  }
+
   def keepAlive: Action[AnyContent] = identify.async { request =>
     repository
       .keepAlive(request.userId)
