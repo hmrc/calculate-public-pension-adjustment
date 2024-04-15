@@ -16,4 +16,4 @@ GET         /submission-status-update/:uniqueId         uk.gov.hmrc.calculatepub
 
 GET         /check-submission-status/:id          uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.checkSubmissionStartedWithId(id: String)
 
-POST        /test-only/user-answers/user-answers       uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.testOnlyset
+POST        /test-only/user-answers               uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.testOnlyset
