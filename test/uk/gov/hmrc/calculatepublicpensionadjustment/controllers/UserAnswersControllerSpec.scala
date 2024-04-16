@@ -155,6 +155,42 @@ class UserAnswersControllerSpec
     }
   }
 
+  ".testOnlyset" - {
+
+    "must return No Content when the data is successfully saved" in {
+
+      when(mockRepo.set(any())) thenReturn Future.successful(Done)
+
+      val request =
+        FakeRequest(POST, routes.UserAnswersController.testOnlyset.url)
+          .withHeaders(
+            "Content-Type" -> "application/json"
+          )
+          .withBody(Json.toJson(userData).toString)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual NO_CONTENT
+      verify(mockRepo, times(1)).set(eqTo(userData))
+    }
+
+    "must return Bad Request when the request cannot be parsed as UserData" in {
+
+      val badPayload = Json.obj("foo" -> "bar")
+
+      val request =
+        FakeRequest(POST, routes.UserAnswersController.testOnlyset.url)
+          .withHeaders(
+            "Content-Type" -> "application/json"
+          )
+          .withBody(badPayload)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+    }
+  }
+
   ".keepAlive" - {
 
     "must return No Content when data is kept alive" in {
