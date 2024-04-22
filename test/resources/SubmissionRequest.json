@@ -121,5 +121,7 @@
       }
     ],
     "inDates": []
-  }
+  },
+  "sessionId" : "sessionId",
+  "uniqueId"  : "uniqueId"
 }

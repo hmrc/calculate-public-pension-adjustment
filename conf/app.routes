@@ -1,6 +1,19 @@
 # microservice specific routes
 
+GET         /user-answers                uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.get
+POST        /user-answers                uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.set
+DELETE      /user-answers                uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.clear
+
+POST        /user-answers/keep-alive     uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.keepAlive
+
 POST        /show-calculation            uk.gov.hmrc.calculatepublicpensionadjustment.controllers.ShowCalculationController.showCalculation
 
-GET         /submission/:uniqueId        uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.retrieveSubmission(uniqueId: String)
+POST        /retrieve-submission          uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.retrieveSubmission
 POST        /submission                  uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.submit
+DELETE      /submission                  uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.clear
+
+GET         /submission-status-update/:uniqueId         uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.updateSubmissionLander(uniqueId: String)
+
+GET         /check-submission-status/:id          uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.checkSubmissionStartedWithId(id: String)
+
+POST        /test-only/user-answers               uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.testOnlyset

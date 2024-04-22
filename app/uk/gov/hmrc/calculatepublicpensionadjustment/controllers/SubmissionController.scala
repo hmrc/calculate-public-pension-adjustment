@@ -18,10 +18,13 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import cats.data.EitherT
 import play.api.Logging
-import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
+import play.api.libs.json.{JsSuccess, JsValue, Json, Reads, __}
 import play.api.mvc._
+import uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions.IdentifierAction
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.RetrieveSubmissionInfo
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, Submission, SubmissionRequest, SubmissionResponse}
-import uk.gov.hmrc.calculatepublicpensionadjustment.services.SubmissionService
+import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
+import uk.gov.hmrc.calculatepublicpensionadjustment.services.{SubmissionService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
 
 import javax.inject.{Inject, Singleton}
@@ -30,39 +33,58 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubmissionController @Inject() (
   override val controllerComponents: ControllerComponents,
-  submissionService: SubmissionService
+  submissionService: SubmissionService,
+  identify: IdentifierAction,
+  repository: SubmissionRepository,
+  userAnswersService: UserAnswersService
 )(implicit ec: ExecutionContext)
     extends BackendBaseController
     with Logging {
 
   def submit: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withValidJson[SubmissionRequest]("Submission") { submissionRequest =>
-      val result = EitherT(submissionService.submit(submissionRequest.calculationInputs, submissionRequest.calculation))
-
-      result.fold(
+      EitherT(
+        submissionService
+          .submit(
+            submissionRequest.calculationInputs,
+            submissionRequest.calculation,
+            submissionRequest.sessionId,
+            submissionRequest.uniqueId
+          )
+      ).fold(
         errors => BadRequest(Json.toJson(SubmissionResponse.Failure(errors))),
         uniqueId => Accepted(Json.toJson(SubmissionResponse.Success(uniqueId)))
       )
     }
   }
 
-  def retrieveSubmission(uniqueId: String): Action[AnyContent] = Action.async {
-    val submission: Future[Option[Submission]] = submissionService.retrieve(uniqueId)
-
-    submission.map(s =>
-      s match {
+  def retrieveSubmission: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    withValidJson[RetrieveSubmissionInfo]("RetrieveSubmissionInfo") { retrieveSubmissionInfo =>
+      submissionService.retrieve(retrieveSubmissionInfo.submissionUniqueId.value) flatMap {
         case Some(submission) =>
-          Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
-        case None             => BadRequest
+          userAnswersService.updateSubmissionStartedToTrue(retrieveSubmissionInfo).map {
+            case true  =>
+              Ok(Json.toJson(RetrieveSubmissionResponse(submission.calculationInputs, submission.calculation)))
+            case false =>
+              BadRequest
+          }
+        case None             =>
+          Future.successful(BadRequest)
       }
-    )
+    }
   }
 
-  private def withValidJson[T](
+  def withValidJson[T](
     errMessage: String
   )(f: T => Future[Result])(implicit request: Request[JsValue], reads: Reads[T]): Future[Result] =
     request.body.validate[T] match {
       case JsSuccess(value, _) => f(value)
       case _                   => Future.successful(BadRequest(s"Invalid $errMessage"))
     }
+
+  def clear: Action[AnyContent] = identify.async { request =>
+    repository
+      .clear(request.userId)
+      .map(_ => NoContent)
+  }
 }

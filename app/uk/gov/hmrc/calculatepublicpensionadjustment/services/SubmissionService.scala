@@ -18,6 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import cats.data.{EitherT, NonEmptyChain}
 import play.api.Logging
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
@@ -36,11 +37,12 @@ class SubmissionService @Inject() (
 
   def submit(
     calculationInputs: CalculationInputs,
-    calculationResponse: Option[CalculationResponse]
+    calculationResponse: Option[CalculationResponse],
+    sessionId: String,
+    uniqueId: String
   )(implicit hc: HeaderCarrier): Future[Either[NonEmptyChain[String], String]] = {
 
-    val uniqueId   = uuidService.random()
-    val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse)
+    val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse, sessionId)
 
     val result: EitherT[Future, NonEmptyChain[String], String] = for {
       _ <- EitherT.liftF(Future.successful(auditService.auditSubmitRequest(buildAudit(submission))))
@@ -52,11 +54,14 @@ class SubmissionService @Inject() (
 
   def retrieve(submissionUniqueId: String): Future[Option[Submission]] = submissionRepository.get(submissionUniqueId)
 
+  def updateSubmission(submission: Submission): Future[Done] = submissionRepository.set(submission)
+
   private def buildSubmission(
     uniqueId: String,
     calculationInputs: CalculationInputs,
-    calculationResponse: Option[CalculationResponse]
-  ) = Submission(uniqueId, calculationInputs, calculationResponse)
+    calculationResponse: Option[CalculationResponse],
+    sessionId: String
+  ) = Submission(uniqueId, sessionId, calculationInputs, calculationResponse)
 
   private def buildAudit(submission: Submission): PPASubmissionEvent = PPASubmissionEvent(submission.uniqueId)
 }

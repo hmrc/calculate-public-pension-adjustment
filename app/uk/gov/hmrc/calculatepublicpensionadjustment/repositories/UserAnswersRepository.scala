@@ -15,14 +15,16 @@
  */
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.repositories
+
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.{IndexModel, _}
+import org.mongodb.scala.model._
+import play.api.libs.json.Format
 import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
@@ -30,71 +32,71 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmissionRepository @Inject() (
+class UserAnswersRepository @Inject() (
   mongoComponent: MongoComponent,
   appConfig: AppConfig,
   clock: Clock
 )(implicit ec: ExecutionContext, crypto: Encrypter with Decrypter)
-    extends PlayMongoRepository[Submission](
-      collectionName = "submissions",
+    extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers",
       mongoComponent = mongoComponent,
-      replaceIndexes = true,
-      domainFormat = Submission.encryptedFormat,
+      domainFormat = UserAnswers.encryptedFormat,
       indexes = Seq(
         IndexModel(
           Indexes.ascending("lastUpdated"),
           IndexOptions()
-            .name("lastUpdatedIdx")
-            .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
-        ),
-        IndexModel(
-          Indexes.ascending("uniqueId"),
-          IndexOptions()
-            .name("uniqueIdx")
-            .unique(true)
-        ),
-        IndexModel(
-          Indexes.ascending("sessionId"),
-          IndexOptions()
-            .name("sessionIdx")
-            .unique(true)
+            .name("last-updated-index")
+            .expireAfter(appConfig.userAnswerTtlInDays, TimeUnit.DAYS)
         )
       )
     ) {
 
-  def insert(item: Submission): Future[Done] =
+  implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
+
+  private def byId(id: String): Bson = Filters.equal("_id", id)
+
+  private def byUniqueIdAndNotId(uniqueId: String, id: String): Bson =
+    Filters.and(Filters.equal("uniqueId", uniqueId), Filters.ne("_id", id))
+
+  def keepAlive(id: String): Future[Done] =
     collection
-      .insertOne(item.copy(lastUpdated = clock.instant()))
+      .updateOne(
+        filter = byId(id),
+        update = Updates.set("lastUpdated", Instant.now(clock))
+      )
       .toFuture()
       .map(_ => Done)
 
-  private def byUniqueId(uniqueId: String): Bson = Filters.equal("uniqueId", uniqueId)
+  def get(id: String): Future[Option[UserAnswers]] =
+    keepAlive(id).flatMap { _ =>
+      collection
+        .find(byId(id))
+        .headOption()
+    }
 
-  private def bySessionId(sessionId: String): Bson = Filters.equal("sessionId", sessionId)
+  def set(userAnswers: UserAnswers): Future[Done] = {
 
-  def get(uniqueId: String): Future[Option[Submission]] =
-    collection
-      .find(byUniqueId(uniqueId))
-      .headOption()
-
-  def set(submission: Submission): Future[Done] = {
-
-    val updatedSubmission = submission copy (lastUpdated = Instant.now(clock))
+    val updatedUserAnswers = userAnswers copy (lastUpdated = Instant.now(clock))
 
     collection
       .replaceOne(
-        filter = byUniqueId(updatedSubmission.uniqueId),
-        replacement = updatedSubmission,
+        filter = byId(updatedUserAnswers.id),
+        replacement = updatedUserAnswers,
         options = ReplaceOptions().upsert(true)
       )
       .toFuture()
       .map(_ => Done)
   }
 
-  def clear(sessionId: String): Future[Done] =
+  def clear(id: String): Future[Done] =
     collection
-      .deleteOne(bySessionId(sessionId))
+      .deleteOne(byId(id))
       .toFuture()
       .map(_ => Done)
 
+  def clearByUniqueIdAndNotId(uniqueId: String, id: String): Future[Done] =
+    collection
+      .deleteOne(byUniqueIdAndNotId(uniqueId, id))
+      .toFuture()
+      .map(_ => Done)
 }

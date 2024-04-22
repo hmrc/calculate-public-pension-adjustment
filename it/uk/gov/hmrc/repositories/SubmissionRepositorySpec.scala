@@ -84,7 +84,7 @@ class SubmissionRepositorySpec
     )
   )
 
-  private val submission: Submission = Submission("submissionUniqueId", calculationInputs, calculation)
+  private val submission: Submission = Submission("submissionUniqueId", "sessionId", calculationInputs, calculation)
 
   when(mockAppConfig.cacheTtl) thenReturn 900
 
@@ -100,6 +100,7 @@ class SubmissionRepositorySpec
 
       val expectedResult = Submission(
         submissionUniqueId,
+        "sessionId",
         calculationInputs,
         calculation,
         Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
@@ -116,6 +117,7 @@ class SubmissionRepositorySpec
 
       val submission = Submission(
         submissionUniqueId,
+        "sessionId",
         calculationInputs,
         calculation,
         Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
@@ -168,6 +170,7 @@ class SubmissionRepositorySpec
 
         val submission = Submission(
           submissionUniqueId,
+          "sessionId",
           calculationInputs,
           None,
           Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
@@ -186,6 +189,24 @@ class SubmissionRepositorySpec
 
         repository.get(submissionUniqueId).futureValue must not be defined
       }
+    }
+  }
+
+  ".clear" - {
+
+    "must clear user answers" in {
+
+      val submission = Submission(
+        submissionUniqueId,
+        "sessionId",
+        calculationInputs,
+        calculation,
+        Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
+      )
+
+      insert(submission).futureValue
+      repository.clear("sessionId").futureValue
+      repository.get(submissionUniqueId).futureValue must not be defined
     }
   }
 }
