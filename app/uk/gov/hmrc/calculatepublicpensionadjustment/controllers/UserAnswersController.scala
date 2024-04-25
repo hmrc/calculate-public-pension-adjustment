@@ -16,16 +16,16 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
+import play.api.mvc._
 import uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions.IdentifierAction
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.UserAnswers
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{RetrieveSubmissionInfo, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.UserAnswersService
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserAnswersController @Inject() (
@@ -68,6 +68,25 @@ class UserAnswersController @Inject() (
       .clear(request.userId)
       .map(_ => NoContent)
   }
+
+  def retrieveUserAnswersByUniqueId: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    withValidJson[RetrieveSubmissionInfo]("RetrieveSubmissionInfo") { retrieveSubmissionInfo =>
+      userAnswersService.retrieveUserAnswersByUniqueId(retrieveSubmissionInfo.submissionUniqueId.value) flatMap {
+        case Some(answers) =>
+          Future.successful(Ok(Json.toJson(answers)))
+        case None          =>
+          Future.successful(BadRequest)
+      }
+    }
+  }
+
+  def withValidJson[T](
+    errMessage: String
+  )(f: T => Future[Result])(implicit request: Request[JsValue], reads: Reads[T]): Future[Result] =
+    request.body.validate[T] match {
+      case JsSuccess(value, _) => f(value)
+      case _                   => Future.successful(BadRequest(s"Invalid $errMessage"))
+    }
 
   def updateSubmissionLander(uniqueId: String): Action[AnyContent] = Action.async {
     userAnswersService.updateSubmissionStartedToFalse(uniqueId).map {

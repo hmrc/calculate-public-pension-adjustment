@@ -82,6 +82,26 @@ class UserAnswersServiceSpec
       }
     }
 
+    "retrieveUserAnswersByUniqueId" - {
+
+      "must return a submission when it exists in the userAnswersRepository" in {
+
+        val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
+
+        when(mockUserAnswersRepository.getByUniqueId(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        service.retrieveUserAnswersByUniqueId("uniqueId").futureValue mustBe Some(userAnswers)
+        verify(mockUserAnswersRepository, times(1)).getByUniqueId(eqTo("uniqueId"))
+      }
+
+      "must return None when it does not exist in the repository" in {
+        when(mockUserAnswersRepository.getByUniqueId("unknownId")).thenReturn(Future.successful(None))
+
+        service.retrieveUserAnswersByUniqueId("unknownId").futureValue mustBe None
+        verify(mockUserAnswersRepository, times(1)).getByUniqueId(eqTo("unknownId"))
+      }
+    }
+
     "updateSubmissionStartedToTrue" - {
 
       "must return a submission when it exists in the userAnswersRepository" in {

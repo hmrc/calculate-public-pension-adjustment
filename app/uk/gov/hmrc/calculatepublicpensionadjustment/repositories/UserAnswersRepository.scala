@@ -55,6 +55,8 @@ class UserAnswersRepository @Inject() (
 
   private def byId(id: String): Bson = Filters.equal("_id", id)
 
+  private def byUniqueId(uniqueId: String): Bson = Filters.equal("uniqueId", uniqueId)
+
   private def byUniqueIdAndNotId(uniqueId: String, id: String): Bson =
     Filters.and(Filters.equal("uniqueId", uniqueId), Filters.ne("_id", id))
 
@@ -67,10 +69,26 @@ class UserAnswersRepository @Inject() (
       .toFuture()
       .map(_ => Done)
 
+  def keepAliveByUniqueId(uniqueId: String): Future[Done] =
+    collection
+      .updateOne(
+        filter = byUniqueId(uniqueId),
+        update = Updates.set("lastUpdated", Instant.now(clock))
+      )
+      .toFuture()
+      .map(_ => Done)
+
   def get(id: String): Future[Option[UserAnswers]] =
     keepAlive(id).flatMap { _ =>
       collection
         .find(byId(id))
+        .headOption()
+    }
+
+  def getByUniqueId(uniqueId: String): Future[Option[UserAnswers]] =
+    keepAliveByUniqueId(uniqueId).flatMap { _ =>
+      collection
+        .find(byUniqueId(uniqueId))
         .headOption()
     }
 

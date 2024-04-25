@@ -323,4 +323,49 @@ class UserAnswersControllerSpec
       status(result) mustEqual NOT_FOUND
     }
   }
+
+  "retrieveUserAnswersByUniqueId" - {
+
+    "must return OK and the user answers when found" in {
+      val uniqueId    = "testUnique1234"
+      val userAnswers = UserAnswers("testId", Json.obj("key" -> "value"), uniqueId, Instant.now(stubClock), true, true)
+
+      when(mockUserAnswersService.retrieveUserAnswersByUniqueId(eqTo(uniqueId)))
+        .thenReturn(Future.successful(Some(userAnswers)))
+
+      val request = FakeRequest(POST, routes.UserAnswersController.retrieveUserAnswersByUniqueId.url)
+        .withHeaders("Content-Type" -> "application/json")
+        .withBody(Json.obj("internalId" -> "internalId", "submissionUniqueId" -> Json.obj("value" -> uniqueId)))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+      contentAsJson(result) mustEqual Json.toJson(userAnswers)
+    }
+
+    "must return BadRequest when submission unique id is not found" in {
+      val uniqueId = "nonExistentUnique1234"
+
+      when(mockUserAnswersService.retrieveUserAnswersByUniqueId(eqTo(uniqueId)))
+        .thenReturn(Future.successful(None))
+
+      val request = FakeRequest(POST, routes.UserAnswersController.retrieveUserAnswersByUniqueId.url)
+        .withHeaders("Content-Type" -> "application/json")
+        .withBody(Json.obj("internalId" -> "internalId", "submissionUniqueId" -> Json.obj("value" -> uniqueId)))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+    }
+
+    "must return BadRequest when request body is invalid" in {
+      val request = FakeRequest(POST, routes.UserAnswersController.retrieveUserAnswersByUniqueId.url)
+        .withHeaders("Content-Type" -> "application/json")
+        .withBody(Json.obj("invalidField" -> "someValue"))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+    }
+  }
 }
