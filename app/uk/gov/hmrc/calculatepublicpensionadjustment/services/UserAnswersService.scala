@@ -43,7 +43,7 @@ class UserAnswersService @Inject() (
   def updateSubmissionStartedToTrue(retrieveSubmissionInfo: RetrieveSubmissionInfo): Future[Boolean] =
     submissionService.retrieve(retrieveSubmissionInfo.submissionUniqueId.value).flatMap {
       case Some(submission) =>
-        retrieveUserAnswers(submission.sessionId).flatMap {
+        retrieveUserAnswers(submission.id).flatMap {
           case Some(rUserAnswers) =>
             for {
               _ <- userAnswers.clear(retrieveSubmissionInfo.userId)
@@ -61,7 +61,7 @@ class UserAnswersService @Inject() (
                               )
                          r <- submissionService.updateSubmission(
                                 rSubmission
-                                  .copy(sessionId = retrieveSubmissionInfo.userId, id = retrieveSubmissionInfo.userId)
+                                  .copy(id = retrieveSubmissionInfo.userId)
                               )
                        } yield r
                    }

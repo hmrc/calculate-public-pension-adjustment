@@ -38,11 +38,11 @@ class SubmissionService @Inject() (
   def submit(
     calculationInputs: CalculationInputs,
     calculationResponse: Option[CalculationResponse],
-    sessionId: String,
+    userId: String,
     uniqueId: String
   )(implicit hc: HeaderCarrier): Future[Either[NonEmptyChain[String], String]] = {
 
-    val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse, sessionId)
+    val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse, userId)
 
     val result: EitherT[Future, NonEmptyChain[String], String] = for {
       _ <- EitherT.liftF(Future.successful(auditService.auditSubmitRequest(buildAudit(submission))))
@@ -59,14 +59,14 @@ class SubmissionService @Inject() (
 
   def updateSubmission(submission: Submission): Future[Done] = submissionRepository.set(submission)
 
-  def clearBySessionId(sessionId: String): Future[Done] = submissionRepository.clear(sessionId)
+  def clearByUserId(userId: String): Future[Done] = submissionRepository.clear(userId)
 
   private def buildSubmission(
     uniqueId: String,
     calculationInputs: CalculationInputs,
     calculationResponse: Option[CalculationResponse],
-    sessionId: String
-  ) = Submission(sessionId, uniqueId, sessionId, calculationInputs, calculationResponse)
+    userId: String
+  ) = Submission(userId, uniqueId, calculationInputs, calculationResponse)
 
   private def buildAudit(submission: Submission): PPASubmissionEvent = PPASubmissionEvent(submission.uniqueId)
 }

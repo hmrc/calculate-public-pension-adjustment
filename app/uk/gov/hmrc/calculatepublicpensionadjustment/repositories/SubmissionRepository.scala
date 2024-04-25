@@ -52,12 +52,6 @@ class SubmissionRepository @Inject() (
           IndexOptions()
             .name("uniqueIdx")
             .unique(true)
-        ),
-        IndexModel(
-          Indexes.ascending("sessionId"),
-          IndexOptions()
-            .name("sessionIdx")
-            .unique(true)
         )
       )
     ) {
@@ -70,7 +64,10 @@ class SubmissionRepository @Inject() (
 
   private def byUniqueId(uniqueId: String): Bson = Filters.equal("uniqueId", uniqueId)
 
-  private def bySessionId(sessionId: String): Bson = Filters.equal("sessionId", sessionId)
+  private def byUserId(userId: String): Bson = Filters.equal("_id", userId)
+
+  private def byUniqueIdAndNotId(uniqueId: String, id: String): Bson =
+    Filters.and(Filters.equal("uniqueId", uniqueId), Filters.ne("_id", id))
 
   private def byUniqueIdAndNotId(uniqueId: String, id: String): Bson =
     Filters.and(Filters.equal("uniqueId", uniqueId), Filters.ne("_id", id))
@@ -94,9 +91,15 @@ class SubmissionRepository @Inject() (
       .map(_ => Done)
   }
 
-  def clear(sessionId: String): Future[Done] =
+  def clear(userId: String): Future[Done] =
     collection
-      .deleteOne(bySessionId(sessionId))
+      .deleteOne(byUserId(userId))
+      .toFuture()
+      .map(_ => Done)
+
+  def clearByUniqueIdAndNotId(uniqueId: String, id: String): Future[Done] =
+    collection
+      .deleteOne(byUniqueIdAndNotId(uniqueId, id))
       .toFuture()
       .map(_ => Done)
 
