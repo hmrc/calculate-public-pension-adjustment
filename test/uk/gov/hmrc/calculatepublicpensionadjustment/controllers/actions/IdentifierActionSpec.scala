@@ -36,7 +36,7 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
 
   class Harness(identify: IdentifierAction) {
     def get(): Action[AnyContent] = identify { request =>
-      Ok(request.nino.mkString)
+      Ok(request.userId)
     }
   }
 
@@ -47,10 +47,9 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
 
     "when the user is authenticated" - {
 
-      "must execute the request when an internal Id can be retrieved" in {
+      "must execute the request when a nino can be retrieved" in {
 
-        val identifierAction =
-          new IdentifierAction(new FakeAuthConnector(new ~(Some("internalId"), Some("nino"))), bodyParsers)
+        val identifierAction = new IdentifierAction(new FakeAuthConnector(Some("nino")), bodyParsers)
         val controller       = new Harness(identifierAction)
 
         val request = FakeRequest()
@@ -61,22 +60,9 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
         contentAsString(result) mustEqual "nino"
       }
 
-      "must execute the request when an internal Id can be retrieved but there is no nino" in {
+      "must return BadRequest when no nino can be retrieved" in {
 
-        val identifierAction = new IdentifierAction(new FakeAuthConnector(new ~(Some("internalId"), None)), bodyParsers)
-        val controller       = new Harness(identifierAction)
-
-        val request = FakeRequest()
-
-        val result = controller.get()(request)
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual ""
-      }
-
-      "must return BadRequest when no internalId can be retrieved" in {
-
-        val identifierAction = new IdentifierAction(new FakeAuthConnector(new ~(None, Some("nino"))), bodyParsers)
+        val identifierAction = new IdentifierAction(new FakeAuthConnector(None), bodyParsers)
         val controller       = new Harness(identifierAction)
 
         val request = FakeRequest()

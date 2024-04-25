@@ -118,6 +118,7 @@ class SubmissionControllerSpec
           Future.successful(
             Some(
               Submission(
+                "ninoId",
                 "uniqueId",
                 "sessionId",
                 CalculationInputs(
@@ -176,7 +177,7 @@ class SubmissionControllerSpec
           )
         )
 
-      val retrieveSubmissionInfo = RetrieveSubmissionInfo("internalId", UniqueId("1234"))
+      val retrieveSubmissionInfo = RetrieveSubmissionInfo("nino", UniqueId("1234"))
 
       when(mockUserAnswersService.updateSubmissionStartedToTrue(retrieveSubmissionInfo))
         .thenReturn(
@@ -241,6 +242,7 @@ class SubmissionControllerSpec
           Future.successful(
             Some(
               Submission(
+                "ninoId",
                 "uniqueId",
                 "sessionId",
                 CalculationInputs(

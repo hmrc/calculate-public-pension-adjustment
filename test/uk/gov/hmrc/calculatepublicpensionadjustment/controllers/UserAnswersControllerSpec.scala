@@ -295,7 +295,7 @@ class UserAnswersControllerSpec
   }
 
   "checkSubmissionStarted" - {
-    "must return OK when record have been found" - {
+    "must return OK when record have been found" in {
 
       val submissionStatusResponse = SubmissionStatusResponse("uniqueId", true)
       when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) thenReturn
@@ -311,7 +311,7 @@ class UserAnswersControllerSpec
       contentAsJson(result) mustEqual Json.parse("{\"uniqueId\":\"uniqueId\",\"submissionStarted\":true}")
     }
 
-    "must return Not Found when the no records have been found" - {
+    "must return Not Found when the no records have been found" in {
       when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) thenReturn Future.successful(None)
 
       val request =
@@ -335,7 +335,7 @@ class UserAnswersControllerSpec
 
       val request = FakeRequest(POST, routes.UserAnswersController.retrieveUserAnswersByUniqueId.url)
         .withHeaders("Content-Type" -> "application/json")
-        .withBody(Json.obj("internalId" -> "internalId", "submissionUniqueId" -> Json.obj("value" -> uniqueId)))
+        .withBody(Json.obj("userId" -> "userId", "submissionUniqueId" -> Json.obj("value" -> uniqueId)))
 
       val result = route(app, request).value
 
@@ -351,7 +351,7 @@ class UserAnswersControllerSpec
 
       val request = FakeRequest(POST, routes.UserAnswersController.retrieveUserAnswersByUniqueId.url)
         .withHeaders("Content-Type" -> "application/json")
-        .withBody(Json.obj("internalId" -> "internalId", "submissionUniqueId" -> Json.obj("value" -> uniqueId)))
+        .withBody(Json.obj("userId" -> "userId", "submissionUniqueId" -> Json.obj("value" -> uniqueId)))
 
       val result = route(app, request).value
 

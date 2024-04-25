@@ -72,6 +72,9 @@ class SubmissionRepository @Inject() (
 
   private def bySessionId(sessionId: String): Bson = Filters.equal("sessionId", sessionId)
 
+  private def byUniqueIdAndNotId(uniqueId: String, id: String): Bson =
+    Filters.and(Filters.equal("uniqueId", uniqueId), Filters.ne("_id", id))
+
   def get(uniqueId: String): Future[Option[Submission]] =
     collection
       .find(byUniqueId(uniqueId))
@@ -94,6 +97,12 @@ class SubmissionRepository @Inject() (
   def clear(sessionId: String): Future[Done] =
     collection
       .deleteOne(bySessionId(sessionId))
+      .toFuture()
+      .map(_ => Done)
+
+  def clearByUniqueIdAndNotId(uniqueId: String, id: String): Future[Done] =
+    collection
+      .deleteOne(byUniqueIdAndNotId(uniqueId, id))
       .toFuture()
       .map(_ => Done)
 

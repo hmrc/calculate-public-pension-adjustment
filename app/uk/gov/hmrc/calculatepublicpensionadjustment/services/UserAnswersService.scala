@@ -18,7 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import play.api.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, SubmissionStatusResponse, UserAnswers}
-import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
+import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.{SubmissionRepository, UserAnswersRepository}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,17 +46,28 @@ class UserAnswersService @Inject() (
         retrieveUserAnswers(submission.sessionId).flatMap {
           case Some(rUserAnswers) =>
             for {
-              _ <- userAnswers.clear(retrieveSubmissionInfo.internalId)
+              _ <- userAnswers.clear(retrieveSubmissionInfo.userId)
               _ <-
                 updateUserAnswers(
                   rUserAnswers
-                    .copy(id = retrieveSubmissionInfo.internalId, submissionStarted = true, authenticated = true)
+                    .copy(id = retrieveSubmissionInfo.userId, submissionStarted = true, authenticated = true)
                 )
-              _ <- submissionService.clearBySessionId(retrieveSubmissionInfo.internalId)
-              _ <- submissionService.updateSubmission(submission.copy(sessionId = retrieveSubmissionInfo.internalId))
+              _ <- submissionService.retrieve(retrieveSubmissionInfo.submissionUniqueId.value).flatMap {
+                     case Some(rSubmission) =>
+                       for {
+                         _ <- submissionService.clearByUniqueIdAndNotId(
+                                retrieveSubmissionInfo.submissionUniqueId.value,
+                                retrieveSubmissionInfo.userId
+                              )
+                         r <- submissionService.updateSubmission(
+                                rSubmission
+                                  .copy(sessionId = retrieveSubmissionInfo.userId, id = retrieveSubmissionInfo.userId)
+                              )
+                       } yield r
+                   }
               r <- userAnswers.clearByUniqueIdAndNotId(
                      retrieveSubmissionInfo.submissionUniqueId.value,
-                     retrieveSubmissionInfo.internalId
+                     retrieveSubmissionInfo.userId
                    )
             } yield r match {
               case Done => true
