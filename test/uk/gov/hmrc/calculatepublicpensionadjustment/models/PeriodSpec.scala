@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.submitpublicpensionadjustment.models.response
 
-import akka.util.Helpers.Requiring
+import org.apache.pekko.util.Helpers.Requiring
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers
@@ -24,6 +24,7 @@ import play.api.libs.json.JsString
 import play.api.mvc.PathBindable
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Period
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Period.{Year, _2016PostAlignment, _2016PreAlignment, indexPathBindable}
+
 import scala.util.Try
 
 class PeriodSpec extends AnyFlatSpec with Matchers {
