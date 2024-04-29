@@ -95,6 +95,8 @@ class UserAnswersServiceSpec
 
         when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
         when(mockSubmissionService.updateSubmission(any())).thenReturn(Future.successful(Done))
+        when(mockSubmissionService.clearBySessionId(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersRepository.clear(any())).thenReturn(Future.successful(Done))
         when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(Some(userAnswers)))
         when(mockUserAnswersRepository.set(any())) thenReturn (Future.successful(Done))
         when(mockUserAnswersRepository.clearByUniqueIdAndNotId(any(), any())) thenReturn (Future.successful(Done))

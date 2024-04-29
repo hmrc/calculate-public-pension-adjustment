@@ -56,6 +56,8 @@ class SubmissionService @Inject() (
 
   def updateSubmission(submission: Submission): Future[Done] = submissionRepository.set(submission)
 
+  def clearBySessionId(sessionId: String): Future[Done] = submissionRepository.clear(sessionId)
+
   private def buildSubmission(
     uniqueId: String,
     calculationInputs: CalculationInputs,

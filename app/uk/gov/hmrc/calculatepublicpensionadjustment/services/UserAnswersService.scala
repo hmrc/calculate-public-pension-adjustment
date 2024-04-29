@@ -44,8 +44,13 @@ class UserAnswersService @Inject() (
         retrieveUserAnswers(submission.sessionId).flatMap {
           case Some(rUserAnswers) =>
             for {
+              _ <- userAnswers.clear(retrieveSubmissionInfo.internalId)
               _ <-
-                updateUserAnswers(rUserAnswers.copy(id = retrieveSubmissionInfo.internalId, submissionStarted = true))
+                updateUserAnswers(
+                  rUserAnswers
+                    .copy(id = retrieveSubmissionInfo.internalId, submissionStarted = true, authenticated = true)
+                )
+              _ <- submissionService.clearBySessionId(retrieveSubmissionInfo.internalId)
               _ <- submissionService.updateSubmission(submission.copy(sessionId = retrieveSubmissionInfo.internalId))
               r <- userAnswers.clearByUniqueIdAndNotId(
                      retrieveSubmissionInfo.submissionUniqueId.value,

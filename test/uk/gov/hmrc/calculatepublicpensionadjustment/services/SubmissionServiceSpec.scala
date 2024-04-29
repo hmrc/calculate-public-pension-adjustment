@@ -106,6 +106,19 @@ class SubmissionServiceSpec
         verify(mockSubmissionRepository, times(1)).get(eqTo("unknownId"))
       }
     }
+
+    "clearBySessionId" - {
+
+      "must clear a submission when it exists in the repository" in {
+        val submission =
+          Submission("uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
+
+        when(mockSubmissionRepository.clear("sessionId")).thenReturn(Future.successful(Done))
+
+        service.clearBySessionId("sessionId").futureValue mustBe Done
+      }
+    }
+
   }
 
   "UuidService" in {
