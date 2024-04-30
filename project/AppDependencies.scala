@@ -2,7 +2,6 @@ import sbt._
 
 object AppDependencies {
 
-  private val AllTestScope     = "test, it"
   private val bootstrapVersion = "8.4.0"
   private val hmrcMongoVersion = "1.7.0"
   private val taxyearVersion   = "3.3.0"
@@ -28,5 +27,9 @@ object AppDependencies {
     "uk.gov.hmrc.mongo"   %% "hmrc-mongo-test-play-30" % hmrcMongoVersion,
     "org.mockito"         %% "mockito-scala"           % "1.17.29",
     "org.apache.pdfbox"    % "pdfbox"                  % "2.0.27"
-  ).map(_ % AllTestScope)
+  )
+
+  val itDependencies = Seq(
+    "uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test
+  )
 }
