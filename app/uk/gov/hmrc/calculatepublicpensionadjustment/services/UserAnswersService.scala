@@ -30,7 +30,9 @@ class UserAnswersService @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  def retrieveUserAnswers(uniqueId: String): Future[Option[UserAnswers]] = userAnswers.get(uniqueId)
+  def retrieveUserAnswers(id: String): Future[Option[UserAnswers]] = userAnswers.get(id)
+
+  def retrieveUserAnswersByUniqueId(uniqueId: String): Future[Option[UserAnswers]] = userAnswers.getByUniqueId(uniqueId)
 
   def updateUserAnswers(updatedUserAnswers: UserAnswers): Future[Boolean] =
     userAnswers.set(updatedUserAnswers) map {
