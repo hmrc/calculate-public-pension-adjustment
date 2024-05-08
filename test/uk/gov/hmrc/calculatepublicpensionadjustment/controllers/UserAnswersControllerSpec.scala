@@ -368,4 +368,20 @@ class UserAnswersControllerSpec
       status(result) mustEqual BAD_REQUEST
     }
   }
+
+  "checkAndRetrieveCalcUserAnswers" - {
+
+    "must return OK when the service processes successfully" in {
+      when(mockUserAnswersService.checkAndRetrieveCalcUserAnswers(eqTo("uniqueId"))(any()))
+        .thenReturn(Future.successful(Done))
+
+      val request =
+        FakeRequest(GET, routes.UserAnswersController.checkAndRetrieveCalcUserAnswers("uniqueId").url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+      verify(mockUserAnswersService).checkAndRetrieveCalcUserAnswers(eqTo("uniqueId"))(any())
+    }
+  }
 }

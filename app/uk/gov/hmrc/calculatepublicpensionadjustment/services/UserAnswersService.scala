@@ -17,8 +17,10 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import play.api.Logging
+import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.SubmitBackendConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, SubmissionStatusResponse, UserAnswers}
-import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.{SubmissionRepository, UserAnswersRepository}
+import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,7 +28,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UserAnswersService @Inject() (
   submissionService: SubmissionService,
-  userAnswers: UserAnswersRepository
+  userAnswers: UserAnswersRepository,
+  submitBackendConnector: SubmitBackendConnector
 )(implicit ec: ExecutionContext)
     extends Logging {
 
@@ -96,4 +99,25 @@ class UserAnswersService @Inject() (
       case None              =>
         Future.successful(None)
     }
+
+  def checkCalculationExistsWithUniqueId(uniqueId: String): Future[Boolean] =
+    retrieveUserAnswersByUniqueId(uniqueId).flatMap {
+      case Some(_) =>
+        Future.successful(true)
+      case None    =>
+        Future.successful(false)
+    }
+
+  def checkAndRetrieveCalcUserAnswers(uniqueId: String)(implicit hc: HeaderCarrier): Future[Done] =
+    for {
+      calcExists <- checkCalculationExistsWithUniqueId(uniqueId)
+      _          <- if (!calcExists) {
+                      submitBackendConnector.retrieveCalcUserAnswersFromSubmitBE(uniqueId).flatMap { ua =>
+                        userAnswers.set(ua)
+                      }
+                    } else {
+                      Future.successful(Done)
+                    }
+    } yield Done
+
 }
