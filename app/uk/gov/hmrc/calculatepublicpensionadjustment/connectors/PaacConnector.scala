@@ -23,11 +23,11 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac.{PaacRequest, PaacResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PaacConnector @Inject() (config: AppConfig, httpClient1: HttpClient, httpClient2: HttpClientV2)(implicit
+class PaacConnector @Inject() (config: AppConfig, httpClient2: HttpClientV2)(implicit
   ec: ExecutionContext
 ) extends Logging {
 
