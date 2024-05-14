@@ -62,16 +62,13 @@ trait CppaModelGenerators extends ModelGenerators {
     for {
       schemeName                 <- genSchemeName
       pensionSchemeTaxReference  <- genSchemePstr
-      originalPensionInputAmount <- genPensionInputAmount
       revisedPensionInputAmount  <- genPensionInputAmount
       chargePaidByScheme         <- genChargePaidBySchemeOrMember
     } yield TaxYearScheme(
       schemeName,
       pensionSchemeTaxReference,
-      originalPensionInputAmount,
       revisedPensionInputAmount,
       chargePaidByScheme,
-      None,
       None
     )
 
