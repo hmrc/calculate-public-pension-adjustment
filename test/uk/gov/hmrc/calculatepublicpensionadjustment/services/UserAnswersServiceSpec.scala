@@ -109,16 +109,16 @@ class UserAnswersServiceSpec
         val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
 
         val submission =
-          Submission("id", "uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
 
         val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
         when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
         when(mockSubmissionService.updateSubmission(any())).thenReturn(Future.successful(Done))
-        when(mockSubmissionService.clearBySessionId(any())).thenReturn(Future.successful(Done))
+        when(mockSubmissionService.clearByUserId(any())).thenReturn(Future.successful(Done))
         when(mockSubmissionService.clearByUniqueIdAndNotId(any(), any())).thenReturn(Future.successful(Done))
         when(mockUserAnswersRepository.clear(any())).thenReturn(Future.successful(Done))
-        when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.get("id")).thenReturn(Future.successful(Some(userAnswers)))
         when(mockUserAnswersRepository.set(any())) thenReturn (Future.successful(Done))
         when(mockUserAnswersRepository.clearByUniqueIdAndNotId(any(), any())) thenReturn (Future.successful(Done))
 
@@ -130,10 +130,10 @@ class UserAnswersServiceSpec
         val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
 
         val submission =
-          Submission("id", "uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
 
         when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
-        when(mockUserAnswersRepository.get("sessionId")).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.get("id")).thenReturn(Future.successful(None))
         when(mockUserAnswersRepository.set(any())) thenReturn Future.successful(Done)
 
         service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue mustBe false

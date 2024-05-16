@@ -22,7 +22,7 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Calculat
 case class SubmissionRequest(
   calculationInputs: CalculationInputs,
   calculation: Option[CalculationResponse],
-  sessionId: String,
+  userId: String,
   uniqueId: String
 )
 

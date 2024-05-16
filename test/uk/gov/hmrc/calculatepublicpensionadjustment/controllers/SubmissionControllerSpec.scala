@@ -120,7 +120,6 @@ class SubmissionControllerSpec
               Submission(
                 "ninoId",
                 "uniqueId",
-                "sessionId",
                 CalculationInputs(
                   Resubmission(false, None),
                   None,
@@ -244,7 +243,6 @@ class SubmissionControllerSpec
               Submission(
                 "ninoId",
                 "uniqueId",
-                "sessionId",
                 CalculationInputs(
                   Resubmission(false, None),
                   None,

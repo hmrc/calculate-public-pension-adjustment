@@ -48,7 +48,7 @@ class SubmissionController @Inject() (
           .submit(
             submissionRequest.calculationInputs,
             submissionRequest.calculation,
-            submissionRequest.sessionId,
+            submissionRequest.userId,
             submissionRequest.uniqueId
           )
       ).fold(

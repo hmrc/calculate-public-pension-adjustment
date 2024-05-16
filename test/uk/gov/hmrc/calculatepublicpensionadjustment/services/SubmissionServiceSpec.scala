@@ -70,7 +70,7 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.successful(Done))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "sessionId", "uniqueId")(hc)
+          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "userId", "uniqueId")(hc)
 
         result.futureValue mustBe Right("uniqueId")
       }
@@ -81,7 +81,7 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.failed(new RuntimeException("exception")))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "sessionId", "uniqueId")(hc)
+          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "userId", "uniqueId")(hc)
 
         an[RuntimeException] mustBe thrownBy(result.futureValue)
       }
@@ -91,7 +91,7 @@ class SubmissionServiceSpec
 
       "must return a submission when it exists in the repository" in {
         val submission =
-          Submission("id", "uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
 
         when(mockSubmissionRepository.get(any())).thenReturn(Future.successful(Some(submission)))
 
@@ -111,11 +111,11 @@ class SubmissionServiceSpec
 
       "must clear a submission when it exists in the repository" in {
         val submission =
-          Submission("id", "uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
 
-        when(mockSubmissionRepository.clear("sessionId")).thenReturn(Future.successful(Done))
+        when(mockSubmissionRepository.clear("userId")).thenReturn(Future.successful(Done))
 
-        service.clearBySessionId("sessionId").futureValue mustBe Done
+        service.clearByUserId("userId").futureValue mustBe Done
       }
     }
 

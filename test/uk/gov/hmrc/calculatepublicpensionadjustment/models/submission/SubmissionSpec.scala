@@ -29,13 +29,13 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
 
     "must serialise to expected Json" in {
       val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
-      val submissionRequest = SubmissionRequest(calculationInputs, None, "sessionId", "uniqueId")
+      val submissionRequest = SubmissionRequest(calculationInputs, None, "userId", "uniqueId")
 
       val serialised: JsValue = Json.toJson(submissionRequest)
 
       val expectedJson = Json.obj(
         "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false)),
-        "sessionId"         -> "sessionId",
+        "userId"            -> "userId",
         "uniqueId"          -> "uniqueId"
       )
       serialised mustEqual expectedJson
@@ -44,21 +44,21 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
     "must de-serialise from valid Json with userAnswers" in {
       val json = Json.obj(
         "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false)),
-        "sessionId"         -> "sessionId",
+        "userId"            -> "userId",
         "uniqueId"          -> "uniqueId"
       )
 
       val deserialised: JsResult[SubmissionRequest] = json.validate[SubmissionRequest]
 
       val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
-      val submissionRequest = SubmissionRequest(calculationInputs, None, "sessionId", "uniqueId")
+      val submissionRequest = SubmissionRequest(calculationInputs, None, "userId", "uniqueId")
       deserialised mustEqual (JsSuccess(submissionRequest))
     }
 
     "serialise" in {
       val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
       val submissionRequest =
-        SubmissionRequest(calculationInputs, Some(SubmissionTestData.calculationResponse), "sessionId", "uniqueId")
+        SubmissionRequest(calculationInputs, Some(SubmissionTestData.calculationResponse), "userId", "uniqueId")
       val json: String      = Json.toJson(submissionRequest).toString
 
       json must startWith("{\"calculationInputs\":{")

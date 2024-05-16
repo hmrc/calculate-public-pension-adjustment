@@ -100,7 +100,7 @@ class SubmissionRepositorySpec
     )
   )
 
-  private val submission: Submission = Submission("id", "uniqueId", "sessionId", calculationInputs, calculation)
+  private val submission: Submission = Submission("id", "uniqueId", calculationInputs, calculation)
 
   when(mockAppConfig.cacheTtl) thenReturn 900
 
@@ -117,14 +117,13 @@ class SubmissionRepositorySpec
       val expectedResult = Submission(
         id,
         "uniqueId",
-        "sessionId",
         calculationInputs,
         calculation,
         Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
       )
 
       val insertResult = repository.insert(submission).futureValue
-      val dbRecord     = find(Filters.equal("sessionId", "sessionId")).futureValue.headOption.value
+      val dbRecord     = find(Filters.equal("_id", "id")).futureValue.headOption.value
 
       insertResult mustEqual Done
       dbRecord mustEqual expectedResult
@@ -135,7 +134,6 @@ class SubmissionRepositorySpec
       val submission = Submission(
         id,
         "uniqueId",
-        "sessionId",
         calculationInputs,
         calculation,
         Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
@@ -189,7 +187,6 @@ class SubmissionRepositorySpec
         val submission = Submission(
           id,
           "uniqueId",
-          "sessionId",
           calculationInputs,
           None,
           Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
@@ -218,14 +215,13 @@ class SubmissionRepositorySpec
       val submission = Submission(
         id,
         "uniqueId",
-        "sessionId",
         calculationInputs,
         calculation,
         Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
       )
 
       insert(submission).futureValue
-      repository.clear("sessionId").futureValue
+      repository.clear("userId").futureValue
       repository.get(id).futureValue must not be defined
     }
   }
