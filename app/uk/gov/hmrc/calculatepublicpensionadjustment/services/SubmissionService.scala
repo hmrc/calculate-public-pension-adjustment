@@ -54,6 +54,9 @@ class SubmissionService @Inject() (
 
   def retrieve(submissionUniqueId: String): Future[Option[Submission]] = submissionRepository.get(submissionUniqueId)
 
+  def clearByUniqueIdAndNotId(submissionUniqueId: String, id: String): Future[Done] =
+    submissionRepository.clearByUniqueIdAndNotId(submissionUniqueId, id)
+
   def updateSubmission(submission: Submission): Future[Done] = submissionRepository.set(submission)
 
   def clearBySessionId(sessionId: String): Future[Done] = submissionRepository.clear(sessionId)
@@ -63,7 +66,7 @@ class SubmissionService @Inject() (
     calculationInputs: CalculationInputs,
     calculationResponse: Option[CalculationResponse],
     sessionId: String
-  ) = Submission(uniqueId, sessionId, calculationInputs, calculationResponse)
+  ) = Submission(sessionId, uniqueId, sessionId, calculationInputs, calculationResponse)
 
   private def buildAudit(submission: Submission): PPASubmissionEvent = PPASubmissionEvent(submission.uniqueId)
 }

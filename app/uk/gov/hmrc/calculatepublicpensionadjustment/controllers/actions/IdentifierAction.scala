@@ -41,16 +41,16 @@ class IdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     authorised()
-      .retrieve(Retrievals.internalId and Retrievals.nino) {
-        case Some(internalId) ~ nino =>
-          block(IdentifierRequest(request, internalId, nino))
+      .retrieve(Retrievals.nino) {
+        case Some(nino) =>
+          block(IdentifierRequest(request, nino))
 
         case _ =>
           Future.successful(BadRequest)
       }
       .recoverWith { case _: NoActiveSession =>
         hc.sessionId
-          .map(sessionId => block(IdentifierRequest(request, sessionId.value, None)))
+          .map(sessionId => block(IdentifierRequest(request, sessionId.value)))
           .getOrElse(Future.successful(BadRequest))
       }
   }

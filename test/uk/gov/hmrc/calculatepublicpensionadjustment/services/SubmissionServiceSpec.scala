@@ -91,7 +91,7 @@ class SubmissionServiceSpec
 
       "must return a submission when it exists in the repository" in {
         val submission =
-          Submission("uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission("id", "uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
 
         when(mockSubmissionRepository.get(any())).thenReturn(Future.successful(Some(submission)))
 
@@ -111,7 +111,7 @@ class SubmissionServiceSpec
 
       "must clear a submission when it exists in the repository" in {
         val submission =
-          Submission("uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission("id", "uniqueId", "sessionId", CalculationInputs(Resubmission(false, None), None, None), None)
 
         when(mockSubmissionRepository.clear("sessionId")).thenReturn(Future.successful(Done))
 

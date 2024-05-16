@@ -48,10 +48,10 @@ class SubmissionRepositorySpec
     with OptionValues
     with MockitoSugar {
 
-  private val submissionUniqueId = "submissionUniqueId"
-  private val instant            = Instant.now.truncatedTo(ChronoUnit.MILLIS)
-  private val stubClock: Clock   = Clock.fixed(instant, ZoneId.systemDefault)
-  private val mockAppConfig      = mock[AppConfig]
+  private val id               = "id"
+  private val instant          = Instant.now.truncatedTo(ChronoUnit.MILLIS)
+  private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
+  private val mockAppConfig    = mock[AppConfig]
 
   private val aesKey = {
     val aesKey = new Array[Byte](32)
@@ -100,7 +100,7 @@ class SubmissionRepositorySpec
     )
   )
 
-  private val submission: Submission = Submission("submissionUniqueId", "sessionId", calculationInputs, calculation)
+  private val submission: Submission = Submission("id", "uniqueId", "sessionId", calculationInputs, calculation)
 
   when(mockAppConfig.cacheTtl) thenReturn 900
 
@@ -115,7 +115,8 @@ class SubmissionRepositorySpec
     "must set the last updated time to `now` and save the submission" in {
 
       val expectedResult = Submission(
-        submissionUniqueId,
+        id,
+        "uniqueId",
         "sessionId",
         calculationInputs,
         calculation,
@@ -123,7 +124,7 @@ class SubmissionRepositorySpec
       )
 
       val insertResult = repository.insert(submission).futureValue
-      val dbRecord     = find(Filters.equal("uniqueId", submissionUniqueId)).futureValue.headOption.value
+      val dbRecord     = find(Filters.equal("sessionId", "sessionId")).futureValue.headOption.value
 
       insertResult mustEqual Done
       dbRecord mustEqual expectedResult
@@ -132,7 +133,8 @@ class SubmissionRepositorySpec
     "must store the data section as encrypted bytes" in {
 
       val submission = Submission(
-        submissionUniqueId,
+        id,
+        "uniqueId",
         "sessionId",
         calculationInputs,
         calculation,
@@ -185,7 +187,8 @@ class SubmissionRepositorySpec
       "must get the record" in {
 
         val submission = Submission(
-          submissionUniqueId,
+          id,
+          "uniqueId",
           "sessionId",
           calculationInputs,
           None,
@@ -194,7 +197,7 @@ class SubmissionRepositorySpec
 
         insert(submission).futureValue
 
-        val result = repository.get(submissionUniqueId).futureValue
+        val result = repository.get("uniqueId").futureValue
         result.value mustEqual submission
       }
     }
@@ -203,7 +206,7 @@ class SubmissionRepositorySpec
 
       "must return None" in {
 
-        repository.get(submissionUniqueId).futureValue must not be defined
+        repository.get(id).futureValue must not be defined
       }
     }
   }
@@ -213,7 +216,8 @@ class SubmissionRepositorySpec
     "must clear user answers" in {
 
       val submission = Submission(
-        submissionUniqueId,
+        id,
+        "uniqueId",
         "sessionId",
         calculationInputs,
         calculation,
@@ -222,7 +226,7 @@ class SubmissionRepositorySpec
 
       insert(submission).futureValue
       repository.clear("sessionId").futureValue
-      repository.get(submissionUniqueId).futureValue must not be defined
+      repository.get(id).futureValue must not be defined
     }
   }
 }
