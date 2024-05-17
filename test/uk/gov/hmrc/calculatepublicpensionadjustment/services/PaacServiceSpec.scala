@@ -87,8 +87,8 @@ class PaacServiceSpec
           100000,
           0,
           List(
-            TaxYearScheme("Scheme 1", "pstrTest1",  10000, 9000, None),
-            TaxYearScheme("Scheme 2", "pstrTest2",  10000, 9000, None)
+            TaxYearScheme("Scheme 1", "pstrTest1", 10000, 9000, None),
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 9000, None)
           ),
           Period._2017,
           Some(AboveThreshold(21000))
@@ -97,7 +97,7 @@ class PaacServiceSpec
           10000,
           List(
             TaxYearScheme("Scheme 1", "pstrTest1", 10000, 9000, None),
-            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 9000,  None)
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 9000, None)
           ),
           100000,
           0,
@@ -123,7 +123,7 @@ class PaacServiceSpec
           10000,
           List(
             TaxYearScheme("Scheme 1", "pstrTest1", 10000, 6000, None),
-            TaxYearScheme("Scheme 2", "pstrTest2",  10000, 0, None)
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 0, None)
           ),
           90000,
           3000,
@@ -134,7 +134,7 @@ class PaacServiceSpec
           10000,
           List(
             TaxYearScheme("Scheme 1", "pstrTest1", 10000, 2000, None),
-            TaxYearScheme("Scheme 2", "pstrTest2",  10000, 1000, None)
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 1000, None)
           ),
           90000,
           8000,
@@ -160,7 +160,7 @@ class PaacServiceSpec
           10000,
           List(
             TaxYearScheme("Scheme 1", "pstrTest1", 10000, 1000, None),
-            TaxYearScheme("Scheme 2", "pstrTest2",  10000, 6000, None)
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 6000, None)
           ),
           90000,
           4000,
@@ -202,7 +202,7 @@ class PaacServiceSpec
           0,
           List(
             TaxYearScheme("Scheme 1", "pstrTest1", 10000, 9000, None),
-            TaxYearScheme("Scheme 2", "pstrTest2",  10000, 9000,  None)
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 9000, None)
           ),
           100000,
           0,
@@ -268,7 +268,7 @@ class PaacServiceSpec
           6000,
           List(
             TaxYearScheme("Scheme 1", "pstrTest1", 10000, 9000, None),
-            TaxYearScheme("Scheme 2", "pstrTest2",10000, 9000, None)
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 9000, None)
           ),
           100000,
           4000,
@@ -294,8 +294,8 @@ class PaacServiceSpec
           90000,
           3000,
           List(
-            TaxYearScheme("Scheme 1", "pstrTest1", 10000, 3000,  None),
-            TaxYearScheme("Scheme 2", "pstrTest2",  10000, 6000,  None)
+            TaxYearScheme("Scheme 1", "pstrTest1", 10000, 3000, None),
+            TaxYearScheme("Scheme 2", "pstrTest2", 10000, 6000, None)
           ),
           Period._2023,
           Some(AboveThreshold(24000))
@@ -1732,7 +1732,7 @@ class PaacServiceSpec
             10000,
             List(
               TaxYearScheme("Scheme 1", "pstrTest1", 10000, 1000, None),
-              TaxYearScheme("Scheme 2", "pstrTest2",  10000, 1000, None)
+              TaxYearScheme("Scheme 2", "pstrTest2", 10000, 1000, None)
             ),
             90000,
             3000,
