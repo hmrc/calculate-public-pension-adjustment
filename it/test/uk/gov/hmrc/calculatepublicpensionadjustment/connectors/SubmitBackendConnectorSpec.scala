@@ -26,7 +26,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.{BAD_REQUEST, NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.UserAnswers
@@ -70,7 +70,7 @@ class SubmitBackendConnectorSpec
   private lazy val connector: SubmitBackendConnector = app.injector.instanceOf[SubmitBackendConnector]
 
   "SubmitBackendConnector" - {
-    "retrieveCalcUserAnswers" - {
+    "retrieveCalcUserAnswersFromSubmitBE" - {
       "should return CalcUserAnswers successfully when calc backend responds with OK" in {
         val uniqueId         = "uniqueId"
         val expectedResponse = UserAnswers(
@@ -88,7 +88,20 @@ class SubmitBackendConnectorSpec
             .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(expectedResponse).toString()))
         )
 
-        connector.retrieveCalcUserAnswersFromSubmitBE(uniqueId).futureValue shouldBe expectedResponse
+        connector.retrieveCalcUserAnswersFromSubmitBE(uniqueId).futureValue shouldBe Some(expectedResponse)
+      }
+
+      "should return None successfully when calc backend responds with NO_CONTENT" in {
+        val id         = "id"
+
+        val url              = s"/submit-public-pension-adjustment/calc-user-answers/$id"
+
+        wireMockServer.stubFor(
+          get(url)
+            .willReturn(aResponse().withStatus(NO_CONTENT))
+        )
+
+        connector.retrieveCalcUserAnswersFromSubmitBE(id).futureValue shouldBe None
       }
 
       "should throw BadRequestException when calc backend responds with an error" in {
@@ -107,5 +120,57 @@ class SubmitBackendConnectorSpec
         }
       }
     }
+
+    "retrieveCalcUserAnswersFromSubmitBEWithId" - {
+      "should return CalcUserAnswers successfully when calc backend responds with OK" in {
+        val id         = "id"
+        val expectedResponse = UserAnswers(
+          id,
+          JsObject(Seq()),
+          "uniqueId",
+          Instant.ofEpochSecond(1),
+          authenticated = true,
+          submissionStarted = true
+        )
+        val url              = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
+
+        wireMockServer.stubFor(
+          get(url)
+            .willReturn(aResponse().withStatus(OK).withBody(Json.toJson(expectedResponse).toString()))
+        )
+
+        connector.retrieveCalcUserAnswersFromSubmitBEWithId(id).futureValue shouldBe Some(expectedResponse)
+      }
+
+      "should return None successfully when calc backend responds with NO_CONTENT" in {
+        val id         = "id"
+
+        val url              = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
+
+        wireMockServer.stubFor(
+          get(url)
+            .willReturn(aResponse().withStatus(NO_CONTENT))
+        )
+
+        connector.retrieveCalcUserAnswersFromSubmitBEWithId(id).futureValue shouldBe None
+      }
+
+      "should throw BadRequestException when calc backend responds with an error" in {
+        val id         = "id"
+        val url      = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
+
+        wireMockServer.stubFor(
+          get(url)
+            .willReturn(aResponse().withStatus(BAD_REQUEST))
+        )
+
+        val response = connector.retrieveCalcUserAnswersFromSubmitBEWithId(id)
+
+        ScalaFutures.whenReady(response.failed) { response =>
+          response shouldBe a[BadRequestException]
+        }
+      }
+    }
+
   }
 }

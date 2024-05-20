@@ -18,12 +18,11 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.connectors
 
 import com.google.inject.Inject
 import play.api.Logging
-import play.api.http.Status.OK
-import play.api.libs.json.Json
+import play.api.http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{UniqueId, UserAnswers}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,7 +32,7 @@ class SubmitBackendConnector @Inject() (
 )(implicit
   ec: ExecutionContext
 ) extends Logging {
-  def retrieveCalcUserAnswersFromSubmitBE(uniqueId: String)(implicit hc: HeaderCarrier): Future[UserAnswers] = {
+  def retrieveCalcUserAnswersFromSubmitBE(uniqueId: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = {
     val submissionsSessionUrl =
       url"${config.sppaBaseUrl}/submit-public-pension-adjustment/calc-user-answers/$uniqueId"
     httpClient2
@@ -41,9 +40,11 @@ class SubmitBackendConnector @Inject() (
       .execute
       .flatMap { response =>
         response.status match {
-          case OK =>
-            Future.successful(response.json.as[UserAnswers])
-          case _  =>
+          case OK         =>
+            Future.successful(Some(response.json.as[UserAnswers]))
+          case NO_CONTENT =>
+            Future.successful(None)
+          case _          =>
             logger.error(
               s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers/$uniqueId with status : ${response.status}"
             )
@@ -56,4 +57,52 @@ class SubmitBackendConnector @Inject() (
         }
       }
   }
+
+  def retrieveCalcUserAnswersFromSubmitBEWithId(id: String)(implicit hc: HeaderCarrier): Future[Option[UserAnswers]] = {
+    val submissionsSessionUrl =
+      url"${config.sppaBaseUrl}/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
+    httpClient2
+      .get(submissionsSessionUrl)
+      .execute
+      .flatMap { response =>
+        response.status match {
+          case OK         =>
+            Future.successful(Some(response.json.as[UserAnswers]))
+          case NO_CONTENT =>
+            Future.successful(None)
+          case _          =>
+            logger.error(
+              s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers-with-id/$id with status : ${response.status}"
+            )
+            Future.failed(
+              UpstreamErrorResponse(
+                s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers-with-id/$id",
+                response.status
+              )
+            )
+        }
+      }
+  }
+
+  def clearCalcUserAnswersSubmitBE()(implicit hc: HeaderCarrier): Future[Done] =
+    httpClient2
+      .delete(url"${config.sppaBaseUrl}/submit-public-pension-adjustment/calc-user-answers")
+      .execute[HttpResponse]
+      .flatMap { response =>
+        response.status match {
+          case NO_CONTENT =>
+            Future.successful(Done)
+          case _          =>
+            logger.error(
+              s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers with status : ${response.status}"
+            )
+            Future.failed(
+              UpstreamErrorResponse(
+                "Unexpected response from submit-public-pension-adjustment/calc-user-answers",
+                response.status
+              )
+            )
+        }
+      }
+
 }

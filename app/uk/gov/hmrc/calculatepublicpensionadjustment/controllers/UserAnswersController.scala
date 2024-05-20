@@ -109,8 +109,15 @@ class UserAnswersController @Inject() (
       )
   }
 
-  def checkAndRetrieveCalcUserAnswers(uniqueId: String): Action[AnyContent] = Action.async { implicit request =>
-    userAnswersService.checkAndRetrieveCalcUserAnswers(uniqueId).map { _ =>
+  def checkAndRetrieveCalcUserAnswersWithUniqueId(uniqueId: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      userAnswersService.checkAndRetrieveCalcUserAnswersWithUniqueId(uniqueId).map { _ =>
+        Ok
+      }
+  }
+
+  def checkAndRetrieveCalcUserAnswersWithId(id: String): Action[AnyContent] = Action.async { implicit request =>
+    userAnswersService.checkAndRetrieveCalcUserAnswersWithId(id).map { _ =>
       Ok
     }
   }

@@ -108,16 +108,44 @@ class UserAnswersService @Inject() (
         Future.successful(false)
     }
 
-  def checkAndRetrieveCalcUserAnswers(uniqueId: String)(implicit hc: HeaderCarrier): Future[Done] =
+  def checkAndRetrieveCalcUserAnswersWithUniqueId(uniqueId: String)(implicit hc: HeaderCarrier): Future[Done] =
     for {
       calcExists <- checkCalculationExistsWithUniqueId(uniqueId)
-      _          <- if (!calcExists) {
-                      submitBackendConnector.retrieveCalcUserAnswersFromSubmitBE(uniqueId).flatMap { ua =>
-                        userAnswers.set(ua)
+      r          <- if (!calcExists) {
+                      submitBackendConnector.retrieveCalcUserAnswersFromSubmitBE(uniqueId).flatMap {
+                        case Some(ua) =>
+                          userAnswers.set(ua).map(_ => Done)
+                        case None     =>
+                          logger.warn(s"No UserAnswers found for uniqueId: $uniqueId")
+                          Future.successful(Done)
                       }
                     } else {
                       Future.successful(Done)
                     }
-    } yield Done
+    } yield r
+
+  def checkCalculationExistsWithId(id: String): Future[Boolean] =
+    retrieveUserAnswers(id).flatMap {
+      case Some(_) =>
+        Future.successful(true)
+      case None    =>
+        Future.successful(false)
+    }
+
+  def checkAndRetrieveCalcUserAnswersWithId(id: String)(implicit hc: HeaderCarrier): Future[Done] =
+    for {
+      calcExists <- checkCalculationExistsWithId(id)
+      r          <- if (!calcExists) {
+                      submitBackendConnector.retrieveCalcUserAnswersFromSubmitBEWithId(id).flatMap {
+                        case Some(ua) =>
+                          userAnswers.set(ua).map(_ => Done)
+                        case None     =>
+                          logger.warn(s"No UserAnswers found for id: $id")
+                          Future.successful(Done)
+                      }
+                    } else {
+                      Future.successful(Done)
+                    }
+    } yield r
 
 }

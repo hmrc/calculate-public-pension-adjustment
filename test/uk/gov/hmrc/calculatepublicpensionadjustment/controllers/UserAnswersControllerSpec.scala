@@ -369,19 +369,35 @@ class UserAnswersControllerSpec
     }
   }
 
-  "checkAndRetrieveCalcUserAnswers" - {
+  "checkAndRetrieveCalcUserAnswersWithUniqueId" - {
 
     "must return OK when the service processes successfully" in {
-      when(mockUserAnswersService.checkAndRetrieveCalcUserAnswers(eqTo("uniqueId"))(any()))
+      when(mockUserAnswersService.checkAndRetrieveCalcUserAnswersWithUniqueId(eqTo("uniqueId"))(any()))
         .thenReturn(Future.successful(Done))
 
       val request =
-        FakeRequest(GET, routes.UserAnswersController.checkAndRetrieveCalcUserAnswers("uniqueId").url)
+        FakeRequest(GET, routes.UserAnswersController.checkAndRetrieveCalcUserAnswersWithUniqueId("uniqueId").url)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
-      verify(mockUserAnswersService).checkAndRetrieveCalcUserAnswers(eqTo("uniqueId"))(any())
+      verify(mockUserAnswersService).checkAndRetrieveCalcUserAnswersWithUniqueId(eqTo("uniqueId"))(any())
+    }
+  }
+
+  "checkAndRetrieveCalcUserAnswersWithId" - {
+
+    "must return OK when the service processes successfully" in {
+      when(mockUserAnswersService.checkAndRetrieveCalcUserAnswersWithId(eqTo("id"))(any()))
+        .thenReturn(Future.successful(Done))
+
+      val request =
+        FakeRequest(GET, routes.UserAnswersController.checkAndRetrieveCalcUserAnswersWithId("id").url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+      verify(mockUserAnswersService).checkAndRetrieveCalcUserAnswersWithId(eqTo("id"))(any())
     }
   }
 }
