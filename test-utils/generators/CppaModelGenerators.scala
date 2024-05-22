@@ -60,18 +60,15 @@ trait CppaModelGenerators extends ModelGenerators {
 
   lazy val genTaxYearScheme: Gen[TaxYearScheme] =
     for {
-      schemeName                 <- genSchemeName
-      pensionSchemeTaxReference  <- genSchemePstr
-      originalPensionInputAmount <- genPensionInputAmount
-      revisedPensionInputAmount  <- genPensionInputAmount
-      chargePaidByScheme         <- genChargePaidBySchemeOrMember
+      schemeName                <- genSchemeName
+      pensionSchemeTaxReference <- genSchemePstr
+      revisedPensionInputAmount <- genPensionInputAmount
+      chargePaidByScheme        <- genChargePaidBySchemeOrMember
     } yield TaxYearScheme(
       schemeName,
       pensionSchemeTaxReference,
-      originalPensionInputAmount,
       revisedPensionInputAmount,
       chargePaidByScheme,
-      None,
       None
     )
 
