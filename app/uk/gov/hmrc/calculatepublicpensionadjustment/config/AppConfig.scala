@@ -30,5 +30,8 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
 
+  val sppaBaseUrl: String =
+    config.get[Service]("microservice.services.submit-public-pension-adjustment").baseUrl
+
   val userAnswerTtlInDays: Int = config.get[Int]("mongodb.userAnswersTtlInDays")
 }

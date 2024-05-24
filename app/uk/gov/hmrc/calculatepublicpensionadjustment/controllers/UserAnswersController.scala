@@ -96,6 +96,7 @@ class UserAnswersController @Inject() (
         BadRequest
     }
   }
+
   def checkSubmissionStartedWithId(id: String): Action[AnyContent] = Action.async {
     userAnswersService
       .checkSubmissionStartedWithId(id)
@@ -106,5 +107,18 @@ class UserAnswersController @Inject() (
           Ok(Json.toJson(submissionStarted))
         }
       )
+  }
+
+  def checkAndRetrieveCalcUserAnswersWithUniqueId(uniqueId: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      userAnswersService.checkAndRetrieveCalcUserAnswersWithUniqueId(uniqueId).map { _ =>
+        Ok
+      }
+  }
+
+  def checkAndRetrieveCalcUserAnswersWithId(id: String): Action[AnyContent] = Action.async { implicit request =>
+    userAnswersService.checkAndRetrieveCalcUserAnswersWithId(id).map { _ =>
+      Ok
+    }
   }
 }

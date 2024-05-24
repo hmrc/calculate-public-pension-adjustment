@@ -37,6 +37,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import play.api.libs.json.JsObject
 import requests.CalculationResponses
+import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.SubmitBackendConnector
 
 class UserAnswersServiceSpec
     extends AnyFreeSpec
@@ -47,20 +48,23 @@ class UserAnswersServiceSpec
     with BeforeAndAfterEach
     with CalculationResponses {
 
-  private val mockSubmissionService     = mock[SubmissionService]
-  private val mockUserAnswersRepository = mock[UserAnswersRepository]
+  private val mockSubmissionService      = mock[SubmissionService]
+  private val mockUserAnswersRepository  = mock[UserAnswersRepository]
+  private val mockSubmitBackendConnector = mock[SubmitBackendConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSubmissionService)
     reset(mockUserAnswersRepository)
+    reset(mockSubmitBackendConnector)
   }
 
   private val hc: HeaderCarrier = HeaderCarrier()
 
-  private val service = new UserAnswersService(mockSubmissionService, mockUserAnswersRepository)
+  private val service =
+    new UserAnswersService(mockSubmissionService, mockUserAnswersRepository, mockSubmitBackendConnector)
 
-  "SubmissionService" - {
+  "UserAnswersServiceService" - {
 
     "retrieveUserAnswers" - {
 
@@ -168,9 +172,6 @@ class UserAnswersServiceSpec
       }
 
     }
-  }
-
-  "UserAnswersService" - {
 
     "checkSubmissionStarted" - {
 
@@ -193,5 +194,81 @@ class UserAnswersServiceSpec
         result.futureValue mustBe None
       }
     }
+
+    "checkCalculationExistsWithUniqueId" - {
+      "must return true if calculation exists" in {
+        when(mockUserAnswersRepository.getByUniqueId("uniqueId"))
+          .thenReturn(Future.successful(Some(UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now))))
+
+        val result = service.checkCalculationExistsWithUniqueId("uniqueId")
+
+        result.futureValue mustBe true
+      }
+
+      "must return false if calculation does not exist" in {
+        when(mockUserAnswersRepository.getByUniqueId("unknownUniqueId")).thenReturn(Future.successful(None))
+
+        val result = service.checkCalculationExistsWithUniqueId("unknownUniqueId")
+
+        result.futureValue mustBe false
+      }
+    }
+
+    "checkAndRetrieveCalcUserAnswersWithUniqueId" - {
+      "must not retrieve calculation user answers from backend if they exist" in {
+        val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
+
+        when(mockUserAnswersRepository.getByUniqueId("uniqueId")).thenReturn(Future.successful(Some(userAnswers)))
+
+        val result = service.checkAndRetrieveCalcUserAnswersWithUniqueId("uniqueId")(hc)
+
+        result.futureValue mustBe Done
+        verify(mockSubmitBackendConnector, never).retrieveCalcUserAnswersFromSubmitBE("uniqueId")(hc)
+      }
+
+      "must retrieve calculation user answers if they do not exist" in {
+        val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
+
+        when(mockUserAnswersRepository.getByUniqueId("uniqueId")).thenReturn(Future.successful(None))
+        when(mockSubmitBackendConnector.retrieveCalcUserAnswersFromSubmitBE("uniqueId")(hc))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.set(userAnswers)).thenReturn(Future.successful(Done))
+
+        val result = service.checkAndRetrieveCalcUserAnswersWithUniqueId("uniqueId")(hc)
+
+        result.futureValue mustBe Done
+        verify(mockUserAnswersRepository, times(1)).set(userAnswers)
+      }
+    }
+
+    "checkAndRetrieveCalcUserAnswersWithId" - {
+      "must not retrieve calculation user answers from backend if they exist" in {
+        val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
+
+        when(mockUserAnswersRepository.get("ID")).thenReturn(Future.successful(Some(userAnswers)))
+
+        val result = service.checkAndRetrieveCalcUserAnswersWithId("ID")(hc)
+
+        result.futureValue mustBe Done
+        verify(mockSubmitBackendConnector, never).retrieveCalcUserAnswersFromSubmitBEWithId("ID")(hc)
+      }
+
+      "must retrieve calculation user answers if they do not exist" in {
+        val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
+
+        when(mockUserAnswersRepository.get("ID")).thenReturn(Future.successful(None))
+        when(mockSubmitBackendConnector.retrieveCalcUserAnswersFromSubmitBEWithId("ID")(hc))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.set(userAnswers)).thenReturn(Future.successful(Done))
+
+        val result = service.checkAndRetrieveCalcUserAnswersWithId("ID")(hc)
+
+        result.futureValue mustBe Done
+        verify(mockUserAnswersRepository, times(1)).set(userAnswers)
+
+      }
+    }
+
   }
+
 }

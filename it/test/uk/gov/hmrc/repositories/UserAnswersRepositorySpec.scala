@@ -90,6 +90,7 @@ class UserAnswersRepositorySpec
     }
   }
 
+  // TODO: Revisit UniqueId Unit Tests
 //  ".getByUniqueId" - {
 //
 //    "when a userAnswer exists, must get the record with the uniqueId" in {
