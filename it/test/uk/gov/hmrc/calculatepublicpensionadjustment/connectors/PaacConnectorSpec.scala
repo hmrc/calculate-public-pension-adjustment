@@ -24,14 +24,14 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.{AboveThreshold, BelowThreshold}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
 import uk.gov.hmrc.calculatepublicpensionadjustment.utils.WireMockHelper
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 class PaacConnectorSpec
     extends AnyFreeSpec

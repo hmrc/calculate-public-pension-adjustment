@@ -17,10 +17,9 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import com.google.inject.Inject
-import play.api.libs.json.Json
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.{BelowThreshold, reads}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.BelowThreshold
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._

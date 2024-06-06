@@ -18,11 +18,11 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import cats.data.EitherT
 import play.api.Logging
-import play.api.libs.json.{JsSuccess, JsValue, Json, Reads, __}
+import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
 import play.api.mvc._
 import uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions.IdentifierAction
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.RetrieveSubmissionInfo
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, Submission, SubmissionRequest, SubmissionResponse}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.{SubmissionService, UserAnswersService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendBaseController
