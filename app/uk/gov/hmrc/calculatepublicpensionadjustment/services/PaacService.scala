@@ -26,7 +26,9 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
+import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
+import scala.math.BigDecimal.RoundingMode
 import scala.math._
 
 class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionContext) extends Logging {
@@ -356,16 +358,49 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   ): Double =
     (period, chargeableAmount > 0) match {
       case (Period._2016 | Period._2017 | Period._2018 | Period._2019, true) =>
-        chargeableAmount * findTaxRate(scottishTaxYears, period, totalIncome)
+        calculateRevisedChargeHelper(scottishTaxYears, period, totalIncome, chargeableAmount)
 
       case (Period._2016 | Period._2017 | Period._2018 | Period._2019, false) =>
         0
 
       case (Period._2020 | Period._2021 | Period._2022 | Period._2023, _) =>
-        chargeableAmount * findTaxRate(scottishTaxYears, period, totalIncome)
+        calculateRevisedChargeHelper(scottishTaxYears, period, totalIncome, chargeableAmount)
     }
 
-  def findTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int): Double =
+  @tailrec
+  private def calculateRevisedChargeHelper(
+    scottishTaxYears: List[Period],
+    period: Period,
+    totalIncome: Int,
+    chargeableAmount: Int,
+    revisedCharge: Double = 0.0
+  ): Double =
+    if (chargeableAmount == 0) {
+      if (revisedCharge > 0)
+        BigDecimal(revisedCharge).setScale(2, RoundingMode.DOWN).toDouble
+      else
+        BigDecimal(revisedCharge).setScale(2, RoundingMode.UP).toDouble
+    } else {
+      val taxRate = findTaxRate(scottishTaxYears, period, totalIncome + chargeableAmount)
+
+      val maxChargeableAmount = (totalIncome + chargeableAmount) - taxRate._2
+
+      val chargeableAmountUnderTaxRate =
+        if (chargeableAmount < maxChargeableAmount) chargeableAmount
+        else maxChargeableAmount
+
+      val charge = taxRate._1 * chargeableAmountUnderTaxRate
+
+      calculateRevisedChargeHelper(
+        scottishTaxYears,
+        period,
+        totalIncome,
+        chargeableAmount - chargeableAmountUnderTaxRate,
+        revisedCharge + charge
+      )
+    }
+
+  def findTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int): (Double, Int) =
     (scottishTaxYears.contains(period), period) match {
       case (true, Period._2016) => ScottishTaxRateTill2018._2016().getTaxRate(totalIncome)
 
