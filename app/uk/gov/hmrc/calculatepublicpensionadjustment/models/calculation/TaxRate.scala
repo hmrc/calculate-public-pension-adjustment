@@ -24,12 +24,12 @@ sealed trait TaxRate {
 
   def topRateAllowance: Int = 150000
 
-  def getTaxRate(income: Int): Double =
+  def getTaxRate(income: Int): (Double, Int) =
     income match {
-      case i if i <= freeAllowance      => 0.00
-      case i if i <= basicRateAllowance => 0.20
-      case i if i <= topRateAllowance   => 0.40
-      case _                            => 0.45
+      case i if i <= freeAllowance      => (0.00, 0)
+      case i if i <= basicRateAllowance => (0.20, freeAllowance)
+      case i if i <= topRateAllowance   => (0.40, basicRateAllowance)
+      case _                            => (0.45, topRateAllowance)
     }
 }
 
@@ -97,14 +97,14 @@ sealed trait ScottishTaxRateAfter2018 extends ScottishTaxRate {
 
   def intermediateRateAllowance: Int
 
-  override def getTaxRate(income: Int): Double =
+  override def getTaxRate(income: Int): (Double, Int) =
     income match {
-      case i if i <= freeAllowance             => 0.00
-      case i if i <= starterRateAllowance      => 0.19
-      case i if i <= basicRateAllowance        => 0.20
-      case i if i <= intermediateRateAllowance => 0.21
-      case i if i <= topRateAllowance          => 0.41
-      case _                                   => 0.46
+      case i if i <= freeAllowance             => (0.00, 0)
+      case i if i <= starterRateAllowance      => (0.19, freeAllowance)
+      case i if i <= basicRateAllowance        => (0.20, starterRateAllowance)
+      case i if i <= intermediateRateAllowance => (0.21, basicRateAllowance)
+      case i if i <= topRateAllowance          => (0.41, intermediateRateAllowance)
+      case _                                   => (0.46, topRateAllowance)
     }
 }
 

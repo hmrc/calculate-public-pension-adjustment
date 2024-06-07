@@ -628,63 +628,63 @@ class PaacServiceSpec
 
         val result = service.findTaxRate(List(Period._2017), Period._2016, 10600)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 10599)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2016 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2016, 42385)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 10600)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 42384)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 10600)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2016 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2016, 150000)
 
-        result mustEqual 0.4
+        result mustEqual (0.4, 42385)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 149999)
 
-        result mustEqual 0.4
+        result mustEqual (0.4, 42385)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2016 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2016, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2018), Period._2017, 11000)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2017 under FreeAllowance" in {
@@ -692,14 +692,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 10999)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2018), Period._2017, 43000)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 11000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2017 under BasicRateAllowance" in {
@@ -707,14 +707,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 42385)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 11000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2018), Period._2017, 150000)
 
-        result mustEqual 0.4
+        result mustEqual (0.4, 43000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2017 under TopRateAllowance" in {
@@ -722,14 +722,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 149999)
 
-        result mustEqual 0.4
+        result mustEqual (0.4, 42385)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2018), Period._2017, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2017 above TopRateAllowance" in {
@@ -737,14 +737,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2018, 11500)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2018 under FreeAllowance" in {
@@ -752,14 +752,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 11499)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2018, 45000)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 11500)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2018 under BasicRateAllowance" in {
@@ -767,14 +767,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 42999)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 11500)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2018, 150000)
 
-        result mustEqual 0.4
+        result mustEqual (0.4, 45000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2018 under TopRateAllowance" in {
@@ -782,14 +782,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 149999)
 
-        result mustEqual 0.4
+        result mustEqual (0.4, 43000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2018, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2018 above TopRateAllowance" in {
@@ -797,14 +797,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2019, 11850)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under FreeAllowance" in {
@@ -812,7 +812,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 11850)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under StarterRateAllowance" in {
@@ -820,14 +820,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 13850)
 
-        result mustEqual 0.19
+        result mustEqual (0.19, 11850)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2019, 46350)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 11850)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under BasicRateAllowance" in {
@@ -835,7 +835,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 24000)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 13850)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under IntermediateRateAllowance" in {
@@ -843,14 +843,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 43430)
 
-        result mustEqual 0.21
+        result mustEqual (0.21, 24000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2019, 150000)
 
-        result mustEqual 0.40
+        result mustEqual (0.4, 46350)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under TopRateAllowance" in {
@@ -858,14 +858,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 149999)
 
-        result mustEqual 0.41
+        result mustEqual (0.41, 43430)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2019, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 above TopRateAllowance" in {
@@ -873,14 +873,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 150001)
 
-        result mustEqual 0.46
+        result mustEqual (0.46, 150000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2020, 12500)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under FreeAllowance" in {
@@ -888,7 +888,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 12499)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under StarterRateAllowance" in {
@@ -896,14 +896,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 14549)
 
-        result mustEqual 0.19
+        result mustEqual (0.19, 12500)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2020, 50000)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 12500)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under BasicRateAllowance" in {
@@ -911,7 +911,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 24944)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 14549)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under IntermediateRateAllowance" in {
@@ -919,14 +919,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 43430)
 
-        result mustEqual 0.21
+        result mustEqual (0.21, 24944)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2020, 150000)
 
-        result mustEqual 0.40
+        result mustEqual (0.4, 50000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under TopRateAllowance" in {
@@ -934,14 +934,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 149999)
 
-        result mustEqual 0.41
+        result mustEqual (0.41, 43430)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2020, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 above TopRateAllowance" in {
@@ -949,14 +949,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 150001)
 
-        result mustEqual 0.46
+        result mustEqual (0.46, 150000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2021, 12500)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under FreeAllowance" in {
@@ -964,7 +964,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 12499)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under StarterRateAllowance" in {
@@ -972,14 +972,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 14585)
 
-        result mustEqual 0.19
+        result mustEqual (0.19, 12500)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2021, 50000)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 12500)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under BasicRateAllowance" in {
@@ -987,7 +987,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 25158)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 14585)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under IntermediateRateAllowance" in {
@@ -995,14 +995,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 43430)
 
-        result mustEqual 0.21
+        result mustEqual (0.21, 25158)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2021, 150000)
 
-        result mustEqual 0.40
+        result mustEqual (0.4, 50000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under TopRateAllowance" in {
@@ -1010,14 +1010,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 149999)
 
-        result mustEqual 0.41
+        result mustEqual (0.41, 43430)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2021, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 above TopRateAllowance" in {
@@ -1025,14 +1025,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 150001)
 
-        result mustEqual 0.46
+        result mustEqual (0.46, 150000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2022, 12570)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under FreeAllowance" in {
@@ -1040,7 +1040,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 12569)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under StarterRateAllowance" in {
@@ -1048,14 +1048,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 14667)
 
-        result mustEqual 0.19
+        result mustEqual (0.19, 12570)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2022, 50270)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 12570)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under BasicRateAllowance" in {
@@ -1063,7 +1063,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 25296)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 14667)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under IntermediateRateAllowance" in {
@@ -1071,14 +1071,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 43662)
 
-        result mustEqual 0.21
+        result mustEqual (0.21, 25296)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2022, 150000)
 
-        result mustEqual 0.40
+        result mustEqual (0.4, 50270)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under TopRateAllowance" in {
@@ -1086,14 +1086,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 149999)
 
-        result mustEqual 0.41
+        result mustEqual (0.41, 43662)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2022, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 above TopRateAllowance" in {
@@ -1101,14 +1101,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 150001)
 
-        result mustEqual 0.46
+        result mustEqual (0.46, 150000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 under FreeAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2023, 12570)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under FreeAllowance" in {
@@ -1116,7 +1116,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 12569)
 
-        result mustEqual 0.0
+        result mustEqual (0.0, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under StarterRateAllowance" in {
@@ -1124,14 +1124,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 14732)
 
-        result mustEqual 0.19
+        result mustEqual (0.19, 12570)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2023, 50270)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 12570)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under BasicRateAllowance" in {
@@ -1139,7 +1139,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 25688)
 
-        result mustEqual 0.2
+        result mustEqual (0.2, 14732)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under IntermediateRateAllowance" in {
@@ -1147,14 +1147,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 43662)
 
-        result mustEqual 0.21
+        result mustEqual (0.21, 25688)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 under TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2023, 150000)
 
-        result mustEqual 0.40
+        result mustEqual (0.4, 50270)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under TopRateAllowance" in {
@@ -1162,14 +1162,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 149999)
 
-        result mustEqual 0.41
+        result mustEqual (0.41, 43662)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 above TopRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2023, 150001)
 
-        result mustEqual 0.45
+        result mustEqual (0.45, 150000)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 above TopRateAllowance" in {
@@ -1177,7 +1177,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 150001)
 
-        result mustEqual 0.46
+        result mustEqual (0.46, 150000)
       }
 
     }
@@ -1269,7 +1269,7 @@ class PaacServiceSpec
             18000
           )
 
-        result mustEqual 3780.0
+        result mustEqual 6694.0
       }
 
       "must return correct RevisedCharge for zero chargeableAmount and scottishTaxYear 2019 with TaxRate 0.21" in {
@@ -1308,7 +1308,7 @@ class PaacServiceSpec
             18000
           )
 
-        result mustEqual 3420.0
+        result mustEqual 3660.37
       }
 
       "must return correct RevisedCharge for zero chargeableAmount and scottishTaxYear 2022 with TaxRate 0.19" in {
