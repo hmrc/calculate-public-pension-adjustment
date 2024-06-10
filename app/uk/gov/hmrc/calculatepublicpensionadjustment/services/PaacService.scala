@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may obtain taxRateWithLowerTaxBandLimit copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -19,6 +19,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 import com.google.inject.Inject
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.TaxFreeInterest
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.BelowThreshold
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
@@ -430,6 +431,42 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
       case (true, Period._2023) => ScottishTaxRateAfter2018._2023().getTaxRate(totalIncome)
     }
+
+  def findTaxFreeInterest(scottishTaxYears: List[Period], period: Period, totalIncome: Int): Int = {
+
+    val taxRateWithLowerTaxBandLimit = findTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int)
+
+    val taxFreeInterest = (taxRate: Double, baseRate: Double, higherRate: Double) =>
+      if (taxRate <= baseRate)
+        TaxFreeInterest.maxAmount
+      else if (baseRate < taxRate && taxRate <= higherRate)
+        TaxFreeInterest.intermediateAmount
+      else
+        TaxFreeInterest.minAmount
+
+    (scottishTaxYears.contains(period), taxRateWithLowerTaxBandLimit._1, period) match {
+      case (true, taxRate, Period._2016 | Period._2017 | Period._2018) =>
+        taxFreeInterest(
+          taxRate,
+          TaxFreeInterest.scottishTaxRateTill2018BaseTaxRate,
+          TaxFreeInterest.scottishTaxRateTill2018HigherTaxRate
+        )
+
+      case (true, taxRate, _) =>
+        taxFreeInterest(
+          taxRate,
+          TaxFreeInterest.scottishTaxRateAfter2018BaseTaxRate,
+          TaxFreeInterest.scottishTaxRateAfter2018HigherTaxRate
+        )
+
+      case (false, taxRate, _) =>
+        taxFreeInterest(
+          taxRate,
+          TaxFreeInterest.nonScottishBaseTaxRate,
+          TaxFreeInterest.nonScottishHigherTaxRate
+        )
+    }
+  }
 
   def calculateTotalAmounts(
     outDates: List[OutOfDatesTaxYearsCalculation],
