@@ -1182,6 +1182,266 @@ class PaacServiceSpec
 
     }
 
+    "isBelowBasicOrIntermediateTaxRate" - {
+
+      "must return true for Scottish TaxYear 2016 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2016, Period._2023), Period._2016, 42385)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2016 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2016, Period._2023), Period._2016, 42386)
+
+        result mustEqual false
+      }
+
+      "must return true for Scottish TaxYear 2017 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2017, Period._2023), Period._2017, 42385)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2017 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2017, Period._2023), Period._2017, 42386)
+
+        result mustEqual false
+      }
+
+      "must return true for Scottish TaxYear 2018 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2018, 43000)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2018 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2018, 43001)
+
+        result mustEqual false
+      }
+
+      "must return true for Scottish TaxYear 2019 for the TotalIncome below IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2019, Period._2023), Period._2019, 43430)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2019 for the TotalIncome above IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2019, Period._2023), Period._2019, 43431)
+
+        result mustEqual false
+      }
+
+      "must return true for Scottish TaxYear 2020 for the TotalIncome below IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2020, Period._2023), Period._2020, 43430)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2020 for the TotalIncome above IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2020, Period._2023), Period._2020, 43431)
+
+        result mustEqual false
+      }
+
+      "must return true for Scottish TaxYear 2021 for the TotalIncome below IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2021, Period._2023), Period._2021, 43430)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2021 for the TotalIncome above IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2021, Period._2023), Period._2021, 43431)
+
+        result mustEqual false
+      }
+
+      "must return true for Scottish TaxYear 2022 for the TotalIncome below IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2022, Period._2023), Period._2022, 43662)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2022 for the TotalIncome above IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2022, Period._2023), Period._2022, 43663)
+
+        result mustEqual false
+      }
+
+      "must return true for Scottish TaxYear 2023 for the TotalIncome below IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2022, Period._2023), Period._2023, 43662)
+
+        result mustEqual true
+      }
+
+      "must return false for Scottish TaxYear 2023 for the TotalIncome above IntermediateTaxRate - 0.21   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2022, Period._2023), Period._2023, 43663)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2016 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2016, 42385)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2016 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2016, 42386)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2017 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2017, 43000)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2017 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2017, 43001)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2018 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(), Period._2018, 45000)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2018 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(), Period._2018, 45001)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2019 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(), Period._2019, 46350)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2019 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2019, 46351)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2020 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(), Period._2020, 50000)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2020 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2020, 50001)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2021 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(), Period._2021, 50000)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2021 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2021, 50001)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2022 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(), Period._2022, 50270)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2022 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2023), Period._2022, 50271)
+
+        result mustEqual false
+      }
+
+      "must return true for NonScottish TaxYear 2023 for the TotalIncome below BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(), Period._2023, 50270)
+
+        result mustEqual true
+      }
+
+      "must return false for NonScottish TaxYear 2023 for the TotalIncome above BasicTaxRate - 0.20   " in {
+
+        val result =
+          service.isBelowBasicOrIntermediateTaxRate(List(Period._2018, Period._2021), Period._2023, 50271)
+
+        result mustEqual false
+      }
+
+    }
+
     "calculateOriginalCharge" - {
 
       val nonZeroTaxYearSchemes = List(
