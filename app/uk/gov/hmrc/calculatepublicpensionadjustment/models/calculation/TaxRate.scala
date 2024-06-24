@@ -24,18 +24,29 @@ sealed trait TaxRate {
 
   def topRateAllowance: Int = 150000
 
+  def basicTaxRate: Double = 0.20
+
+  def higherTaxRate: Double = 0.40
+
+  def topTaxRate: Double = 0.45
+
   def getTaxRate(income: Int): (Double, Int) =
     income match {
       case i if i <= freeAllowance      => (0.00, 0)
-      case i if i <= basicRateAllowance => (0.20, freeAllowance)
-      case i if i <= topRateAllowance   => (0.40, basicRateAllowance)
-      case _                            => (0.45, topRateAllowance)
+      case i if i <= basicRateAllowance => (basicTaxRate, freeAllowance)
+      case i if i <= topRateAllowance   => (higherTaxRate, basicRateAllowance)
+      case _                            => (topTaxRate, topRateAllowance)
     }
 }
 
 sealed trait NonScottishTaxRate extends TaxRate
 
 object NonScottishTaxRate {
+
+  case class NonScottishTaxRates(
+    freeAllowance: Int = 0,
+    basicRateAllowance: Int = 0
+  ) extends NonScottishTaxRate
 
   case class _2016(
     freeAllowance: Int = 10600,
@@ -75,6 +86,11 @@ sealed trait ScottishTaxRateTill2018 extends ScottishTaxRate
 
 object ScottishTaxRateTill2018 {
 
+  case class ScottishTaxRatesTill2018(
+    freeAllowance: Int = 0,
+    basicRateAllowance: Int = 0
+  ) extends ScottishTaxRateTill2018
+
   case class _2016(
     freeAllowance: Int = 10600,
     basicRateAllowance: Int = 42385
@@ -97,18 +113,33 @@ sealed trait ScottishTaxRateAfter2018 extends ScottishTaxRate {
 
   def intermediateRateAllowance: Int
 
+  def starterTaxRate: Double = 0.19
+
+  def intermediateTaxRate: Double = 0.21
+
+  override def higherTaxRate: Double = 0.41
+
+  override def topTaxRate: Double = 0.46
+
   override def getTaxRate(income: Int): (Double, Int) =
     income match {
       case i if i <= freeAllowance             => (0.00, 0)
-      case i if i <= starterRateAllowance      => (0.19, freeAllowance)
-      case i if i <= basicRateAllowance        => (0.20, starterRateAllowance)
-      case i if i <= intermediateRateAllowance => (0.21, basicRateAllowance)
-      case i if i <= topRateAllowance          => (0.41, intermediateRateAllowance)
-      case _                                   => (0.46, topRateAllowance)
+      case i if i <= starterRateAllowance      => (starterTaxRate, freeAllowance)
+      case i if i <= basicRateAllowance        => (basicTaxRate, starterRateAllowance)
+      case i if i <= intermediateRateAllowance => (intermediateTaxRate, basicRateAllowance)
+      case i if i <= topRateAllowance          => (higherTaxRate, intermediateRateAllowance)
+      case _                                   => (topTaxRate, topRateAllowance)
     }
 }
 
 object ScottishTaxRateAfter2018 {
+
+  case class ScottishTaxRatesAfter2018(
+    freeAllowance: Int = 0,
+    starterRateAllowance: Int = 0,
+    basicRateAllowance: Int = 0,
+    intermediateRateAllowance: Int = 0
+  ) extends ScottishTaxRateAfter2018
 
   case class _2019(
     freeAllowance: Int = 11850,
