@@ -431,22 +431,6 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       case (true, Period._2023) => ScottishTaxRateAfter2018._2023().getTaxRate(totalIncome)
     }
 
-  def isBelowBasicOrIntermediateTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int): Boolean =
-    (
-      scottishTaxYears.contains(period),
-      period,
-      findTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int)._1
-    ) match {
-      case (true, Period._2016 | Period._2017 | Period._2018, taxRate) =>
-        taxRate <= ScottishTaxRateTill2018.ScottishTaxRatesTill2018().basicTaxRate
-
-      case (true, _, taxRate) =>
-        taxRate <= ScottishTaxRateAfter2018.ScottishTaxRatesAfter2018().intermediateTaxRate
-
-      case (false, _, taxRate) =>
-        taxRate <= NonScottishTaxRate.NonScottishTaxRates().basicTaxRate
-    }
-
   def calculateTotalAmounts(
     outDates: List[OutOfDatesTaxYearsCalculation],
     inDates: List[InDatesTaxYearsCalculation]
