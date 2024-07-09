@@ -28,10 +28,9 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   lazy val paacServiceUrl: String = servicesConfig.baseUrl("pension-annual-allowance-calculator")
 
-  val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInDays")
+  val ttlInDays: Int = servicesConfig.getInt("mongodb.ttlInDays")
 
   val sppaBaseUrl: String =
     config.get[Service]("microservice.services.submit-public-pension-adjustment").baseUrl
 
-  val userAnswerTtlInDays: Int = config.get[Int]("mongodb.userAnswersTtlInDays")
 }
