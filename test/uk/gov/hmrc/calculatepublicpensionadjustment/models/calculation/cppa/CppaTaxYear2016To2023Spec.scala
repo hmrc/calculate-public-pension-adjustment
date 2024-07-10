@@ -39,7 +39,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"        -> v.totalIncome,
             "chargePaidByMember" -> v.chargePaidByMember,
             "taxYearSchemes"     -> v.taxYearSchemes,
-            "period"             -> v.period
+            "period"             -> v.period,
+            "incomeSubJourney"   -> v.incomeSubJourney
           )
 
           json.validate[CppaTaxYear2016To2023] mustEqual JsSuccess(
@@ -49,6 +50,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.totalIncome,
               v.chargePaidByMember,
               v.period,
+              v.incomeSubJourney,
               v.income
             )
           )
@@ -65,7 +67,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"        -> v.totalIncome,
             "chargePaidByMember" -> v.chargePaidByMember,
             "taxYearSchemes"     -> v.taxYearSchemes,
-            "period"             -> v.period
+            "period"             -> v.period,
+            "incomeSubJourney"   -> v.incomeSubJourney
           )
 
           json.validate[CppaTaxYear2016To2023] mustEqual JsError("tax year must be `between 2016 and 2023`")
@@ -82,7 +85,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"        -> v.totalIncome,
             "chargePaidByMember" -> v.chargePaidByMember,
             "taxYearSchemes"     -> v.taxYearSchemes,
-            "period"             -> v.period
+            "period"             -> v.period,
+            "incomeSubJourney"   -> v.incomeSubJourney
           )
 
           Json.toJson[CppaTaxYear2016To2023](
@@ -92,6 +96,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.totalIncome,
               v.chargePaidByMember,
               v.period,
+              v.incomeSubJourney,
               v.income
             )
           ) mustEqual json
@@ -109,7 +114,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"        -> v.totalIncome,
             "chargePaidByMember" -> v.chargePaidByMember,
             "taxYearSchemes"     -> v.taxYearSchemes,
-            "period"             -> v.period
+            "period"             -> v.period,
+            "incomeSubJourney"   -> v.incomeSubJourney
           )
 
           json.validate[CppaTaxYear2016To2023] mustEqual
@@ -121,6 +127,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
                   v.totalIncome,
                   v.chargePaidByMember,
                   v.period,
+                  v.incomeSubJourney,
                   v.income
                 )
             )
@@ -138,6 +145,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "chargePaidByMember"         -> v.chargePaidByMember,
             "taxYearSchemes"             -> v.taxYearSchemes,
             "period"                     -> v.period,
+            "incomeSubJourney"           -> v.incomeSubJourney,
             "pensionInput2016PostAmount" -> v.pensionInput2016PostAmount
           )
 
@@ -150,6 +158,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
                   v.totalIncome,
                   v.chargePaidByMember,
                   v.period,
+                  v.incomeSubJourney,
                   v.income,
                   v.pensionInput2016PostAmount
                 )
@@ -167,7 +176,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"        -> v.totalIncome,
             "chargePaidByMember" -> v.chargePaidByMember,
             "taxYearSchemes"     -> v.taxYearSchemes,
-            "period"             -> v.period
+            "period"             -> v.period,
+            "incomeSubJourney"   -> v.incomeSubJourney
           )
 
           Json.toJson[CppaTaxYear2016To2023](
@@ -177,6 +187,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.totalIncome,
               v.chargePaidByMember,
               v.period,
+              v.incomeSubJourney,
               v.income
             )
           ) mustEqual json
@@ -194,6 +205,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "chargePaidByMember"         -> v.chargePaidByMember,
             "taxYearSchemes"             -> v.taxYearSchemes,
             "period"                     -> v.period,
+            "incomeSubJourney"           -> v.incomeSubJourney,
             "pensionInput2016PostAmount" -> v.pensionInput2016PostAmount
           )
 
@@ -204,6 +216,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.totalIncome,
               v.chargePaidByMember,
               v.period,
+              v.incomeSubJourney,
               v.income,
               v.pensionInput2016PostAmount
             )
@@ -230,7 +243,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "totalIncome"                              -> v.totalIncome,
           "chargePaidByMember"                       -> v.chargePaidByMember,
           "taxYearSchemes"                           -> v.taxYearSchemes,
-          "period"                                   -> v.period
+          "period"                                   -> v.period,
+          "incomeSubJourney"                         -> v.incomeSubJourney
         )
 
         json.validate[CppaTaxYear2016To2023] mustEqual JsSuccess(
@@ -243,6 +257,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             v.totalIncome,
             v.chargePaidByMember,
             v.period,
+            v.incomeSubJourney,
             v.income
           )
         )
@@ -265,7 +280,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "totalIncome"                              -> v.totalIncome,
           "chargePaidByMember"                       -> v.chargePaidByMember,
           "taxYearSchemes"                           -> v.taxYearSchemes,
-          "period"                                   -> v.period
+          "period"                                   -> v.period,
+          "incomeSubJourney"                         -> v.incomeSubJourney
         )
 
         json.validate[CppaTaxYear2016To2023] mustEqual JsError("tax year must be `between 2016 and 2023`")
@@ -288,6 +304,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "totalIncome"                              -> v.totalIncome,
           "chargePaidByMember"                       -> v.chargePaidByMember,
           "period"                                   -> v.period,
+          "incomeSubJourney"                         -> v.incomeSubJourney,
           "income"                                   -> v.income
         )
 
@@ -301,6 +318,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             v.totalIncome,
             v.chargePaidByMember,
             v.period,
+            v.incomeSubJourney,
             v.income
           )
         ) mustEqual json
@@ -320,7 +338,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "taxYearSchemes"                           -> v.taxYearSchemes,
             "totalIncome"                              -> v.totalIncome,
             "chargePaidByMember"                       -> v.chargePaidByMember,
-            "period"                                   -> v.period
+            "period"                                   -> v.period,
+            "incomeSubJourney"                         -> v.incomeSubJourney
           )
 
           json.validate[CppaTaxYear2016To2023] mustEqual
@@ -334,7 +353,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
                   v.taxYearSchemes,
                   v.totalIncome,
                   v.chargePaidByMember,
-                  v.period
+                  v.period,
+                  v.incomeSubJourney
                 )
             )
         }
@@ -352,6 +372,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"                                      -> v.totalIncome,
             "chargePaidByMember"                               -> v.chargePaidByMember,
             "period"                                           -> v.period,
+            "incomeSubJourney"                                 -> v.incomeSubJourney,
             "definedBenefitInput2016PostAmount"                -> v.definedBenefitInput2016PostAmount,
             "definedContributionInput2016PostAmount"           -> v.definedContributionInput2016PostAmount,
             "postAccessDefinedContributionInput2016PostAmount" -> v.postAccessDefinedContributionInput2016PostAmount
@@ -369,6 +390,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
                   v.totalIncome,
                   v.chargePaidByMember,
                   v.period,
+                  v.incomeSubJourney,
                   None,
                   v.definedBenefitInput2016PostAmount,
                   v.definedContributionInput2016PostAmount,
@@ -390,7 +412,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "taxYearSchemes"                           -> v.taxYearSchemes,
             "totalIncome"                              -> v.totalIncome,
             "chargePaidByMember"                       -> v.chargePaidByMember,
-            "period"                                   -> v.period
+            "period"                                   -> v.period,
+            "incomeSubJourney"                         -> v.incomeSubJourney
           )
 
           Json.toJson[CppaTaxYear2016To2023](
@@ -402,7 +425,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.taxYearSchemes,
               v.totalIncome,
               v.chargePaidByMember,
-              v.period
+              v.period,
+              v.incomeSubJourney
             )
           ) mustEqual json
         }
@@ -421,6 +445,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"                                      -> v.totalIncome,
             "chargePaidByMember"                               -> v.chargePaidByMember,
             "period"                                           -> v.period,
+            "incomeSubJourney"                                 -> v.incomeSubJourney,
             "definedBenefitInput2016PostAmount"                -> v.definedBenefitInput2016PostAmount,
             "definedContributionInput2016PostAmount"           -> v.definedContributionInput2016PostAmount,
             "postAccessDefinedContributionInput2016PostAmount" -> v.postAccessDefinedContributionInput2016PostAmount
@@ -436,6 +461,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.totalIncome,
               v.chargePaidByMember,
               v.period,
+              v.incomeSubJourney,
               None,
               v.definedBenefitInput2016PostAmount,
               v.definedContributionInput2016PostAmount,
@@ -462,7 +488,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "totalIncome"                    -> v.totalIncome,
           "chargePaidByMember"             -> v.chargePaidByMember,
           "taxYearSchemes"                 -> v.taxYearSchemes,
-          "period"                         -> v.period
+          "period"                         -> v.period,
+          "incomeSubJourney"               -> v.incomeSubJourney
         )
 
         json.validate[CppaTaxYear2016To2023] mustEqual JsSuccess(
@@ -473,6 +500,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             v.chargePaidByMember,
             v.taxYearSchemes,
             v.period,
+            v.incomeSubJourney,
             v.income
           )
         )
@@ -493,7 +521,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "totalIncome"                    -> v.totalIncome,
           "chargePaidByMember"             -> v.chargePaidByMember,
           "taxYearSchemes"                 -> v.taxYearSchemes,
-          "period"                         -> v.period
+          "period"                         -> v.period,
+          "incomeSubJourney"               -> v.incomeSubJourney
         )
 
         json.validate[CppaTaxYear2016To2023] mustEqual JsError("tax year must be `between 2016 and 2023`")
@@ -514,7 +543,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "totalIncome"                    -> v.totalIncome,
           "chargePaidByMember"             -> v.chargePaidByMember,
           "taxYearSchemes"                 -> v.taxYearSchemes,
-          "period"                         -> v.period
+          "period"                         -> v.period,
+          "incomeSubJourney"               -> v.incomeSubJourney
         )
 
         Json.toJson[CppaTaxYear2016To2023](
@@ -525,6 +555,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             v.chargePaidByMember,
             v.taxYearSchemes,
             v.period,
+            v.incomeSubJourney,
             v.income
           )
         ) mustEqual json
@@ -542,7 +573,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"                    -> v.totalIncome,
             "chargePaidByMember"             -> v.chargePaidByMember,
             "taxYearSchemes"                 -> v.taxYearSchemes,
-            "period"                         -> v.period
+            "period"                         -> v.period,
+            "incomeSubJourney"               -> v.incomeSubJourney
           )
 
           json.validate[CppaTaxYear2016To2023] mustEqual
@@ -554,7 +586,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
                   v.totalIncome,
                   v.chargePaidByMember,
                   v.taxYearSchemes,
-                  v.period
+                  v.period,
+                  v.incomeSubJourney
                 )
             )
         }
@@ -570,6 +603,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "chargePaidByMember"                     -> v.chargePaidByMember,
             "taxYearSchemes"                         -> v.taxYearSchemes,
             "period"                                 -> v.period,
+            "incomeSubJourney"                       -> v.incomeSubJourney,
             "definedBenefitInput2016PostAmount"      -> v.definedBenefitInput2016PostAmount,
             "definedContributionInput2016PostAmount" -> v.definedContributionInput2016PostAmount
           )
@@ -584,6 +618,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
                   v.chargePaidByMember,
                   v.taxYearSchemes,
                   v.period,
+                  v.incomeSubJourney,
                   None,
                   v.definedBenefitInput2016PostAmount,
                   v.definedContributionInput2016PostAmount
@@ -601,7 +636,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "totalIncome"                    -> v.totalIncome,
             "chargePaidByMember"             -> v.chargePaidByMember,
             "taxYearSchemes"                 -> v.taxYearSchemes,
-            "period"                         -> v.period
+            "period"                         -> v.period,
+            "incomeSubJourney"               -> v.incomeSubJourney
           )
 
           Json.toJson[CppaTaxYear2016To2023](
@@ -611,7 +647,8 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.totalIncome,
               v.chargePaidByMember,
               v.taxYearSchemes,
-              v.period
+              v.period,
+              v.incomeSubJourney
             )
           ) mustEqual json
         }
@@ -628,6 +665,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
             "chargePaidByMember"                     -> v.chargePaidByMember,
             "taxYearSchemes"                         -> v.taxYearSchemes,
             "period"                                 -> v.period,
+            "incomeSubJourney"                       -> v.incomeSubJourney,
             "definedBenefitInput2016PostAmount"      -> v.definedBenefitInput2016PostAmount,
             "definedContributionInput2016PostAmount" -> v.definedContributionInput2016PostAmount
           )
@@ -640,6 +678,7 @@ class CppaTaxYear2016To2023Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
               v.chargePaidByMember,
               v.taxYearSchemes,
               v.period,
+              v.incomeSubJourney,
               None,
               v.definedBenefitInput2016PostAmount,
               v.definedContributionInput2016PostAmount

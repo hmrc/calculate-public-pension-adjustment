@@ -32,7 +32,7 @@ class SubmissionRequestParsingSpec extends AnyFreeSpec with Matchers {
       request.calculationInputs.resubmission mustBe (Resubmission(false, None))
 
       request.calculationInputs.annualAllowance.get.scottishTaxYears mustBe List.empty
-      request.calculationInputs.annualAllowance.get.taxYears.size mustBe 3
+      request.calculationInputs.annualAllowance.get.taxYears.size mustBe 2
     }
   }
 

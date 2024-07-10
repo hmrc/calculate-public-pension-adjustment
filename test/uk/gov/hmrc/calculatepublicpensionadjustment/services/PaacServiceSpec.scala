@@ -23,6 +23,8 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.PayeCodeAdjustment.Increase
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.{AboveThreshold, BelowThreshold}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
@@ -75,6 +77,23 @@ class PaacServiceSpec
           0,
           0,
           Period._2016,
+          IncomeSubJourney(
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(888),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(2291)
+          ),
           None,
           Some(16000),
           Some(20000),
@@ -90,6 +109,23 @@ class PaacServiceSpec
             TaxYearScheme("Scheme 2", "pstrTest2", 10000, 9000, None)
           ),
           Period._2017,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(21000))
         ),
         CppaTaxYear2016To2023.NormalTaxYear(
@@ -101,6 +137,23 @@ class PaacServiceSpec
           100000,
           0,
           Period._2018,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(24000))
         ),
         CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
@@ -113,6 +166,23 @@ class PaacServiceSpec
             TaxYearScheme("Scheme 2", "pstrTest2", 10000, 0, None)
           ),
           Period._2019,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(24000))
         ),
         CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
@@ -127,6 +197,23 @@ class PaacServiceSpec
           90000,
           3000,
           Period._2020,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(BelowThreshold)
         ),
         CppaTaxYear2016To2023.NormalTaxYear(
@@ -138,6 +225,23 @@ class PaacServiceSpec
           90000,
           8000,
           Period._2021,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(24000))
         ),
         CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
@@ -150,6 +254,23 @@ class PaacServiceSpec
             TaxYearScheme("Scheme 2", "pstrTest2", 10000, 6000, None)
           ),
           Period._2022,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(24000))
         ),
         CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
@@ -164,6 +285,23 @@ class PaacServiceSpec
           90000,
           4000,
           Period._2023,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(24000))
         )
       )
@@ -182,6 +320,23 @@ class PaacServiceSpec
           100000,
           0,
           Period._2016,
+          IncomeSubJourney(
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(888),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(2291)
+          ),
           None,
           Some(10000)
         )
@@ -206,6 +361,23 @@ class PaacServiceSpec
           100000,
           0,
           Period._2016,
+          IncomeSubJourney(
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(888),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(2291)
+          ),
           None,
           Some(23000)
         )
@@ -227,7 +399,24 @@ class PaacServiceSpec
           ),
           100000,
           4000,
-          Period._2016
+          Period._2016,
+          IncomeSubJourney(
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(888),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(2291)
+          )
         ),
         CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
           12000,
@@ -239,6 +428,23 @@ class PaacServiceSpec
             TaxYearScheme("Scheme 2", "pstrTest2", 10000, 6000, None)
           ),
           Period._2020,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(BelowThreshold)
         ),
         CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
@@ -251,6 +457,23 @@ class PaacServiceSpec
             TaxYearScheme("Scheme 2", "pstrTest2", 10000, 6000, None)
           ),
           Period._2023,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(24000))
         )
       )
@@ -272,6 +495,23 @@ class PaacServiceSpec
           100000,
           4000,
           Period._2016,
+          IncomeSubJourney(
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(888),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(2291)
+          ),
           None,
           Some(0)
         ),
@@ -285,6 +525,23 @@ class PaacServiceSpec
             TaxYearScheme("Scheme 2", "pstrTest2", 10000, 6000, None)
           ),
           Period._2020,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(BelowThreshold)
         ),
         CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
@@ -297,6 +554,23 @@ class PaacServiceSpec
             TaxYearScheme("Scheme 2", "pstrTest2", 10000, 6000, None)
           ),
           Period._2023,
+          IncomeSubJourney(
+            Some(444),
+            Some(666),
+            Some(712),
+            Some(777),
+            Some(true),
+            Some(888),
+            None,
+            Some(1111),
+            Some(1212),
+            Some(1414),
+            Some(842),
+            Some(Increase),
+            Some(2740),
+            None,
+            Some(2291)
+          ),
           Some(AboveThreshold(24000))
         )
       )
@@ -1670,7 +1944,24 @@ class PaacServiceSpec
             ),
             90000,
             4000,
-            Period._2016
+            Period._2016,
+            IncomeSubJourney(
+              None,
+              None,
+              None,
+              None,
+              None,
+              Some(888),
+              None,
+              None,
+              None,
+              None,
+              None,
+              None,
+              None,
+              None,
+              Some(2291)
+            )
           ),
           CppaTaxYear2016To2023.NormalTaxYear(
             18000,
@@ -1681,6 +1972,23 @@ class PaacServiceSpec
             100000,
             0,
             Period._2017,
+            IncomeSubJourney(
+              Some(444),
+              Some(666),
+              Some(712),
+              Some(777),
+              Some(true),
+              Some(888),
+              None,
+              Some(1111),
+              Some(1212),
+              Some(1414),
+              Some(842),
+              Some(Increase),
+              Some(2740),
+              None,
+              Some(2291)
+            ),
             Some(AboveThreshold(21000))
           ),
           CppaTaxYear2016To2023.NormalTaxYear(
@@ -1692,6 +2000,23 @@ class PaacServiceSpec
             100000,
             0,
             Period._2018,
+            IncomeSubJourney(
+              Some(444),
+              Some(666),
+              Some(712),
+              Some(777),
+              Some(true),
+              Some(888),
+              None,
+              Some(1111),
+              Some(1212),
+              Some(1414),
+              Some(842),
+              Some(Increase),
+              Some(2740),
+              None,
+              Some(2291)
+            ),
             Some(AboveThreshold(24000))
           ),
           CppaTaxYear2016To2023.NormalTaxYear(
@@ -1703,6 +2028,23 @@ class PaacServiceSpec
             90000,
             3000,
             Period._2019,
+            IncomeSubJourney(
+              Some(444),
+              Some(666),
+              Some(712),
+              Some(777),
+              Some(true),
+              Some(888),
+              None,
+              Some(1111),
+              Some(1212),
+              Some(1414),
+              Some(842),
+              Some(Increase),
+              Some(2740),
+              None,
+              Some(2291)
+            ),
             Some(BelowThreshold)
           ),
           CppaTaxYear2016To2023.NormalTaxYear(
@@ -1714,6 +2056,23 @@ class PaacServiceSpec
             90000,
             3000,
             Period._2020,
+            IncomeSubJourney(
+              Some(444),
+              Some(666),
+              Some(712),
+              Some(777),
+              Some(true),
+              Some(888),
+              None,
+              Some(1111),
+              Some(1212),
+              Some(1414),
+              Some(842),
+              Some(Increase),
+              Some(2740),
+              None,
+              Some(2291)
+            ),
             Some(AboveThreshold(24000))
           ),
           CppaTaxYear2016To2023.NormalTaxYear(
@@ -1725,6 +2084,23 @@ class PaacServiceSpec
             90000,
             8000,
             Period._2021,
+            IncomeSubJourney(
+              Some(444),
+              Some(666),
+              Some(712),
+              Some(777),
+              Some(true),
+              Some(888),
+              None,
+              Some(1111),
+              Some(1212),
+              Some(1414),
+              Some(842),
+              Some(Increase),
+              Some(2740),
+              None,
+              Some(2291)
+            ),
             Some(BelowThreshold)
           ),
           CppaTaxYear2016To2023.NormalTaxYear(
@@ -1736,6 +2112,23 @@ class PaacServiceSpec
             90000,
             3000,
             Period._2022,
+            IncomeSubJourney(
+              Some(444),
+              Some(666),
+              Some(712),
+              Some(777),
+              Some(true),
+              Some(888),
+              None,
+              Some(1111),
+              Some(1212),
+              Some(1414),
+              Some(842),
+              Some(Increase),
+              Some(2740),
+              None,
+              Some(2291)
+            ),
             Some(AboveThreshold(24000))
           ),
           CppaTaxYear2016To2023.NormalTaxYear(
@@ -1747,6 +2140,23 @@ class PaacServiceSpec
             90000,
             4000,
             Period._2023,
+            IncomeSubJourney(
+              Some(444),
+              Some(666),
+              Some(712),
+              Some(777),
+              Some(true),
+              Some(888),
+              None,
+              Some(1111),
+              Some(1212),
+              Some(1414),
+              Some(842),
+              Some(Increase),
+              Some(2740),
+              None,
+              Some(2291)
+            ),
             Some(AboveThreshold(24000))
           )
         )

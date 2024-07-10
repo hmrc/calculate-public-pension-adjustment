@@ -18,6 +18,7 @@ package generators
 
 import org.scalacheck.Gen
 import org.scalacheck.Gen._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
 
@@ -72,6 +73,63 @@ trait CppaModelGenerators extends ModelGenerators {
       None
     )
 
+  lazy val genIncomeSubJourneyFor2016: Gen[IncomeSubJourney] =
+    for {
+      taxReliefAmount             <- genIncomeSubJourneyAmounts
+      blindPersonsAllowanceAmount <- genIncomeSubJourneyAmounts
+    } yield IncomeSubJourney(
+      None,
+      None,
+      None,
+      None,
+      None,
+      taxReliefAmount,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      blindPersonsAllowanceAmount
+    )
+
+  lazy val genIncomeSubJourney: Gen[IncomeSubJourney] =
+    for {
+      salarySacrificeAmount                 <- genIncomeSubJourneyAmounts
+      flexibleRemunerationAmount            <- genIncomeSubJourneyAmounts
+      rASContributionsAmount                <- genIncomeSubJourneyAmounts
+      lumpsumDeathBenefitsAmount            <- genIncomeSubJourneyAmounts
+      isAboveThreshold                      <- genIsAboveThreshold
+      taxReliefAmount                       <- genIncomeSubJourneyAmounts
+      adjustedIncomeAmount                  <- genIncomeSubJourneyAmounts
+      taxReliefPensionAmount                <- genIncomeSubJourneyAmounts
+      personalContributionsAmount           <- genIncomeSubJourneyAmounts
+      reliefClaimedOnOverseasPensionsAmount <- genIncomeSubJourneyAmounts
+      giftAidAmount                         <- genIncomeSubJourneyAmounts
+      payeCodeAdjustment                    <- genPayeCodeAdjustment
+      codeAdjustmentAmount                  <- genIncomeSubJourneyAmounts
+      personalAllowanceAmount               <- genIncomeSubJourneyAmounts
+      blindPersonsAllowanceAmount           <- genIncomeSubJourneyAmounts
+    } yield IncomeSubJourney(
+      salarySacrificeAmount,
+      flexibleRemunerationAmount,
+      rASContributionsAmount,
+      lumpsumDeathBenefitsAmount,
+      isAboveThreshold,
+      taxReliefAmount,
+      adjustedIncomeAmount,
+      taxReliefPensionAmount,
+      personalContributionsAmount,
+      reliefClaimedOnOverseasPensionsAmount,
+      giftAidAmount,
+      payeCodeAdjustment,
+      codeAdjustmentAmount,
+      personalAllowanceAmount,
+      blindPersonsAllowanceAmount
+    )
+
   lazy val genCppaTaxYear2011To2015ForPeriod: Period => Gen[CppaTaxYear2011To2015] = (period: Period) =>
     for {
       pensionInputAmount <- genPensionInputAmount
@@ -83,6 +141,7 @@ trait CppaModelGenerators extends ModelGenerators {
       income                     <- genIncome
       totalIncome                <- genTotalIncome
       chargePaidByMember         <- genChargePaidBySchemeOrMember
+      incomeSubJourney           <- genIncomeSubJourneyFor2016
       noOfTaxYearSchemes         <- Gen.oneOf(1, 5)
       taxYearSchemes             <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
       pensionInput2016PostAmount <- genPensionInputAmount
@@ -92,6 +151,7 @@ trait CppaModelGenerators extends ModelGenerators {
       totalIncome,
       chargePaidByMember,
       Period._2016,
+      incomeSubJourney,
       Some(income),
       Some(pensionInput2016PostAmount)
     )
@@ -102,6 +162,7 @@ trait CppaModelGenerators extends ModelGenerators {
       income             <- genIncome
       totalIncome        <- genTotalIncome
       chargePaidByMember <- genChargePaidBySchemeOrMember
+      incomeSubJourney   <- genIncomeSubJourneyFor2016
       noOfTaxYearSchemes <- Gen.oneOf(1, 5)
       taxYearSchemes     <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
     } yield CppaTaxYear2016To2023.NormalTaxYear(
@@ -110,6 +171,7 @@ trait CppaModelGenerators extends ModelGenerators {
       totalIncome,
       chargePaidByMember,
       Period._2016,
+      incomeSubJourney,
       Some(income),
       None
     )
@@ -123,6 +185,7 @@ trait CppaModelGenerators extends ModelGenerators {
       postAccessDefinedContributionInputAmount         <- genPreAndPostAccessDefinedContributionInputAmount
       noOfTaxYearSchemes                               <- Gen.oneOf(1, 5)
       taxYearSchemes                                   <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+      incomeSubJourney                                 <- genIncomeSubJourneyFor2016
       definedBenefitInput2016PostAmount                <- genPensionInputAmount
       definedContributionInput2016PostAmount           <- genPensionInputAmount
       postAccessDefinedContributionInput2016PostAmount <- genPensionInputAmount
@@ -135,6 +198,7 @@ trait CppaModelGenerators extends ModelGenerators {
       0,
       0,
       Period._2016,
+      incomeSubJourney,
       None,
       Some(definedBenefitInput2016PostAmount),
       Some(definedContributionInput2016PostAmount),
@@ -150,6 +214,7 @@ trait CppaModelGenerators extends ModelGenerators {
       postAccessDefinedContributionInputAmount <- genPreAndPostAccessDefinedContributionInputAmount
       noOfTaxYearSchemes                       <- Gen.oneOf(1, 5)
       taxYearSchemes                           <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+      incomeSubJourney                         <- genIncomeSubJourneyFor2016
     } yield CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       Some(flexiAccessDate),
@@ -158,7 +223,8 @@ trait CppaModelGenerators extends ModelGenerators {
       taxYearSchemes,
       0,
       0,
-      Period._2016
+      Period._2016,
+      incomeSubJourney
     )
 
   lazy val genCppaTaxYear2016PostFlexiblyAccessedWithNoOptionalAmounts
@@ -170,13 +236,15 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember             <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes             <- Gen.oneOf(1, 5)
       taxYearSchemes                 <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+      incomeSubJourney               <- genIncomeSubJourneyFor2016
     } yield CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       definedContributionInputAmount,
       totalIncome,
       chargePaidByMember,
       taxYearSchemes,
-      Period._2016
+      Period._2016,
+      incomeSubJourney
     )
 
   lazy val genCppaTaxYear2016PostFlexiblyAccessedWithOptionalAmounts
@@ -188,6 +256,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember                     <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes                     <- Gen.oneOf(1, 5)
       taxYearSchemes                         <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+      incomeSubJourney                       <- genIncomeSubJourneyFor2016
       definedBenefitInput2016PostAmount      <- genDefinedBenefitInputAmount
       definedContributionInput2016PostAmount <- genDefinedContributionInputAmount
     } yield CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
@@ -197,6 +266,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember,
       taxYearSchemes,
       Period._2016,
+      incomeSubJourney,
       None,
       Some(definedBenefitInput2016PostAmount),
       Some(definedContributionInput2016PostAmount)
@@ -211,12 +281,14 @@ trait CppaModelGenerators extends ModelGenerators {
         chargePaidByMember <- genChargePaidBySchemeOrMember
         noOfTaxYearSchemes <- Gen.oneOf(1, 5)
         taxYearSchemes     <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+        incomeSubJourney   <- genIncomeSubJourney
       } yield CppaTaxYear2016To2023.NormalTaxYear(
         pensionInputAmount,
         taxYearSchemes,
         totalIncome,
         chargePaidByMember,
         period,
+        incomeSubJourney,
         Some(income)
       )
 
@@ -232,6 +304,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember                       <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes                       <- Gen.oneOf(1, 5)
       taxYearSchemes                           <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+      incomeSubJourney                         <- genIncomeSubJourney
     } yield CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       Some(flexiAccessDate),
@@ -241,6 +314,7 @@ trait CppaModelGenerators extends ModelGenerators {
       totalIncome,
       chargePaidByMember,
       period,
+      incomeSubJourney,
       Some(income)
     )
 
@@ -254,6 +328,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember             <- genChargePaidBySchemeOrMember
       noOfTaxYearSchemes             <- Gen.oneOf(1, 5)
       taxYearSchemes                 <- Gen.listOfN(noOfTaxYearSchemes, genTaxYearScheme)
+      incomeSubJourney               <- genIncomeSubJourney
     } yield CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear(
       definedBenefitInputAmount,
       definedContributionInputAmount,
@@ -261,6 +336,7 @@ trait CppaModelGenerators extends ModelGenerators {
       chargePaidByMember,
       taxYearSchemes,
       period,
+      incomeSubJourney,
       Some(income)
     )
 }

@@ -71,7 +71,16 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       (v._1, v._2._1) match {
         case (
               Period._2016 | Period._2017 | Period._2018 | Period._2019,
-              CppaTaxYear2016To2023.NormalTaxYear(_, taxYearSchemes, totalIncome, chargePaidByMember, _, _, _)
+              CppaTaxYear2016To2023.NormalTaxYear(
+                _,
+                taxYearSchemes,
+                totalIncome,
+                chargePaidByMember,
+                _,
+                incomeSubJourney,
+                _,
+                _
+              )
             ) =>
           Some(
             buildOutOfDatesTaxYearsCalculationResult(
@@ -96,6 +105,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 totalIncome,
                 chargePaidByMember,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _,
@@ -123,6 +133,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 chargePaidByMember,
                 taxYearSchemes,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _
@@ -149,7 +160,16 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       (v._1, v._2._1) match {
         case (
               Period._2020 | Period._2021 | Period._2022 | Period._2023,
-              CppaTaxYear2016To2023.NormalTaxYear(_, taxYearSchemes, totalIncome, chargePaidByMember, _, _, _)
+              CppaTaxYear2016To2023.NormalTaxYear(
+                _,
+                taxYearSchemes,
+                totalIncome,
+                chargePaidByMember,
+                _,
+                incomeSubJourney,
+                _,
+                _
+              )
             ) =>
           Some(
             buildInDatesTaxYearsCalculationResult(
@@ -173,6 +193,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 totalIncome,
                 chargePaidByMember,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _,
@@ -199,6 +220,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 chargePaidByMember,
                 taxYearSchemes,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _
@@ -461,13 +483,29 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val oFlexiblyAccessedTaxYear: Option[Period] = calculationRequest.taxYears collectFirst {
       case CppaTaxYear2016To2023
-            .InitialFlexiblyAccessedTaxYear(_, Some(flexiAccessDate), _, _, _, _, _, Period._2016, _, _, _, _) =>
+            .InitialFlexiblyAccessedTaxYear(
+              _,
+              Some(flexiAccessDate),
+              _,
+              _,
+              _,
+              _,
+              _,
+              Period._2016,
+              incomeSubJourney,
+              _,
+              _,
+              _,
+              _
+            ) =>
         if (flexiAccessDate.isAfter(LocalDate.of(2015, 4, 5)) && flexiAccessDate.isBefore(LocalDate.of(2015, 7, 9)))
           Period._2016PreAlignment
         else
           Period._2016PostAlignment
 
-      case CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, period, _, _, _, _) => period
+      case CppaTaxYear2016To2023
+            .InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, period, incomeSubJourney, _, _, _, _) =>
+        period
     }
 
     val paacTaxYears: List[PaacTaxYear] = calculationRequest.taxYears.flatMap {
@@ -475,7 +513,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         List(PaacTaxYear2011To2015.NormalTaxYear(pensionInputAmount, period))
 
       case CppaTaxYear2016To2023
-            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, None) =>
+            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, incomeSubJourney, _, None) =>
         List(
           PaacTaxYear2016PreAlignment.NormalTaxYear(
             pensionInputAmount,
@@ -484,7 +522,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         )
 
       case CppaTaxYear2016To2023
-            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, Some(0)) =>
+            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, incomeSubJourney, _, Some(0)) =>
         List(
           PaacTaxYear2016PreAlignment.NormalTaxYear(
             pensionInputAmount,
@@ -493,7 +531,16 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         )
 
       case CppaTaxYear2016To2023
-            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, Some(pensionInput2016PostAmount)) =>
+            .NormalTaxYear(
+              pensionInputAmount,
+              _,
+              _,
+              _,
+              Period._2016,
+              incomeSubJourney,
+              _,
+              Some(pensionInput2016PostAmount)
+            ) =>
         List(
           PaacTaxYear2016PreAlignment.NormalTaxYear(
             pensionInputAmount,
@@ -505,7 +552,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
           )
         )
 
-      case CppaTaxYear2016To2023.NormalTaxYear(pensionInputAmount, _, _, _, period, income, _) =>
+      case CppaTaxYear2016To2023.NormalTaxYear(pensionInputAmount, _, _, _, period, incomeSubJourney, income, _) =>
         List(
           PaacTaxYear2017ToCurrent.NormalTaxYear(
             pensionInputAmount,
@@ -523,6 +570,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             _,
             Period._2016,
+            incomeSubJourney,
             _,
             definedBenefitInput2016PostAmount,
             definedContributionInput2016PostAmount,
@@ -552,6 +600,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             _,
             Period._2016,
+            incomeSubJourney,
             _,
             definedBenefitInput2016PostAmount,
             definedContributionInput2016PostAmount,
@@ -583,6 +632,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             _,
             period,
+            incomeSubJourney,
             income,
             _,
             _,
@@ -605,6 +655,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             taxYearSchemes,
             Period._2016,
+            incomeSubJourney,
             _,
             definedBenefitInput2016PostAmount,
             definedContributionInput2016PostAmount
@@ -631,6 +682,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             taxYearSchemes,
             period,
+            incomeSubJourney,
             income,
             _,
             _
@@ -652,6 +704,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             taxYearSchemes,
             period,
+            incomeSubJourney,
             income,
             _,
             _

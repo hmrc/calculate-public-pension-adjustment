@@ -7,20 +7,6 @@
       "scottishTaxYears": [],
       "taxYears": [
         {
-          "pensionInputAmount": 2,
-          "taxYearSchemes": [
-            {
-              "name": "Scheme1",
-              "pensionSchemeTaxReference": "00348916RT",
-              "revisedPensionInputAmount": 2,
-              "chargePaidByScheme": 0
-            }
-          ],
-          "totalIncome": 5,
-          "chargePaidByMember": 0,
-          "period": "2016-pre"
-        },
-        {
           "pensionInputAmount": 4,
           "taxYearSchemes": [
             {
@@ -32,7 +18,15 @@
           ],
           "totalIncome": 5,
           "chargePaidByMember": 0,
-          "period": "2016-post"
+          "period": "2016",
+          "incomeSubJourney" : {
+            "isAboveThreshold" : false,
+            "taxReliefAmount" : 111,
+            "giftAidAmount" : 222,
+            "payeCodeAdjustment" : "increase",
+            "codeAdjustmentAmount" : 333,
+            "blindPersonsAllowanceAmount" : 2291
+          }
         },
         {
           "pensionInputAmount": 8,
@@ -47,6 +41,20 @@
           "totalIncome": 8,
           "chargePaidByMember": 1,
           "period": "2017",
+          "incomeSubJourney" : {
+            "salarySacrificeAmount" : 1211,
+            "flexibleRemunerationAmount" : 1618,
+            "rASContributionsAmount" : 3345,
+            "lumpsumDeathBenefitsAmount" : 948,
+            "isAboveThreshold" : true,
+            "taxReliefAmount" : 519,
+            "taxReliefPensionAmount" : 8181,
+            "personalContributionsAmount" : 4999,
+            "giftAidAmount" : 589,
+            "payeCodeAdjustment" : "increase",
+            "codeAdjustmentAmount" : 697,
+            "blindPersonsAllowanceAmount" : 2291
+          },
           "income": {
             "incomeAboveThreshold": true,
             "adjustedIncome": 5
