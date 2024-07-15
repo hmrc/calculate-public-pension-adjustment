@@ -63,7 +63,7 @@ class UserAnswersRepositorySpec
   private implicit val crypto: Encrypter with Decrypter =
     SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", configuration.underlying)
 
-  when(mockAppConfig.cacheTtl) thenReturn 900
+  when(mockAppConfig.ttlInDays) thenReturn 900
 
   protected override val repository = new UserAnswersRepository(
     mongoComponent = mongoComponent,

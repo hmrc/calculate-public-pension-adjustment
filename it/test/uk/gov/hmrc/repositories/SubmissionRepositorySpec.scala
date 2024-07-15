@@ -102,7 +102,7 @@ class SubmissionRepositorySpec
 
   private val submission: Submission = Submission("id", "uniqueId", calculationInputs, calculation)
 
-  when(mockAppConfig.cacheTtl) thenReturn 900
+  when(mockAppConfig.ttlInDays) thenReturn 900
 
   protected override val repository = new SubmissionRepository(
     mongoComponent = mongoComponent,
