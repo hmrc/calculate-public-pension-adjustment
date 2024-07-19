@@ -535,20 +535,20 @@ trait CalculationResponses {
 
   val withAllYearsResponse = CalculationResponse(
     Resubmission(true, Some("Change in amounts")),
-    TotalAmounts(34400, 0, 23002),
+    TotalAmounts(32400, 0, 23002),
     List(
       OutOfDatesTaxYearsCalculation(
         Period._2016,
         0,
-        2000,
+        0,
         0,
         2000,
         10000,
-        0,
+        4000,
         0,
         List(
-          OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
-          OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
+          OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
+          OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
         )
       ),
       OutOfDatesTaxYearsCalculation(
