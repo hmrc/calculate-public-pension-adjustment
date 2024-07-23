@@ -18,18 +18,25 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
 sealed trait TaxRate {
 
+  def personalAllowance: Int
+
   def freeAllowance: Int
 
   def basicRateAllowance: Int
 
   def topRateAllowance: Int = 150000
 
-  def getTaxRate(income: Int): (Double, Int) =
+  def basicTaxRate: Double = 0.20
+
+  def higherTaxRate: Double = 0.40
+
+  def topTaxRate: Double = 0.45
+
+  def getTaxRate(income: Int, giftAidAmount: Int): (Double, Int) =
     income match {
-      case i if i <= freeAllowance      => (0.00, 0)
-      case i if i <= basicRateAllowance => (0.20, freeAllowance)
-      case i if i <= topRateAllowance   => (0.40, basicRateAllowance)
-      case _                            => (0.45, topRateAllowance)
+      case i if i <= basicRateAllowance + giftAidAmount => (basicTaxRate, personalAllowance)
+      case i if i <= topRateAllowance + giftAidAmount   => (higherTaxRate, basicRateAllowance + giftAidAmount)
+      case _                                            => (topTaxRate, topRateAllowance + giftAidAmount)
     }
 }
 
@@ -37,34 +44,58 @@ sealed trait NonScottishTaxRate extends TaxRate
 
 object NonScottishTaxRate {
 
+  case class NonScottishTaxRates(
+    personalAllowance: Int = 0,
+    freeAllowance: Int = 0,
+    basicRateAllowance: Int = 0
+  ) extends NonScottishTaxRate
+
   case class _2016(
+    personalAllowance: Int,
     freeAllowance: Int = 10600,
-    basicRateAllowance: Int = 42385
+    basicRateAllowance: Int = 31785
   ) extends NonScottishTaxRate
 
   case class _2017(
+    personalAllowance: Int,
     freeAllowance: Int = 11000,
-    basicRateAllowance: Int = 43000
+    basicRateAllowance: Int = 32000
   ) extends NonScottishTaxRate
 
   case class _2018(
+    personalAllowance: Int,
     freeAllowance: Int = 11500,
-    basicRateAllowance: Int = 45000
+    basicRateAllowance: Int = 33500
   ) extends NonScottishTaxRate
 
   case class _2019(
+    personalAllowance: Int,
     freeAllowance: Int = 11850,
-    basicRateAllowance: Int = 46350
+    basicRateAllowance: Int = 34500
   ) extends NonScottishTaxRate
 
-  case class _2020To2021(
+  case class _2020(
+    personalAllowance: Int,
     freeAllowance: Int = 12500,
-    basicRateAllowance: Int = 50000
+    basicRateAllowance: Int = 37500
   ) extends NonScottishTaxRate
 
-  case class _2022To2023(
+  case class _2021(
+    personalAllowance: Int,
+    freeAllowance: Int = 12500,
+    basicRateAllowance: Int = 37500
+  ) extends NonScottishTaxRate
+
+  case class _2022(
+    personalAllowance: Int,
     freeAllowance: Int = 12570,
-    basicRateAllowance: Int = 50270
+    basicRateAllowance: Int = 37700
+  ) extends NonScottishTaxRate
+
+  case class _2023(
+    personalAllowance: Int,
+    freeAllowance: Int = 12570,
+    basicRateAllowance: Int = 37700
   ) extends NonScottishTaxRate
 
 }
@@ -75,19 +106,28 @@ sealed trait ScottishTaxRateTill2018 extends ScottishTaxRate
 
 object ScottishTaxRateTill2018 {
 
+  case class ScottishTaxRatesTill2018(
+    personalAllowance: Int = 0,
+    freeAllowance: Int = 0,
+    basicRateAllowance: Int = 0
+  ) extends ScottishTaxRateTill2018
+
   case class _2016(
+    personalAllowance: Int,
     freeAllowance: Int = 10600,
-    basicRateAllowance: Int = 42385
+    basicRateAllowance: Int = 31785
   ) extends ScottishTaxRateTill2018
 
   case class _2017(
+    personalAllowance: Int,
     freeAllowance: Int = 11000,
-    basicRateAllowance: Int = 42385
+    basicRateAllowance: Int = 31385
   ) extends ScottishTaxRateTill2018
 
   case class _2018(
+    personalAllowance: Int,
     freeAllowance: Int = 11500,
-    basicRateAllowance: Int = 43000
+    basicRateAllowance: Int = 31500
   ) extends ScottishTaxRateTill2018
 }
 
@@ -97,52 +137,73 @@ sealed trait ScottishTaxRateAfter2018 extends ScottishTaxRate {
 
   def intermediateRateAllowance: Int
 
-  override def getTaxRate(income: Int): (Double, Int) =
+  def starterTaxRate: Double = 0.19
+
+  def intermediateTaxRate: Double = 0.21
+
+  override def higherTaxRate: Double = 0.41
+
+  override def topTaxRate: Double = 0.46
+
+  override def getTaxRate(income: Int, giftAidAmount: Int): (Double, Int) =
     income match {
-      case i if i <= freeAllowance             => (0.00, 0)
-      case i if i <= starterRateAllowance      => (0.19, freeAllowance)
-      case i if i <= basicRateAllowance        => (0.20, starterRateAllowance)
-      case i if i <= intermediateRateAllowance => (0.21, basicRateAllowance)
-      case i if i <= topRateAllowance          => (0.41, intermediateRateAllowance)
-      case _                                   => (0.46, topRateAllowance)
+      case i if i <= starterRateAllowance                      => (starterTaxRate, personalAllowance)
+      case i if i <= basicRateAllowance + giftAidAmount        => (basicTaxRate, starterRateAllowance)
+      case i if i <= intermediateRateAllowance + giftAidAmount =>
+        (intermediateTaxRate, basicRateAllowance + giftAidAmount)
+      case i if i <= topRateAllowance + giftAidAmount          => (higherTaxRate, intermediateRateAllowance + giftAidAmount)
+      case _                                                   => (topTaxRate, topRateAllowance + giftAidAmount)
     }
 }
 
 object ScottishTaxRateAfter2018 {
 
+  case class ScottishTaxRatesAfter2018(
+    personalAllowance: Int,
+    freeAllowance: Int = 0,
+    starterRateAllowance: Int = 0,
+    basicRateAllowance: Int = 0,
+    intermediateRateAllowance: Int = 0
+  ) extends ScottishTaxRateAfter2018
+
   case class _2019(
+    personalAllowance: Int,
     freeAllowance: Int = 11850,
-    starterRateAllowance: Int = 13850,
-    basicRateAllowance: Int = 24000,
-    intermediateRateAllowance: Int = 43430
+    starterRateAllowance: Int = 2000,
+    basicRateAllowance: Int = 12150,
+    intermediateRateAllowance: Int = 31580
   ) extends ScottishTaxRateAfter2018
 
   case class _2020(
+    personalAllowance: Int,
     freeAllowance: Int = 12500,
-    starterRateAllowance: Int = 14549,
-    basicRateAllowance: Int = 24944,
-    intermediateRateAllowance: Int = 43430
+    starterRateAllowance: Int = 2049,
+    basicRateAllowance: Int = 12444,
+    intermediateRateAllowance: Int = 30930
   ) extends ScottishTaxRateAfter2018
 
   case class _2021(
+    personalAllowance: Int,
     freeAllowance: Int = 12500,
-    starterRateAllowance: Int = 14585,
-    basicRateAllowance: Int = 25158,
-    intermediateRateAllowance: Int = 43430
+    starterRateAllowance: Int = 2085,
+    basicRateAllowance: Int = 12658,
+    intermediateRateAllowance: Int = 30930
   ) extends ScottishTaxRateAfter2018
 
   case class _2022(
+    personalAllowance: Int,
     freeAllowance: Int = 12570,
-    starterRateAllowance: Int = 14667,
-    basicRateAllowance: Int = 25296,
-    intermediateRateAllowance: Int = 43662
+    starterRateAllowance: Int = 2097,
+    basicRateAllowance: Int = 12726,
+    intermediateRateAllowance: Int = 31092
   ) extends ScottishTaxRateAfter2018
 
   case class _2023(
+    personalAllowance: Int,
     freeAllowance: Int = 12570,
-    starterRateAllowance: Int = 14732,
-    basicRateAllowance: Int = 25688,
-    intermediateRateAllowance: Int = 43662
+    starterRateAllowance: Int = 2162,
+    basicRateAllowance: Int = 13118,
+    intermediateRateAllowance: Int = 31092
   ) extends ScottishTaxRateAfter2018
 
 }

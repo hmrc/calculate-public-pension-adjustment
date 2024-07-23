@@ -19,6 +19,8 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 import com.google.inject.Inject
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.PayeCodeAdjustment.{Decrease, Increase}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.BelowThreshold
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
@@ -32,6 +34,8 @@ import scala.math.BigDecimal.RoundingMode
 import scala.math._
 
 class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionContext) extends Logging {
+
+  private final val personalAllowanceTaperingLimit = 100000
 
   def calculate(
     calculationRequest: CalculationRequest
@@ -71,13 +75,23 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       (v._1, v._2._1) match {
         case (
               Period._2016 | Period._2017 | Period._2018 | Period._2019,
-              CppaTaxYear2016To2023.NormalTaxYear(_, taxYearSchemes, totalIncome, chargePaidByMember, _, _, _)
+              CppaTaxYear2016To2023.NormalTaxYear(
+                _,
+                taxYearSchemes,
+                totalIncome,
+                chargePaidByMember,
+                _,
+                incomeSubJourney,
+                _,
+                _
+              )
             ) =>
           Some(
             buildOutOfDatesTaxYearsCalculationResult(
               v._1,
               calculationRequest.scottishTaxYears,
               totalIncome,
+              incomeSubJourney,
               chargePaidByMember,
               taxYearSchemes,
               v._2._2,
@@ -96,6 +110,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 totalIncome,
                 chargePaidByMember,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _,
@@ -107,6 +122,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
               v._1,
               calculationRequest.scottishTaxYears,
               totalIncome,
+              incomeSubJourney,
               chargePaidByMember,
               taxYearSchemes,
               v._2._2,
@@ -123,6 +139,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 chargePaidByMember,
                 taxYearSchemes,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _
@@ -133,6 +150,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
               v._1,
               calculationRequest.scottishTaxYears,
               totalIncome,
+              incomeSubJourney,
               chargePaidByMember,
               taxYearSchemes,
               v._2._2,
@@ -149,13 +167,23 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       (v._1, v._2._1) match {
         case (
               Period._2020 | Period._2021 | Period._2022 | Period._2023,
-              CppaTaxYear2016To2023.NormalTaxYear(_, taxYearSchemes, totalIncome, chargePaidByMember, _, _, _)
+              CppaTaxYear2016To2023.NormalTaxYear(
+                _,
+                taxYearSchemes,
+                totalIncome,
+                chargePaidByMember,
+                _,
+                incomeSubJourney,
+                _,
+                _
+              )
             ) =>
           Some(
             buildInDatesTaxYearsCalculationResult(
               v._1,
               calculationRequest.scottishTaxYears,
               totalIncome,
+              incomeSubJourney,
               chargePaidByMember,
               taxYearSchemes,
               v._2._2
@@ -173,6 +201,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 totalIncome,
                 chargePaidByMember,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _,
@@ -184,6 +213,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
               v._1,
               calculationRequest.scottishTaxYears,
               totalIncome,
+              incomeSubJourney,
               chargePaidByMember,
               taxYearSchemes,
               v._2._2
@@ -199,6 +229,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
                 chargePaidByMember,
                 taxYearSchemes,
                 _,
+                incomeSubJourney,
                 _,
                 _,
                 _
@@ -209,6 +240,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
               v._1,
               calculationRequest.scottishTaxYears,
               totalIncome,
+              incomeSubJourney,
               chargePaidByMember,
               taxYearSchemes,
               v._2._2
@@ -233,11 +265,15 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     period: Period,
     scottishTaxYears: List[Period],
     totalIncome: Int,
+    incomeSubJourney: IncomeSubJourney,
     chargePaidByMember: Int,
     taxYearSchemes: List[TaxYearScheme],
     oPaacResponseRow: Option[PaacResponseRow],
     oPaacResponse2016PostRow: Option[PaacResponseRow]
   ): OutOfDatesTaxYearsCalculation = {
+
+    val personalAllowanceAndRevisedNetIncome =
+      calculatePersonalAllowanceAndReducedNetIncome(period, scottishTaxYears, totalIncome, incomeSubJourney)
 
     val originalCharge = calculateOriginalCharge(chargePaidByMember, taxYearSchemes)
 
@@ -249,7 +285,17 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       else
         oPaacResponseRow.map(_.chargeableAmount).getOrElse(0)
 
-    val revisedCharge = calculateRevisedCharge(scottishTaxYears, period, totalIncome, chargeableAmount)
+    val giftAidAmount = incomeSubJourney.giftAidAmount.getOrElse(0)
+
+    val revisedCharge =
+      calculateRevisedCharge(
+        scottishTaxYears,
+        period,
+        personalAllowanceAndRevisedNetIncome._1,
+        personalAllowanceAndRevisedNetIncome._2,
+        chargeableAmount,
+        giftAidAmount
+      )
 
     val totalCompensation = originalCharge - revisedCharge
 
@@ -305,16 +351,29 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     period: Period,
     scottishTaxYears: List[Period],
     totalIncome: Int,
+    incomeSubJourney: IncomeSubJourney,
     chargePaidByMember: Int,
     taxYearSchemes: List[TaxYearScheme],
     oPaacResponseRow: Option[PaacResponseRow]
   ): InDatesTaxYearsCalculation = {
 
+    val personalAllowanceAndRevisedNetIncome =
+      calculatePersonalAllowanceAndReducedNetIncome(period, scottishTaxYears, totalIncome, incomeSubJourney)
+
     val originalCharge = calculateOriginalCharge(chargePaidByMember, taxYearSchemes)
 
     val chargeableAmount = oPaacResponseRow.map(_.chargeableAmount).getOrElse(0)
 
-    val revisedCharge = calculateRevisedCharge(scottishTaxYears, period, totalIncome, chargeableAmount)
+    val giftAidAmount = incomeSubJourney.giftAidAmount.getOrElse(0)
+
+    val revisedCharge = calculateRevisedCharge(
+      scottishTaxYears,
+      period,
+      personalAllowanceAndRevisedNetIncome._1,
+      personalAllowanceAndRevisedNetIncome._2,
+      chargeableAmount,
+      giftAidAmount
+    )
 
     val totalCompensation = originalCharge - revisedCharge
 
@@ -353,26 +412,44 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   def calculateRevisedCharge(
     scottishTaxYears: List[Period],
     period: Period,
-    totalIncome: Int,
-    chargeableAmount: Int
+    personalAllowance: Int,
+    revisedNetIncome: Int,
+    chargeableAmount: Int,
+    giftAidAmount: Int
   ): Double =
     (period, chargeableAmount > 0) match {
       case (Period._2016 | Period._2017 | Period._2018 | Period._2019, true) =>
-        calculateRevisedChargeHelper(scottishTaxYears, period, totalIncome, chargeableAmount)
+        calculateRevisedChargeHelper(
+          scottishTaxYears,
+          period,
+          personalAllowance,
+          revisedNetIncome,
+          chargeableAmount,
+          giftAidAmount
+        )
 
       case (Period._2016 | Period._2017 | Period._2018 | Period._2019, false) =>
         0
 
       case (Period._2020 | Period._2021 | Period._2022 | Period._2023, _) =>
-        calculateRevisedChargeHelper(scottishTaxYears, period, totalIncome, chargeableAmount)
+        calculateRevisedChargeHelper(
+          scottishTaxYears,
+          period,
+          personalAllowance,
+          revisedNetIncome,
+          chargeableAmount,
+          giftAidAmount
+        )
     }
 
   @tailrec
   private def calculateRevisedChargeHelper(
     scottishTaxYears: List[Period],
     period: Period,
-    totalIncome: Int,
+    personalAllowance: Int,
+    revisedNetIncome: Int,
     chargeableAmount: Int,
+    giftAidAmount: Int,
     revisedCharge: Double = 0.0
   ): Double =
     if (chargeableAmount == 0) {
@@ -381,9 +458,10 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       else
         BigDecimal(revisedCharge).setScale(2, RoundingMode.UP).toDouble
     } else {
-      val taxRate = findTaxRate(scottishTaxYears, period, totalIncome + chargeableAmount)
+      val taxRate =
+        findTaxRate(scottishTaxYears, period, personalAllowance, revisedNetIncome + chargeableAmount, giftAidAmount)
 
-      val maxChargeableAmount = (totalIncome + chargeableAmount) - taxRate._2
+      val maxChargeableAmount = (revisedNetIncome + chargeableAmount) - taxRate._2
 
       val chargeableAmountUnderTaxRate =
         if (chargeableAmount < maxChargeableAmount) chargeableAmount
@@ -394,41 +472,104 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       calculateRevisedChargeHelper(
         scottishTaxYears,
         period,
-        totalIncome,
+        personalAllowance,
+        revisedNetIncome,
         chargeableAmount - chargeableAmountUnderTaxRate,
+        giftAidAmount,
         revisedCharge + charge
       )
     }
 
-  def findTaxRate(scottishTaxYears: List[Period], period: Period, totalIncome: Int): (Double, Int) =
+  def findTaxRate(
+    scottishTaxYears: List[Period],
+    period: Period,
+    personalAllowance: Int,
+    revisedNetIncome: Int,
+    giftAidAmount: Int
+  ): (Double, Int) =
     (scottishTaxYears.contains(period), period) match {
-      case (true, Period._2016) => ScottishTaxRateTill2018._2016().getTaxRate(totalIncome)
+      case (true, Period._2016) =>
+        ScottishTaxRateTill2018._2016(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (false, Period._2016) => NonScottishTaxRate._2016().getTaxRate(totalIncome)
+      case (false, Period._2016) =>
+        NonScottishTaxRate._2016(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (true, Period._2017) => ScottishTaxRateTill2018._2017().getTaxRate(totalIncome)
+      case (true, Period._2017) =>
+        ScottishTaxRateTill2018._2017(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (false, Period._2017) => NonScottishTaxRate._2017().getTaxRate(totalIncome)
+      case (false, Period._2017) =>
+        NonScottishTaxRate._2017(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (true, Period._2018) => ScottishTaxRateTill2018._2018().getTaxRate(totalIncome)
+      case (true, Period._2018) =>
+        ScottishTaxRateTill2018._2018(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (false, Period._2018) => NonScottishTaxRate._2018().getTaxRate(totalIncome)
+      case (false, Period._2018) =>
+        NonScottishTaxRate._2018(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (true, Period._2019) => ScottishTaxRateAfter2018._2019().getTaxRate(totalIncome)
+      case (true, Period._2019) =>
+        ScottishTaxRateAfter2018._2019(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (false, Period._2019) => NonScottishTaxRate._2019().getTaxRate(totalIncome)
+      case (false, Period._2019) =>
+        NonScottishTaxRate._2019(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (true, Period._2020) => ScottishTaxRateAfter2018._2020().getTaxRate(totalIncome)
+      case (true, Period._2020) =>
+        ScottishTaxRateAfter2018._2020(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (false, Period._2020 | Period._2021) => NonScottishTaxRate._2020To2021().getTaxRate(totalIncome)
+      case (false, Period._2020) =>
+        NonScottishTaxRate._2020(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (true, Period._2021) => ScottishTaxRateAfter2018._2021().getTaxRate(totalIncome)
+      case (true, Period._2021) =>
+        ScottishTaxRateAfter2018._2021(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (true, Period._2022) => ScottishTaxRateAfter2018._2022().getTaxRate(totalIncome)
+      case (false, Period._2021) =>
+        NonScottishTaxRate._2021(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (false, Period._2022 | Period._2023) => NonScottishTaxRate._2022To2023().getTaxRate(totalIncome)
+      case (true, Period._2022) =>
+        ScottishTaxRateAfter2018._2022(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
 
-      case (true, Period._2023) => ScottishTaxRateAfter2018._2023().getTaxRate(totalIncome)
+      case (false, Period._2022) =>
+        NonScottishTaxRate._2022(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
+
+      case (true, Period._2023) =>
+        ScottishTaxRateAfter2018._2023(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
+
+      case (false, Period._2023) =>
+        NonScottishTaxRate._2023(personalAllowance).getTaxRate(revisedNetIncome, giftAidAmount)
+    }
+
+  def findFreeAllowance(scottishTaxYears: List[Period], period: Period): Int =
+    (scottishTaxYears.contains(period), period) match {
+      case (true, Period._2016) => ScottishTaxRateTill2018._2016(0).freeAllowance
+
+      case (false, Period._2016) => NonScottishTaxRate._2016(0).freeAllowance
+
+      case (true, Period._2017) => ScottishTaxRateTill2018._2017(0).freeAllowance
+
+      case (false, Period._2017) => NonScottishTaxRate._2017(0).freeAllowance
+
+      case (true, Period._2018) => ScottishTaxRateTill2018._2018(0).freeAllowance
+
+      case (false, Period._2018) => NonScottishTaxRate._2018(0).freeAllowance
+
+      case (true, Period._2019) => ScottishTaxRateAfter2018._2019(0).freeAllowance
+
+      case (false, Period._2019) => NonScottishTaxRate._2019(0).freeAllowance
+
+      case (true, Period._2020) => ScottishTaxRateAfter2018._2020(0).freeAllowance
+
+      case (false, Period._2020) => NonScottishTaxRate._2020(0).freeAllowance
+
+      case (true, Period._2021) => ScottishTaxRateAfter2018._2021(0).freeAllowance
+
+      case (false, Period._2021) => NonScottishTaxRate._2021(0).freeAllowance
+
+      case (true, Period._2022) => ScottishTaxRateAfter2018._2022(0).freeAllowance
+
+      case (false, Period._2022) => NonScottishTaxRate._2022(0).freeAllowance
+
+      case (true, Period._2023) => ScottishTaxRateAfter2018._2023(0).freeAllowance
+
+      case (false, Period._2023) => NonScottishTaxRate._2023(0).freeAllowance
     }
 
   def calculateTotalAmounts(
@@ -440,6 +581,44 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       inDates.map(_.debit).sum,
       inDates.map(v => v.memberCredit + v.schemeCredit).sum
     )
+
+  def calculatePersonalAllowanceAndReducedNetIncome(
+    period: Period,
+    scottishTaxYears: List[Period],
+    totalIncome: Int,
+    incomeSubJourney: IncomeSubJourney
+  ): (Int, Int) = {
+    val freeAllowance: Int = findFreeAllowance(scottishTaxYears, period)
+
+    val netIncome: Int = totalIncome - incomeSubJourney.taxReliefAmount.getOrElse(0)
+
+    val netIncomeAfterDeductingGiftAid = netIncome - incomeSubJourney.giftAidAmount.getOrElse(0)
+
+    val freeAllowanceAfterTapering: Int =
+      if (netIncomeAfterDeductingGiftAid > personalAllowanceTaperingLimit) {
+        val taperingAmount = (netIncomeAfterDeductingGiftAid - personalAllowanceTaperingLimit) / 2
+        if (freeAllowance > taperingAmount)
+          freeAllowance - taperingAmount
+        else
+          0
+      } else
+        freeAllowance
+
+    val codedAmount: Int = incomeSubJourney.payeCodeAdjustment
+      .map {
+        case Increase => incomeSubJourney.codeAdjustmentAmount.getOrElse(0)
+        case Decrease => -1 * incomeSubJourney.codeAdjustmentAmount.getOrElse(0)
+      }
+      .getOrElse(0)
+
+    val blindPersonaAllowance = incomeSubJourney.blindPersonsAllowanceAmount.getOrElse(0)
+
+    val personalAllowance = incomeSubJourney.personalAllowanceAmount.getOrElse(
+      freeAllowanceAfterTapering + codedAmount + blindPersonaAllowance
+    )
+
+    (personalAllowance, netIncome - personalAllowance)
+  }
 
   def sendRequest(
     calculationRequest: CalculationRequest
@@ -461,13 +640,29 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val oFlexiblyAccessedTaxYear: Option[Period] = calculationRequest.taxYears collectFirst {
       case CppaTaxYear2016To2023
-            .InitialFlexiblyAccessedTaxYear(_, Some(flexiAccessDate), _, _, _, _, _, Period._2016, _, _, _, _) =>
+            .InitialFlexiblyAccessedTaxYear(
+              _,
+              Some(flexiAccessDate),
+              _,
+              _,
+              _,
+              _,
+              _,
+              Period._2016,
+              incomeSubJourney,
+              _,
+              _,
+              _,
+              _
+            ) =>
         if (flexiAccessDate.isAfter(LocalDate.of(2015, 4, 5)) && flexiAccessDate.isBefore(LocalDate.of(2015, 7, 9)))
           Period._2016PreAlignment
         else
           Period._2016PostAlignment
 
-      case CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, period, _, _, _, _) => period
+      case CppaTaxYear2016To2023
+            .InitialFlexiblyAccessedTaxYear(_, _, _, _, _, _, _, period, incomeSubJourney, _, _, _, _) =>
+        period
     }
 
     val paacTaxYears: List[PaacTaxYear] = calculationRequest.taxYears.flatMap {
@@ -475,7 +670,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         List(PaacTaxYear2011To2015.NormalTaxYear(pensionInputAmount, period))
 
       case CppaTaxYear2016To2023
-            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, None) =>
+            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, incomeSubJourney, _, None) =>
         List(
           PaacTaxYear2016PreAlignment.NormalTaxYear(
             pensionInputAmount,
@@ -484,7 +679,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         )
 
       case CppaTaxYear2016To2023
-            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, Some(0)) =>
+            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, incomeSubJourney, _, Some(0)) =>
         List(
           PaacTaxYear2016PreAlignment.NormalTaxYear(
             pensionInputAmount,
@@ -493,7 +688,16 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         )
 
       case CppaTaxYear2016To2023
-            .NormalTaxYear(pensionInputAmount, _, _, _, Period._2016, _, Some(pensionInput2016PostAmount)) =>
+            .NormalTaxYear(
+              pensionInputAmount,
+              _,
+              _,
+              _,
+              Period._2016,
+              incomeSubJourney,
+              _,
+              Some(pensionInput2016PostAmount)
+            ) =>
         List(
           PaacTaxYear2016PreAlignment.NormalTaxYear(
             pensionInputAmount,
@@ -505,7 +709,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
           )
         )
 
-      case CppaTaxYear2016To2023.NormalTaxYear(pensionInputAmount, _, _, _, period, income, _) =>
+      case CppaTaxYear2016To2023.NormalTaxYear(pensionInputAmount, _, _, _, period, incomeSubJourney, income, _) =>
         List(
           PaacTaxYear2017ToCurrent.NormalTaxYear(
             pensionInputAmount,
@@ -523,6 +727,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             _,
             Period._2016,
+            incomeSubJourney,
             _,
             definedBenefitInput2016PostAmount,
             definedContributionInput2016PostAmount,
@@ -552,6 +757,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             _,
             Period._2016,
+            incomeSubJourney,
             _,
             definedBenefitInput2016PostAmount,
             definedContributionInput2016PostAmount,
@@ -583,6 +789,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             _,
             period,
+            incomeSubJourney,
             income,
             _,
             _,
@@ -605,6 +812,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             taxYearSchemes,
             Period._2016,
+            incomeSubJourney,
             _,
             definedBenefitInput2016PostAmount,
             definedContributionInput2016PostAmount
@@ -631,6 +839,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             taxYearSchemes,
             period,
+            incomeSubJourney,
             income,
             _,
             _
@@ -652,6 +861,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
             _,
             taxYearSchemes,
             period,
+            incomeSubJourney,
             income,
             _,
             _
