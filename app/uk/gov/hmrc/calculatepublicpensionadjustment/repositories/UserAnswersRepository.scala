@@ -40,6 +40,7 @@ class UserAnswersRepository @Inject() (
     extends PlayMongoRepository[UserAnswers](
       collectionName = "user-answers",
       mongoComponent = mongoComponent,
+      replaceIndexes = true,
       domainFormat = UserAnswers.encryptedFormat,
       indexes = Seq(
         IndexModel(
