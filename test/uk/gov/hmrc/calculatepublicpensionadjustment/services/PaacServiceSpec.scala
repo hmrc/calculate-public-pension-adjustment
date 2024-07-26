@@ -1337,6 +1337,138 @@ class PaacServiceSpec
 
     }
 
+    "findFreeAllowance" - {
+
+      "must return correct FreeAllowance for ScottishTaxYear 2016" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2023), Period._2016)
+
+        result mustEqual 10600
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2016" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2017, Period._2023), Period._2016)
+
+        result mustEqual 10600
+      }
+
+      "must return correct FreeAllowance for ScottishTaxYear 2017" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2017, Period._2023), Period._2017)
+
+        result mustEqual 11000
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2017" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2023), Period._2017)
+
+        result mustEqual 11000
+      }
+
+      "must return correct FreeAllowance for ScottishTaxYear 2018" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2018, Period._2023), Period._2018)
+
+        result mustEqual 11500
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2018" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2023), Period._2018)
+
+        result mustEqual 11500
+      }
+
+      "must return correct FreeAllowance for ScottishTaxYear 2019" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2019, Period._2023), Period._2019)
+
+        result mustEqual 11850
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2019" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2023), Period._2019)
+
+        result mustEqual 11850
+      }
+
+      "must return correct FreeAllowance for ScottishTaxYear 2020" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2020, Period._2023), Period._2020)
+
+        result mustEqual 12500
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2020" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2023), Period._2020)
+
+        result mustEqual 12500
+      }
+
+      "must return correct FreeAllowance for ScottishTaxYear 2021" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2021, Period._2023), Period._2021)
+
+        result mustEqual 12500
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2021" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2023), Period._2021)
+
+        result mustEqual 12500
+      }
+
+      "must return correct FreeAllowance for ScottishTaxYear 2022" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2022, Period._2023), Period._2022)
+
+        result mustEqual 12570
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2022" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2023), Period._2022)
+
+        result mustEqual 12570
+      }
+
+      "must return correct FreeAllowance for ScottishTaxYear 2023" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2022, Period._2023), Period._2023)
+
+        result mustEqual 12570
+      }
+
+      "must return correct FreeAllowance for Non-ScottishTaxYear 2023" in {
+
+        val result =
+          service.findFreeAllowance(List(Period._2016, Period._2022), Period._2023)
+
+        result mustEqual 12570
+      }
+
+    }
+
     "calculateOriginalCharge" - {
 
       val nonZeroTaxYearSchemes = List(
@@ -2307,6 +2439,242 @@ class PaacServiceSpec
           )
 
         result mustEqual TotalAmounts(4002, 3200, 3440)
+      }
+
+    }
+
+    "calculatePersonalAllowanceAndReducedNetIncome" - {
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid less than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              Some(5555),
+              Some(6666)
+            )
+          )
+
+        result mustEqual (5555, 53779)
+      }
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid less than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with No personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            60000,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              None,
+              Some(6666)
+            )
+          )
+
+        result mustEqual (23610, 35724)
+      }
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is less than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            100001,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              Some(5555),
+              Some(6666)
+            )
+          )
+
+        result mustEqual (5555, 93780)
+      }
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is less than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with No personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            100001,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              None,
+              Some(6666)
+            )
+          )
+
+        result mustEqual (23610, 75725)
+      }
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid more than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            160000,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              Some(5555),
+              Some(6666)
+            )
+          )
+
+        result mustEqual (5555, 153779)
+      }
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid more than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with No personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            160000,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              None,
+              Some(6666)
+            )
+          )
+
+        result mustEqual (11110, 148224)
+      }
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is more than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            120000,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              Some(5555),
+              Some(6666)
+            )
+          )
+
+        result mustEqual (5555, 113779)
+      }
+
+      "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is more than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with No personalAllowanceAmount" in {
+
+        val result =
+          service.calculatePersonalAllowanceAndReducedNetIncome(
+            Period._2021,
+            List(Period._2016PostAlignment, Period._2018),
+            120000,
+            IncomeSubJourney(
+              Some(111),
+              Some(222),
+              Some(333),
+              Some(444),
+              Some(true),
+              Some(666),
+              Some(777),
+              Some(888),
+              Some(999),
+              Some(1111),
+              Some(2222),
+              Some(Increase),
+              Some(4444),
+              None,
+              Some(6666)
+            )
+          )
+
+        result mustEqual (15054, 104280)
       }
 
     }
