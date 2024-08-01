@@ -49,6 +49,9 @@ class SubmissionRepositorySpec
     with MockitoSugar {
 
   private val id               = "id"
+  private val id2              = "id2"
+  private val uniqueId         = "uniqueId"
+  private val uniqueId2        = "uniqueId2"
   private val instant          = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
   private val mockAppConfig    = mock[AppConfig]
@@ -208,6 +211,22 @@ class SubmissionRepositorySpec
     }
   }
 
+  ".set" - {
+
+    "must set submission" in {
+      val submission = Submission(
+        id,
+        uniqueId,
+        calculationInputs,
+        calculation,
+        Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
+      )
+
+      repository.set(submission).futureValue
+      repository.get(uniqueId).futureValue.value mustBe submission
+    }
+  }
+
   ".clear" - {
 
     "must clear user answers" in {
@@ -223,6 +242,27 @@ class SubmissionRepositorySpec
       insert(submission).futureValue
       repository.clear("userId").futureValue
       repository.get(id).futureValue must not be defined
+    }
+  }
+
+  ".clearByUniqueIdAndNotId" - {
+
+    "must clear submission with UniqueId with different Id" in {
+
+      val submission = Submission(
+        id,
+        uniqueId,
+        calculationInputs,
+        calculation,
+        Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
+      )
+
+      insert(submission).futureValue
+      insert(submission.copy(id = id2, uniqueId = uniqueId2)).futureValue
+
+      repository.clearByUniqueIdAndNotId(uniqueId, id2).futureValue
+      repository.get(uniqueId2).futureValue mustBe defined
+      repository.get(uniqueId).futureValue must not be defined
     }
   }
 }

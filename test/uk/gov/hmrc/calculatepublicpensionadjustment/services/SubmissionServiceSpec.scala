@@ -119,6 +119,30 @@ class SubmissionServiceSpec
       }
     }
 
+    "update" - {
+
+      "must return Done when updating submission" in {
+        val submission =
+          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+
+        when(mockSubmissionRepository.set(submission)).thenReturn(Future.successful(Done))
+
+        service.updateSubmission(submission).futureValue mustBe Done
+      }
+    }
+
+    "clearByUniqueIdAndNotId" - {
+
+      "must return Done when clearing a submission" in {
+        val submission =
+          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+
+        when(mockSubmissionRepository.clearByUniqueIdAndNotId("uniqueId", "id2")).thenReturn(Future.successful(Done))
+
+        service.clearByUniqueIdAndNotId("uniqueId", "id2").futureValue mustBe Done
+      }
+    }
+
   }
 
   "UuidService" in {

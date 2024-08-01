@@ -29,7 +29,7 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.UserAnswers
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.utils.WireMockHelper
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, UpstreamErrorResponse}
 
@@ -172,5 +172,32 @@ class SubmitBackendConnectorSpec
       }
     }
 
+    "clearCalcUserAnswersSubmitBE" - {
+      "should return Done successfully when calc backend responds with NO_CONTENT" in {
+        val url = s"/submit-public-pension-adjustment/calc-user-answers"
+
+        wireMockServer.stubFor(
+          delete(url)
+            .willReturn(aResponse().withStatus(NO_CONTENT))
+        )
+
+        connector.clearCalcUserAnswersSubmitBE().futureValue shouldBe Done
+      }
+
+      "should throw BadRequestException when calc backend responds with a bad request" in {
+        val url = s"/submit-public-pension-adjustment/calc-user-answers"
+
+        wireMockServer.stubFor(
+          delete(url)
+            .willReturn(aResponse().withStatus(BAD_REQUEST))
+        )
+
+        val response = connector.clearCalcUserAnswersSubmitBE()
+
+        ScalaFutures.whenReady(response.failed) { response =>
+          response shouldBe a[BadRequestException]
+        }
+      }
+    }
   }
 }
