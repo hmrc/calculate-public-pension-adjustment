@@ -42,7 +42,7 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
 
 lazy val scoverageSettings =
   Seq(
-    coverageExcludedPackages := """;uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.Reverse[^.]*;testonly""",
+    coverageExcludedPackages := """;uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.Reverse[^.]*;testonly;uk\.gov\.hmrc\.calculatepublicpensionadjustment\.config;""",
     coverageExcludedFiles := "<empty>;.*javascript.*;.*Routes.*;.*testonly.*",
     coverageFailOnMinimum := true,
     coverageHighlighting := true,
