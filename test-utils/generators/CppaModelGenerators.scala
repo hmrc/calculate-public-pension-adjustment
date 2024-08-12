@@ -91,7 +91,6 @@ trait CppaModelGenerators extends ModelGenerators {
       None,
       None,
       None,
-      None,
       blindPersonsAllowanceAmount
     )
 
@@ -108,9 +107,8 @@ trait CppaModelGenerators extends ModelGenerators {
       personalContributionsAmount           <- genIncomeSubJourneyAmounts
       reliefClaimedOnOverseasPensionsAmount <- genIncomeSubJourneyAmounts
       giftAidAmount                         <- genIncomeSubJourneyAmounts
-      payeCodeAdjustment                    <- genPayeCodeAdjustment
-      codeAdjustmentAmount                  <- genIncomeSubJourneyAmounts
       personalAllowanceAmount               <- genIncomeSubJourneyAmounts
+      tradeUnionOrPoliceReliefAmount        <- genIncomeSubJourneyAmountsLessThan100
       blindPersonsAllowanceAmount           <- genIncomeSubJourneyAmounts
     } yield IncomeSubJourney(
       salarySacrificeAmount,
@@ -124,9 +122,8 @@ trait CppaModelGenerators extends ModelGenerators {
       personalContributionsAmount,
       reliefClaimedOnOverseasPensionsAmount,
       giftAidAmount,
-      payeCodeAdjustment,
-      codeAdjustmentAmount,
       personalAllowanceAmount,
+      tradeUnionOrPoliceReliefAmount,
       blindPersonsAllowanceAmount
     )
 

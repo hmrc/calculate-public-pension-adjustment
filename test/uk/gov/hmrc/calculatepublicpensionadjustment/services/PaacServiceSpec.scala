@@ -24,7 +24,6 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.PayeCodeAdjustment.Increase
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.{AboveThreshold, BelowThreshold}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
@@ -91,7 +90,6 @@ class PaacServiceSpec
             None,
             None,
             None,
-            None,
             Some(2291)
           ),
           None,
@@ -121,9 +119,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(21000))
@@ -149,9 +146,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(24000))
@@ -178,9 +174,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(24000))
@@ -209,9 +204,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(BelowThreshold)
@@ -237,9 +231,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(24000))
@@ -266,9 +259,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(24000))
@@ -297,9 +289,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(24000))
@@ -327,7 +318,6 @@ class PaacServiceSpec
             None,
             None,
             Some(888),
-            None,
             None,
             None,
             None,
@@ -375,7 +365,6 @@ class PaacServiceSpec
             None,
             None,
             None,
-            None,
             Some(2291)
           ),
           None,
@@ -414,7 +403,6 @@ class PaacServiceSpec
             None,
             None,
             None,
-            None,
             Some(2291)
           )
         ),
@@ -440,9 +428,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(BelowThreshold)
@@ -469,9 +456,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(24000))
@@ -509,7 +495,6 @@ class PaacServiceSpec
             None,
             None,
             None,
-            None,
             Some(2291)
           ),
           None,
@@ -537,9 +522,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(BelowThreshold)
@@ -566,9 +550,8 @@ class PaacServiceSpec
             Some(1212),
             Some(1414),
             Some(842),
-            Some(Increase),
-            Some(2740),
             None,
+            Some(100),
             Some(2291)
           ),
           Some(AboveThreshold(24000))
@@ -900,49 +883,49 @@ class PaacServiceSpec
 
       "must return correct TaxRate for NonScottishTaxRate 2016 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2016, 12385, 28000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2016, 12385, 28000, 2250, 2000)
 
         result mustEqual (0.2, 12385)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 12384, 28000, 2250)
+        val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 12384, 28000, 2250, 2000)
 
         result mustEqual (0.2, 12384)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2016 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2016, 16000, 150000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2016, 16000, 150000, 2250, 2000)
 
-        result mustEqual (0.4, 34035)
+        result mustEqual (0.4, 36035)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 14250, 149999, 2250)
+        val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 14250, 149999, 2250, 2000)
 
-        result mustEqual (0.4, 34035)
+        result mustEqual (0.4, 36035)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2016 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2016, 12000, 154000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2016, 12000, 154000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.4, 36035)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 12000, 154000, 2250)
+        val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 12000, 154000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.4, 36035)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2018), Period._2017, 11000, 28000, 2250)
+        val result = service.findTaxRate(List(Period._2018), Period._2017, 11000, 28000, 2250, 2000)
 
         result mustEqual (0.2, 11000)
       }
@@ -950,44 +933,44 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2017 under BasicRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 12000, 28000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 12000, 28000, 2250, 2000)
 
         result mustEqual (0.2, 12000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2018), Period._2017, 10000, 150000, 2250)
+        val result = service.findTaxRate(List(Period._2018), Period._2017, 10000, 150000, 2250, 2000)
 
-        result mustEqual (0.4, 34250)
+        result mustEqual (0.4, 36250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2017 under TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 14999, 150100, 2250)
+          service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 14999, 150100, 2250, 2000)
 
-        result mustEqual (0.4, 33635)
+        result mustEqual (0.4, 35635)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2018), Period._2017, 14001, 188000, 2250)
+        val result = service.findTaxRate(List(Period._2018), Period._2017, 14001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2017 above TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 14001, 188000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 14001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2018, 8000, 18000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2018, 8000, 18000, 2250, 2000)
 
         result mustEqual (0.2, 8000)
       }
@@ -995,52 +978,52 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2018 under BasicRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 12000, 28000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 12000, 28000, 2250, 2000)
 
         result mustEqual (0.2, 12000)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2018, 15000, 148000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2018, 15000, 148000, 2250, 2000)
 
-        result mustEqual (0.4, 35750)
+        result mustEqual (0.4, 37750)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2018 under TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 14999, 148000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 14999, 148000, 2250, 2000)
 
-        result mustEqual (0.4, 33750)
+        result mustEqual (0.4, 35750)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2018, 15001, 188000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2018, 15001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2018 above TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 15001, 188000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 15001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under StarterRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 13850, 1000, 500)
+          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 13850, 1000, 500, 1000)
 
         result mustEqual (0.19, 13850)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2019, 16350, 28000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2019, 16350, 28000, 2250, 2000)
 
         result mustEqual (0.2, 16350)
       }
@@ -1048,7 +1031,7 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2019 under BasicRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 14000, 8000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 14000, 8000, 2250, 2000)
 
         result mustEqual (0.2, 2000)
       }
@@ -1056,52 +1039,52 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2019 under IntermediateRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 13430, 28000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 13430, 28000, 2250, 2000)
 
-        result mustEqual (0.21, 14400)
+        result mustEqual (0.21, 16400)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2019, 15000, 148000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2019, 15000, 148000, 2250, 2000)
 
-        result mustEqual (0.4, 36750)
+        result mustEqual (0.4, 38750)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 14999, 148000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 14999, 148000, 2250, 2000)
 
-        result mustEqual (0.41, 33830)
+        result mustEqual (0.41, 35830)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2019, 15001, 188000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2019, 15001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 above TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 15001, 188000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 15001, 188000, 2250, 2000)
 
-        result mustEqual (0.46, 152250)
+        result mustEqual (0.46, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under StarterRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 14549, 1000, 750)
+          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 14549, 1000, 750, 800)
 
         result mustEqual (0.19, 14549)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2020, 5000, 31000, 1250)
+        val result = service.findTaxRate(List(Period._2017), Period._2020, 5000, 31000, 1250, 1000)
 
         result mustEqual (0.2, 5000)
       }
@@ -1109,7 +1092,7 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2020 under BasicRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 24944, 11000, 1250)
+          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 24944, 11000, 1250, 1000)
 
         result mustEqual (0.2, 2049)
       }
@@ -1117,52 +1100,52 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2020 under IntermediateRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 43430, 31000, 1250)
+          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 43430, 31000, 1250, 1000)
 
-        result mustEqual (0.21, 13694)
+        result mustEqual (0.21, 14694)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2020, 150000, 148000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2020, 150000, 148000, 2250, 2000)
 
-        result mustEqual (0.4, 39750)
+        result mustEqual (0.4, 41750)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 149999, 148000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 149999, 148000, 2250, 2000)
 
-        result mustEqual (0.41, 33180)
+        result mustEqual (0.41, 35180)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2020, 150001, 188000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2020, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 above TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 150001, 188000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.46, 152250)
+        result mustEqual (0.46, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under StarterRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 9585, 1000, 750)
+          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 9585, 1000, 750, 800)
 
         result mustEqual (0.19, 9585)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2021, 10160, 31000, 1250)
+        val result = service.findTaxRate(List(Period._2017), Period._2021, 10160, 31000, 1250, 1000)
 
         result mustEqual (0.2, 10160)
       }
@@ -1170,7 +1153,7 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2021 under BasicRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 9158, 11000, 1250)
+          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 9158, 11000, 1250, 1000)
 
         result mustEqual (0.2, 2085)
       }
@@ -1178,52 +1161,52 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2021 under IntermediateRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 12430, 28000, 1250)
+          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 12430, 28000, 1250, 1000)
 
-        result mustEqual (0.21, 13908)
+        result mustEqual (0.21, 14908)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2021, 12000, 148000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2021, 12000, 148000, 2250, 2000)
 
-        result mustEqual (0.4, 39750)
+        result mustEqual (0.4, 41750)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 149999, 148000, 1250)
+          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 149999, 148000, 1250, 1000)
 
-        result mustEqual (0.41, 32180)
+        result mustEqual (0.41, 33180)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2021, 150001, 188000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2021, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 above TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 150001, 188000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.46, 152250)
+        result mustEqual (0.46, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under StarterRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 14667, 1000, 750)
+          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 14667, 1000, 750, 800)
 
         result mustEqual (0.19, 14667)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2022, 14270, 27000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2022, 14270, 27000, 2250, 2000)
 
         result mustEqual (0.2, 14270)
       }
@@ -1231,7 +1214,7 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2022 under BasicRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 25296, 8000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 25296, 8000, 2250, 2000)
 
         result mustEqual (0.2, 2097)
       }
@@ -1239,52 +1222,52 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2022 under IntermediateRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 43662, 28000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 43662, 28000, 2250, 2000)
 
-        result mustEqual (0.21, 14976)
+        result mustEqual (0.21, 16976)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2022, 12000, 148000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2022, 12000, 148000, 2250, 2000)
 
-        result mustEqual (0.4, 39950)
+        result mustEqual (0.4, 41950)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 149999, 148000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 149999, 148000, 2250, 2000)
 
-        result mustEqual (0.41, 33342)
+        result mustEqual (0.41, 35342)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2022, 150001, 188000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2022, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 above TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 150001, 188000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.46, 152250)
+        result mustEqual (0.46, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under StarterRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 14732, 1000, 750)
+          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 14732, 1000, 750, 800)
 
         result mustEqual (0.19, 14732)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 under BasicRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2023, 15270, 28000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2023, 15270, 28000, 2250, 2000)
 
         result mustEqual (0.2, 15270)
       }
@@ -1292,7 +1275,7 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2023 under BasicRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 15688, 8000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 15688, 8000, 2250, 2000)
 
         result mustEqual (0.2, 2162)
       }
@@ -1300,39 +1283,39 @@ class PaacServiceSpec
       "must return correct TaxRate for ScottishTaxRate 2023 under IntermediateRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 43662, 28000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 43662, 28000, 2250, 2000)
 
-        result mustEqual (0.21, 15368)
+        result mustEqual (0.21, 17368)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 under TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2023, 150000, 148000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2023, 150000, 148000, 2250, 2000)
 
-        result mustEqual (0.4, 39950)
+        result mustEqual (0.4, 41950)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 149999, 148000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 149999, 148000, 2250, 2000)
 
-        result mustEqual (0.41, 33342)
+        result mustEqual (0.41, 35342)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 above TopRateAllowance" in {
 
-        val result = service.findTaxRate(List(Period._2017), Period._2023, 150001, 188000, 2250)
+        val result = service.findTaxRate(List(Period._2017), Period._2023, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.45, 152250)
+        result mustEqual (0.45, 154250)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 above TopRateAllowance" in {
 
         val result =
-          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 150001, 188000, 2250)
+          service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 150001, 188000, 2250, 2000)
 
-        result mustEqual (0.46, 152250)
+        result mustEqual (0.46, 154250)
       }
 
     }
@@ -1542,7 +1525,8 @@ class PaacServiceSpec
             18000,
             60000,
             18000,
-            2250
+            2250,
+            2000
           )
 
         result mustEqual 7200.0
@@ -1557,10 +1541,11 @@ class PaacServiceSpec
             18000,
             20000,
             62000,
-            2250
+            2250,
+            2000
           )
 
-        result mustEqual 22653.99
+        result mustEqual 22253.99
       }
 
       "must return correct RevisedCharge for non-zero chargeableAmount and scottishTaxYear 2019 with TaxRate 0.41" in {
@@ -1572,7 +1557,8 @@ class PaacServiceSpec
             0,
             40000,
             22000,
-            2250
+            2250,
+            2000
           )
 
         result mustEqual 9020.0
@@ -1587,7 +1573,8 @@ class PaacServiceSpec
             18000,
             40000,
             -18000,
-            2250
+            2250,
+            2000
           )
 
         result mustEqual 0.0
@@ -1602,10 +1589,11 @@ class PaacServiceSpec
             14000,
             28000,
             22000,
-            2250
+            2250,
+            2000
           )
 
-        result mustEqual 7951.59
+        result mustEqual 7551.59
       }
 
       "must return correct RevisedCharge for zero chargeableAmount and scottishTaxYear 2022 with TaxRate 0.19" in {
@@ -1617,10 +1605,11 @@ class PaacServiceSpec
             0,
             14000,
             22000,
-            2250
+            2250,
+            2000
           )
 
-        result mustEqual 5141.83
+        result mustEqual 4721.83
       }
 
       "must return correct RevisedCharge for negative chargeableAmount and scottishTaxYear 2022 with TaxRate 0.41" in {
@@ -1632,7 +1621,8 @@ class PaacServiceSpec
             0,
             80000,
             22000,
-            2250
+            2250,
+            2000
           )
 
         result mustEqual 9020.0
@@ -1660,7 +1650,6 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2018),
             60000,
             IncomeSubJourney(
-              None,
               None,
               None,
               None,
@@ -1725,7 +1714,6 @@ class PaacServiceSpec
               None,
               None,
               None,
-              None,
               None
             ),
             1000,
@@ -1764,7 +1752,6 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2018),
             60000,
             IncomeSubJourney(
-              None,
               None,
               None,
               None,
@@ -1819,7 +1806,6 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2018),
             60000,
             IncomeSubJourney(
-              None,
               None,
               None,
               None,
@@ -1898,7 +1884,6 @@ class PaacServiceSpec
               None,
               None,
               None,
-              None,
               None
             ),
             1000,
@@ -1937,7 +1922,6 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2021),
             30000,
             IncomeSubJourney(
-              None,
               None,
               None,
               None,
@@ -2002,7 +1986,6 @@ class PaacServiceSpec
               None,
               None,
               None,
-              None,
               None
             ),
             100,
@@ -2044,7 +2027,6 @@ class PaacServiceSpec
             List(Period._2016PostAlignment, Period._2018),
             60000,
             IncomeSubJourney(
-              None,
               None,
               None,
               None,
@@ -2122,7 +2104,6 @@ class PaacServiceSpec
               None,
               None,
               None,
-              None,
               Some(2291)
             )
           ),
@@ -2147,9 +2128,8 @@ class PaacServiceSpec
               Some(1212),
               Some(1414),
               Some(842),
-              Some(Increase),
-              Some(2740),
               None,
+              Some(100),
               Some(2291)
             ),
             Some(AboveThreshold(21000))
@@ -2175,9 +2155,8 @@ class PaacServiceSpec
               Some(1212),
               Some(1414),
               Some(842),
-              Some(Increase),
-              Some(2740),
               None,
+              Some(100),
               Some(2291)
             ),
             Some(AboveThreshold(24000))
@@ -2203,9 +2182,8 @@ class PaacServiceSpec
               Some(1212),
               Some(1414),
               Some(842),
-              Some(Increase),
-              Some(2740),
               None,
+              Some(100),
               Some(2291)
             ),
             Some(BelowThreshold)
@@ -2231,9 +2209,8 @@ class PaacServiceSpec
               Some(1212),
               Some(1414),
               Some(842),
-              Some(Increase),
-              Some(2740),
               None,
+              Some(100),
               Some(2291)
             ),
             Some(AboveThreshold(24000))
@@ -2259,9 +2236,8 @@ class PaacServiceSpec
               Some(1212),
               Some(1414),
               Some(842),
-              Some(Increase),
-              Some(2740),
               None,
+              Some(100),
               Some(2291)
             ),
             Some(BelowThreshold)
@@ -2287,9 +2263,8 @@ class PaacServiceSpec
               Some(1212),
               Some(1414),
               Some(842),
-              Some(Increase),
-              Some(2740),
               None,
+              Some(100),
               Some(2291)
             ),
             Some(AboveThreshold(24000))
@@ -2315,9 +2290,8 @@ class PaacServiceSpec
               Some(1212),
               Some(1414),
               Some(842),
-              Some(Increase),
-              Some(2740),
               None,
+              Some(100),
               Some(2291)
             ),
             Some(AboveThreshold(24000))
@@ -2464,14 +2438,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               Some(5555),
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (5555, 53779)
+        result mustEqual (5555, 47113, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid less than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with No personalAllowanceAmount" in {
@@ -2493,14 +2466,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               None,
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (23610, 35724)
+        result mustEqual (19166, 33502, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is less than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with personalAllowanceAmount" in {
@@ -2522,14 +2494,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               Some(5555),
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (5555, 93780)
+        result mustEqual (5555, 87114, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is less than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with No personalAllowanceAmount" in {
@@ -2551,14 +2522,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               None,
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (23610, 75725)
+        result mustEqual (19166, 73503, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid more than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with personalAllowanceAmount" in {
@@ -2580,14 +2550,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               Some(5555),
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (5555, 153779)
+        result mustEqual (5555, 147113, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid more than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with No personalAllowanceAmount" in {
@@ -2609,14 +2578,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               None,
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (11110, 148224)
+        result mustEqual (6666, 146002, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is more than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with personalAllowanceAmount" in {
@@ -2638,14 +2606,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               Some(5555),
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (5555, 113779)
+        result mustEqual (5555, 107113, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is more than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with No personalAllowanceAmount" in {
@@ -2667,14 +2634,13 @@ class PaacServiceSpec
               Some(999),
               Some(1111),
               Some(2222),
-              Some(Increase),
-              Some(4444),
               None,
+              Some(100),
               Some(6666)
             )
           )
 
-        result mustEqual (15054, 104280)
+        result mustEqual (11005, 101663, 2778)
       }
 
     }
