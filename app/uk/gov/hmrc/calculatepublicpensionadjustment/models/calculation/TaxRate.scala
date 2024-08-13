@@ -32,12 +32,19 @@ sealed trait TaxRate {
 
   def topTaxRate: Double = 0.45
 
-  def getTaxRate(income: Int, giftAidAmount: Int): (Double, Int) =
+  def getTaxRate(income: Int, grossGiftAidAmount: Int, rASContributionsAmount: Int): (Double, Int) =
     income match {
-      case i if i <= basicRateAllowance + giftAidAmount => (basicTaxRate, personalAllowance)
-      case i if i <= topRateAllowance + giftAidAmount   => (higherTaxRate, basicRateAllowance + giftAidAmount)
-      case _                                            => (topTaxRate, topRateAllowance + giftAidAmount)
+      case i if i <= basicRateAllowance + grossGiftAidAmount + rASContributionsAmount =>
+        (basicTaxRate, personalAllowance)
+      case i if i <= topRateAllowance + grossGiftAidAmount + rASContributionsAmount   =>
+        (higherTaxRate, basicRateAllowance + grossGiftAidAmount + rASContributionsAmount)
+      case _                                                                          => (topTaxRate, topRateAllowance + grossGiftAidAmount + rASContributionsAmount)
     }
+
+  def getGrossGiftAidAmount(netIncome: Int, giftAidAmount: Int): Double =
+    if (netIncome > freeAllowance + basicRateAllowance)
+      1.25 * giftAidAmount
+    else giftAidAmount
 }
 
 sealed trait NonScottishTaxRate extends TaxRate
@@ -145,14 +152,16 @@ sealed trait ScottishTaxRateAfter2018 extends ScottishTaxRate {
 
   override def topTaxRate: Double = 0.46
 
-  override def getTaxRate(income: Int, giftAidAmount: Int): (Double, Int) =
+  override def getTaxRate(income: Int, grossGiftAidAmount: Int, rASContributionsAmount: Int): (Double, Int) =
     income match {
-      case i if i <= starterRateAllowance                      => (starterTaxRate, personalAllowance)
-      case i if i <= basicRateAllowance + giftAidAmount        => (basicTaxRate, starterRateAllowance)
-      case i if i <= intermediateRateAllowance + giftAidAmount =>
-        (intermediateTaxRate, basicRateAllowance + giftAidAmount)
-      case i if i <= topRateAllowance + giftAidAmount          => (higherTaxRate, intermediateRateAllowance + giftAidAmount)
-      case _                                                   => (topTaxRate, topRateAllowance + giftAidAmount)
+      case i if i <= starterRateAllowance                                                    => (starterTaxRate, personalAllowance)
+      case i if i <= basicRateAllowance + grossGiftAidAmount + rASContributionsAmount        =>
+        (basicTaxRate, starterRateAllowance)
+      case i if i <= intermediateRateAllowance + grossGiftAidAmount + rASContributionsAmount =>
+        (intermediateTaxRate, basicRateAllowance + grossGiftAidAmount + rASContributionsAmount)
+      case i if i <= topRateAllowance + grossGiftAidAmount + rASContributionsAmount          =>
+        (higherTaxRate, intermediateRateAllowance + grossGiftAidAmount + rASContributionsAmount)
+      case _                                                                                 => (topTaxRate, topRateAllowance + grossGiftAidAmount + rASContributionsAmount)
     }
 }
 

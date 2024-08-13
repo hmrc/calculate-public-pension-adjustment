@@ -17,8 +17,6 @@
 package generators
 
 import org.scalacheck.Gen
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{PayeCodeAdjustment, WithName}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.PayeCodeAdjustment._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income
 
 trait ModelGenerators {
@@ -67,9 +65,14 @@ trait ModelGenerators {
       )
     )
 
+  lazy val genIncomeSubJourneyAmountsLessThan100: Gen[Option[Int]] =
+    Gen.option(
+      Gen.chooseNum(
+        minT = 1,
+        maxT = 100
+      )
+    )
+
   lazy val genIsAboveThreshold: Gen[Option[Boolean]] =
     Gen.option(Gen.oneOf(true, false))
-
-  lazy val genPayeCodeAdjustment: Gen[Option[WithName with PayeCodeAdjustment]] =
-    Gen.option(Gen.oneOf(Increase, Decrease))
 }
