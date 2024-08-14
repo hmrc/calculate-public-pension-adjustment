@@ -17,7 +17,6 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import com.google.inject.Inject
-import play.api.libs.json.Json
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
@@ -703,7 +702,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     (
       personalAllowance,
-      netIncome - personalAllowance - blindPersonaAllowance,
+      Math.max(0, netIncome - personalAllowance),
       grossGiftAidAmount
     )
   }

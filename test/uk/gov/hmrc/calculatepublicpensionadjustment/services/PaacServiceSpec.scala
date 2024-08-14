@@ -2444,7 +2444,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (5555, 47113, 2778)
+        result mustEqual (5555, 53779, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid less than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with No personalAllowanceAmount" in {
@@ -2472,7 +2472,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (19166, 33502, 2778)
+        result mustEqual (19166, 40168, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is less than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with personalAllowanceAmount" in {
@@ -2500,7 +2500,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (5555, 87114, 2778)
+        result mustEqual (5555, 93780, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is less than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with No personalAllowanceAmount" in {
@@ -2528,7 +2528,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (19166, 73503, 2778)
+        result mustEqual (19166, 80169, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid more than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with personalAllowanceAmount" in {
@@ -2556,7 +2556,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (5555, 147113, 2778)
+        result mustEqual (5555, 153779, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid more than personalAllowanceTaperingLimit and freeAllowance is less than taperingAmount with No personalAllowanceAmount" in {
@@ -2584,7 +2584,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (6666, 146002, 2778)
+        result mustEqual (6666, 152668, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is more than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with personalAllowanceAmount" in {
@@ -2612,7 +2612,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (5555, 107113, 2778)
+        result mustEqual (5555, 113779, 2778)
       }
 
       "must return correct PersonalAllowanceAndReducedNetIncome with netIncomeAfterDeductingGiftAid is more than personalAllowanceTaperingLimit and freeAllowance is more than taperingAmount with No personalAllowanceAmount" in {
@@ -2640,7 +2640,7 @@ class PaacServiceSpec
             )
           )
 
-        result mustEqual (11005, 101663, 2778)
+        result mustEqual (11005, 108329, 2778)
       }
 
     }
