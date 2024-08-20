@@ -36,6 +36,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
   private final val personalAllowanceTaperingLimit = 100000
 
+  private final val giftAidAmountGrossingRatio = 1.25
+
   def calculate(
     calculationRequest: CalculationRequest
   )(implicit hc: HeaderCarrier): Future[CalculationResponse] =
@@ -614,41 +616,6 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       case (false, Period._2023) => NonScottishTaxRate._2023(0).freeAllowance
     }
 
-  def calcGrossGiftAidAmount(scottishTaxYears: List[Period], period: Period, netIncome: Int, giftAmount: Int): Double =
-    (scottishTaxYears.contains(period), period) match {
-      case (true, Period._2016) => ScottishTaxRateTill2018._2016(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2016) => NonScottishTaxRate._2016(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (true, Period._2017) => ScottishTaxRateTill2018._2017(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2017) => NonScottishTaxRate._2017(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (true, Period._2018) => ScottishTaxRateTill2018._2018(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2018) => NonScottishTaxRate._2018(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (true, Period._2019) => ScottishTaxRateAfter2018._2019(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2019) => NonScottishTaxRate._2019(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (true, Period._2020) => ScottishTaxRateAfter2018._2020(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2020) => NonScottishTaxRate._2020(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (true, Period._2021) => ScottishTaxRateAfter2018._2021(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2021) => NonScottishTaxRate._2021(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (true, Period._2022) => ScottishTaxRateAfter2018._2022(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2022) => NonScottishTaxRate._2022(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (true, Period._2023) => ScottishTaxRateAfter2018._2023(0).getGrossGiftAidAmount(netIncome, giftAmount)
-
-      case (false, Period._2023) => NonScottishTaxRate._2023(0).getGrossGiftAidAmount(netIncome, giftAmount)
-    }
-
   def calculateTotalAmounts(
     outDates: List[OutOfDatesTaxYearsCalculation],
     inDates: List[InDatesTaxYearsCalculation]
@@ -670,12 +637,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val netIncome = totalIncome - incomeSubJourney.taxReliefAmount.getOrElse(0)
 
-    val grossGiftAidAmount = calcGrossGiftAidAmount(
-      scottishTaxYears,
-      period,
-      netIncome,
-      incomeSubJourney.giftAidAmount.getOrElse(0)
-    ).ceil.toInt
+    val grossGiftAidAmount = (giftAidAmountGrossingRatio * incomeSubJourney.giftAidAmount.getOrElse(0)).ceil.toInt
 
     val rASContributionsAmount = incomeSubJourney.rASContributionsAmount.getOrElse(0)
 

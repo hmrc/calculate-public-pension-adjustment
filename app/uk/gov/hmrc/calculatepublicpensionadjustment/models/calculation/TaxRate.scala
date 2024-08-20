@@ -40,11 +40,6 @@ sealed trait TaxRate {
         (higherTaxRate, basicRateAllowance + grossGiftAidAmount + rASContributionsAmount)
       case _                                                                          => (topTaxRate, topRateAllowance + grossGiftAidAmount + rASContributionsAmount)
     }
-
-  def getGrossGiftAidAmount(netIncome: Int, giftAidAmount: Int): Double =
-    if (netIncome > freeAllowance + basicRateAllowance)
-      1.25 * giftAidAmount
-    else giftAidAmount
 }
 
 sealed trait NonScottishTaxRate extends TaxRate
