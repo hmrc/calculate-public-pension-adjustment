@@ -178,6 +178,11 @@ trait CppaRequests {
      |    "isResubmission": true,
      |    "reason": "Change in amounts"
      |  },
+     |  "setup": {
+     |    "aa": {
+     |      "savingsStatement": true
+     |    }
+     |  },
      |  "annualAllowance": {
      |    "scottishTaxYears": [
      |      "2017",
@@ -497,6 +502,11 @@ trait CppaRequests {
       |{
       |  "resubmission": {
       |    "isResubmission": false
+      |  },
+      |  "setup": {
+      |    "aa": {
+      |      "savingsStatement": true
+      |    }
       |  },
       |  "annualAllowance": {
       |    "scottishTaxYears": [
@@ -843,6 +853,11 @@ trait CppaRequests {
      |    "isResubmission": true,
      |    "reason": "Change in amounts"
      |  },
+     |  "setup": {
+     |    "aa": {
+     |      "savingsStatement": true
+     |    }
+     |  },
      |  "annualAllowance": {
      |    "scottishTaxYears": [
      |      "2017",
@@ -1172,6 +1187,11 @@ trait CppaRequests {
       |{
       |  "resubmission": {
       |    "isResubmission": false
+      |  },
+      |  "setup": {
+      |    "aa": {
+      |      "savingsStatement": true
+      |    }
       |  },
       |  "annualAllowance": {
       |    "scottishTaxYears": [

@@ -25,8 +25,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import requests.CalculationResponses
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationInputs
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Resubmission
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, Resubmission, Setup}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
@@ -70,7 +69,20 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.successful(Done))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "userId", "uniqueId")(hc)
+          service.submit(
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None,
+            "userId",
+            "uniqueId"
+          )(hc)
 
         result.futureValue mustBe Right("uniqueId")
       }
@@ -81,7 +93,20 @@ class SubmissionServiceSpec
         when(mockSubmissionRepository.insert(any())).thenReturn(Future.failed(new RuntimeException("exception")))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
-          service.submit(CalculationInputs(Resubmission(false, None), None, None), None, "userId", "uniqueId")(hc)
+          service.submit(
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None,
+            "userId",
+            "uniqueId"
+          )(hc)
 
         an[RuntimeException] mustBe thrownBy(result.futureValue)
       }
@@ -91,7 +116,20 @@ class SubmissionServiceSpec
 
       "must return a submission when it exists in the repository" in {
         val submission =
-          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission(
+            "id",
+            "uniqueId",
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None
+          )
 
         when(mockSubmissionRepository.get(any())).thenReturn(Future.successful(Some(submission)))
 
@@ -111,7 +149,20 @@ class SubmissionServiceSpec
 
       "must clear a submission when it exists in the repository" in {
         val submission =
-          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission(
+            "id",
+            "uniqueId",
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None
+          )
 
         when(mockSubmissionRepository.clear("userId")).thenReturn(Future.successful(Done))
 
@@ -123,7 +174,20 @@ class SubmissionServiceSpec
 
       "must return Done when updating submission" in {
         val submission =
-          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission(
+            "id",
+            "uniqueId",
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None
+          )
 
         when(mockSubmissionRepository.set(submission)).thenReturn(Future.successful(Done))
 
@@ -135,7 +199,20 @@ class SubmissionServiceSpec
 
       "must return Done when clearing a submission" in {
         val submission =
-          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission(
+            "id",
+            "uniqueId",
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None
+          )
 
         when(mockSubmissionRepository.clearByUniqueIdAndNotId("uniqueId", "id2")).thenReturn(Future.successful(Done))
 
