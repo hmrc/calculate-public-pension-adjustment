@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse, Resubmission, TotalAmounts}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, CalculationResponse, LifetimeAllowanceSetup, Resubmission, Setup, TotalAmounts}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{Submission, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models._
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
@@ -122,12 +122,14 @@ class SubmissionControllerSpec
                 "uniqueId",
                 CalculationInputs(
                   Resubmission(false, None),
+                  Setup(
+                    Some(AnnualAllowanceSetup(Some(true))),
+                    Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                  ),
                   None,
                   Some(
                     LifeTimeAllowance(
-                      true,
                       LocalDate.parse("2018-11-28"),
-                      true,
                       ChangeInTaxCharge.IncreasedCharge,
                       LtaProtectionOrEnhancements.Protection,
                       Some(ProtectionType.FixedProtection2014),
@@ -142,7 +144,6 @@ class SubmissionControllerSpec
                       Some(WhoPayingExtraLtaCharge.You),
                       None,
                       NewLifeTimeAllowanceAdditions(
-                        false,
                         None,
                         None,
                         None,
@@ -194,13 +195,14 @@ class SubmissionControllerSpec
 
       status(result) mustEqual OK
       contentAsJson(result) mustEqual Json.parse(
-        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"lifeTimeAllowance\":{\"benefitCrystallisationEventFlag\":true,\"benefitCrystallisationEventDate\":\"2018-11-28\"," +
-          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"changeInTaxCharge\":\"increasedCharge\",\"lifetimeAllowanceProtectionOrEnhancements\":\"protection\"," +
+        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true},\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true," +
+          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"multipleBenefitCrystallisationEventFlag\":false}},\"lifeTimeAllowance\":{\"benefitCrystallisationEventDate\":\"2018-11-28\"," +
+          "\"changeInTaxCharge\":\"increasedCharge\",\"lifetimeAllowanceProtectionOrEnhancements\":\"protection\"," +
           "\"protectionType\":\"fixedProtection2014\",\"protectionReference\":\"R41AB678TR23355\",\"protectionTypeEnhancementChanged\":\"protection\"," +
           "\"newProtectionTypeOrEnhancement\":\"individualProtection2016\",\"newProtectionTypeOrEnhancementReference\":\"2134567801\",\"previousLifetimeAllowanceChargeFlag\":true," +
           "\"previousLifetimeAllowanceChargePaymentMethod\":\"annualPayment\",\"previousLifetimeAllowanceChargePaidBy\":\"pensionScheme\"," +
           "\"previousLifetimeAllowanceChargeSchemeNameAndTaxRef\":{\"name\":\"Scheme 1\",\"taxRef\":\"00348916RT\"}," +
-          "\"newLifetimeAllowanceChargeWillBePaidBy\":\"you\",\"newLifeTimeAllowanceAdditions\":{\"multipleBenefitCrystallisationEventFlag\":false}}}} "
+          "\"newLifetimeAllowanceChargeWillBePaidBy\":\"you\",\"newLifeTimeAllowanceAdditions\":{}}}} "
       )
 
       verify(mockSubmissionService, times(1)).retrieve(eqTo("1234"))
@@ -245,12 +247,14 @@ class SubmissionControllerSpec
                 "uniqueId",
                 CalculationInputs(
                   Resubmission(false, None),
+                  Setup(
+                    Some(AnnualAllowanceSetup(Some(true))),
+                    Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                  ),
                   None,
                   Some(
                     LifeTimeAllowance(
-                      true,
                       LocalDate.parse("2018-11-28"),
-                      true,
                       ChangeInTaxCharge.IncreasedCharge,
                       LtaProtectionOrEnhancements.Protection,
                       Some(ProtectionType.FixedProtection2014),
@@ -265,7 +269,6 @@ class SubmissionControllerSpec
                       Some(WhoPayingExtraLtaCharge.You),
                       None,
                       NewLifeTimeAllowanceAdditions(
-                        false,
                         None,
                         None,
                         None,
@@ -400,12 +403,14 @@ class SubmissionControllerSpec
   private def calculationInputs =
     CalculationInputs(
       Resubmission(false, None),
+      Setup(
+        Some(AnnualAllowanceSetup(Some(true))),
+        Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+      ),
       None,
       Some(
         LifeTimeAllowance(
-          true,
           LocalDate.parse("2018-11-28"),
-          true,
           ChangeInTaxCharge.IncreasedCharge,
           LtaProtectionOrEnhancements.Protection,
           Some(ProtectionType.FixedProtection2014),
@@ -420,7 +425,6 @@ class SubmissionControllerSpec
           Some(WhoPayingExtraLtaCharge.You),
           None,
           NewLifeTimeAllowanceAdditions(
-            false,
             None,
             None,
             None,

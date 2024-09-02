@@ -67,7 +67,12 @@ class SubmissionRepositorySpec
   private implicit val crypto: Encrypter with Decrypter =
     SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", configuration.underlying)
 
-  private val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
+  private val calculationInputs = CalculationInputs(
+    Resubmission(false, None),
+    Setup(Some(AnnualAllowanceSetup(Some(true))), Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))),
+    None,
+    None
+  )
 
   val calculation = Some(
     CalculationResponse(

@@ -21,42 +21,69 @@ import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, startWith}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Logging
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, Resubmission}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, Resubmission, Setup}
 
 class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logging {
 
   "SubmissionRequest" - {
 
     "must serialise to expected Json" in {
-      val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
+      val calculationInputs = CalculationInputs(
+        Resubmission(false, None),
+        Setup(
+          Some(AnnualAllowanceSetup(Some(true))),
+          Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+        ),
+        None,
+        None
+      )
       val submissionRequest = SubmissionRequest(calculationInputs, None, "userId", "uniqueId")
 
       val serialised: JsValue = Json.toJson(submissionRequest)
 
-      val expectedJson = Json.obj(
-        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false)),
-        "userId"            -> "userId",
-        "uniqueId"          -> "uniqueId"
+      val expectedJson = Json.parse(
+        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false}," +
+          "\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true},\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true," +
+          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"multipleBenefitCrystallisationEventFlag\":false}}}," +
+          "\"userId\":\"userId\",\"uniqueId\":\"uniqueId\"} "
       )
+
       serialised mustEqual expectedJson
     }
 
     "must de-serialise from valid Json with userAnswers" in {
-      val json = Json.obj(
-        "calculationInputs" -> Json.obj("resubmission" -> Json.obj("isResubmission" -> false)),
-        "userId"            -> "userId",
-        "uniqueId"          -> "uniqueId"
+      val json = Json.parse(
+        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false}," +
+          "\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true},\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true," +
+          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"multipleBenefitCrystallisationEventFlag\":false}}}," +
+          "\"userId\":\"userId\",\"uniqueId\":\"uniqueId\"} "
       )
 
       val deserialised: JsResult[SubmissionRequest] = json.validate[SubmissionRequest]
 
-      val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
+      val calculationInputs = CalculationInputs(
+        Resubmission(false, None),
+        Setup(
+          Some(AnnualAllowanceSetup(Some(true))),
+          Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+        ),
+        None,
+        None
+      )
       val submissionRequest = SubmissionRequest(calculationInputs, None, "userId", "uniqueId")
       deserialised mustEqual (JsSuccess(submissionRequest))
     }
 
     "serialise" in {
-      val calculationInputs = CalculationInputs(Resubmission(false, None), None, None)
+      val calculationInputs = CalculationInputs(
+        Resubmission(false, None),
+        Setup(
+          Some(AnnualAllowanceSetup(Some(true))),
+          Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+        ),
+        None,
+        None
+      )
       val submissionRequest =
         SubmissionRequest(calculationInputs, Some(SubmissionTestData.calculationResponse), "userId", "uniqueId")
       val json: String      = Json.toJson(submissionRequest).toString

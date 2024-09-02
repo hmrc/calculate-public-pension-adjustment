@@ -24,8 +24,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.libs.json.Json
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.CalculationInputs
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Resubmission
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, Resubmission, Setup}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, UniqueId, UserAnswers}
 
@@ -113,7 +112,20 @@ class UserAnswersServiceSpec
         val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
 
         val submission =
-          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission(
+            "id",
+            "uniqueId",
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None
+          )
 
         val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
@@ -134,7 +146,20 @@ class UserAnswersServiceSpec
         val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
 
         val submission =
-          Submission("id", "uniqueId", CalculationInputs(Resubmission(false, None), None, None), None)
+          Submission(
+            "id",
+            "uniqueId",
+            CalculationInputs(
+              Resubmission(false, None),
+              Setup(
+                Some(AnnualAllowanceSetup(Some(true))),
+                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+              ),
+              None,
+              None
+            ),
+            None
+          )
 
         when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
         when(mockUserAnswersRepository.get("id")).thenReturn(Future.successful(None))

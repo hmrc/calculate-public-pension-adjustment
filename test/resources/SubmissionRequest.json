@@ -3,6 +3,11 @@
     "resubmission": {
       "isResubmission": false
     },
+    "setup": {
+      "aa": {
+        "savingsStatement": true
+      }
+    },
     "annualAllowance": {
       "scottishTaxYears": [],
       "taxYears": [
