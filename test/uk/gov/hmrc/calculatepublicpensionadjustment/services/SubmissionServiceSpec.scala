@@ -25,7 +25,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import requests.CalculationResponses
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, Resubmission, Setup}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, MaybePIAIncrease, MaybePIAUnchangedOrDecreased, Resubmission, Setup}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
@@ -73,8 +73,33 @@ class SubmissionServiceSpec
             CalculationInputs(
               Resubmission(false, None),
               Setup(
-                Some(AnnualAllowanceSetup(Some(true))),
-                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                Some(
+                  AnnualAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(MaybePIAIncrease.No),
+                    Some(MaybePIAUnchangedOrDecreased.No),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false)
+                  )
+                ),
+                Some(
+                  LifetimeAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(true)
+                  )
+                )
               ),
               None,
               None
@@ -97,8 +122,33 @@ class SubmissionServiceSpec
             CalculationInputs(
               Resubmission(false, None),
               Setup(
-                Some(AnnualAllowanceSetup(Some(true))),
-                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                Some(
+                  AnnualAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(MaybePIAIncrease.No),
+                    Some(MaybePIAUnchangedOrDecreased.No),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false)
+                  )
+                ),
+                Some(
+                  LifetimeAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(true)
+                  )
+                )
               ),
               None,
               None
@@ -122,8 +172,33 @@ class SubmissionServiceSpec
             CalculationInputs(
               Resubmission(false, None),
               Setup(
-                Some(AnnualAllowanceSetup(Some(true))),
-                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                Some(
+                  AnnualAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(MaybePIAIncrease.No),
+                    Some(MaybePIAUnchangedOrDecreased.No),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false)
+                  )
+                ),
+                Some(
+                  LifetimeAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(true)
+                  )
+                )
               ),
               None,
               None
@@ -155,8 +230,33 @@ class SubmissionServiceSpec
             CalculationInputs(
               Resubmission(false, None),
               Setup(
-                Some(AnnualAllowanceSetup(Some(true))),
-                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                Some(
+                  AnnualAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(MaybePIAIncrease.No),
+                    Some(MaybePIAUnchangedOrDecreased.No),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false)
+                  )
+                ),
+                Some(
+                  LifetimeAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(true)
+                  )
+                )
               ),
               None,
               None
@@ -180,8 +280,33 @@ class SubmissionServiceSpec
             CalculationInputs(
               Resubmission(false, None),
               Setup(
-                Some(AnnualAllowanceSetup(Some(true))),
-                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                Some(
+                  AnnualAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(MaybePIAIncrease.No),
+                    Some(MaybePIAUnchangedOrDecreased.No),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false)
+                  )
+                ),
+                Some(
+                  LifetimeAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(true)
+                  )
+                )
               ),
               None,
               None
@@ -205,8 +330,33 @@ class SubmissionServiceSpec
             CalculationInputs(
               Resubmission(false, None),
               Setup(
-                Some(AnnualAllowanceSetup(Some(true))),
-                Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                Some(
+                  AnnualAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(MaybePIAIncrease.No),
+                    Some(MaybePIAUnchangedOrDecreased.No),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(false)
+                  )
+                ),
+                Some(
+                  LifetimeAllowanceSetup(
+                    Some(true),
+                    Some(false),
+                    Some(true),
+                    Some(false),
+                    Some(false),
+                    Some(false),
+                    Some(true)
+                  )
+                )
               ),
               None,
               None

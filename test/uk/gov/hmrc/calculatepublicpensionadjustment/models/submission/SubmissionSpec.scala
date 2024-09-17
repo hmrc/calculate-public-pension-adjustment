@@ -21,7 +21,7 @@ import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, startWith}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Logging
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, Resubmission, Setup}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, MaybePIAIncrease, MaybePIAUnchangedOrDecreased, Resubmission, Setup}
 
 class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logging {
 
@@ -31,8 +31,33 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
       val calculationInputs = CalculationInputs(
         Resubmission(false, None),
         Setup(
-          Some(AnnualAllowanceSetup(Some(true))),
-          Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+          Some(
+            AnnualAllowanceSetup(
+              Some(true),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(MaybePIAIncrease.No),
+              Some(MaybePIAUnchangedOrDecreased.No),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false)
+            )
+          ),
+          Some(
+            LifetimeAllowanceSetup(
+              Some(true),
+              Some(false),
+              Some(true),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(true)
+            )
+          )
         ),
         None,
         None
@@ -42,10 +67,14 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
       val serialised: JsValue = Json.toJson(submissionRequest)
 
       val expectedJson = Json.parse(
-        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false}," +
-          "\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true},\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true," +
-          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"multipleBenefitCrystallisationEventFlag\":false}}}," +
-          "\"userId\":\"userId\",\"uniqueId\":\"uniqueId\"} "
+        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true," +
+          "\"pensionProtectedMember\":false,\"hadAACharge\":false,\"contributionRefunds\":false,\"netIncomeAbove100K\":false," +
+          "\"netIncomeAbove190K\":false,\"maybePIAIncrease\":\"no\",\"maybePIAUnchangedOrDecreased\":\"no\",\"pIAAboveAnnualAllowanceIn2023\":false," +
+          "\"netIncomeAbove190KIn2023\":false,\"flexibleAccessDcScheme\":false,\"contribution4000ToDirectContributionScheme\":false}," +
+          "\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true,\"previousLTACharge\":false," +
+          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"increaseInLTACharge\":false,\"newLTACharge\":false," +
+          "\"multipleBenefitCrystallisationEventFlag\":false,\"otherSchemeNotification\":true}}},\"userId\":\"userId\"," +
+          "\"uniqueId\":\"uniqueId\"}"
       )
 
       serialised mustEqual expectedJson
@@ -53,10 +82,14 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
 
     "must de-serialise from valid Json with userAnswers" in {
       val json = Json.parse(
-        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false}," +
-          "\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true},\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true," +
-          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"multipleBenefitCrystallisationEventFlag\":false}}}," +
-          "\"userId\":\"userId\",\"uniqueId\":\"uniqueId\"} "
+        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true," +
+          "\"pensionProtectedMember\":false,\"hadAACharge\":false,\"contributionRefunds\":false,\"netIncomeAbove100K\":false," +
+          "\"netIncomeAbove190K\":false,\"maybePIAIncrease\":\"no\",\"maybePIAUnchangedOrDecreased\":\"no\",\"pIAAboveAnnualAllowanceIn2023\":false," +
+          "\"netIncomeAbove190KIn2023\":false,\"flexibleAccessDcScheme\":false,\"contribution4000ToDirectContributionScheme\":false}," +
+          "\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true,\"previousLTACharge\":false," +
+          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"increaseInLTACharge\":false,\"newLTACharge\":false," +
+          "\"multipleBenefitCrystallisationEventFlag\":false,\"otherSchemeNotification\":true}}},\"userId\":\"userId\"," +
+          "\"uniqueId\":\"uniqueId\"}"
       )
 
       val deserialised: JsResult[SubmissionRequest] = json.validate[SubmissionRequest]
@@ -64,8 +97,33 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
       val calculationInputs = CalculationInputs(
         Resubmission(false, None),
         Setup(
-          Some(AnnualAllowanceSetup(Some(true))),
-          Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+          Some(
+            AnnualAllowanceSetup(
+              Some(true),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(MaybePIAIncrease.No),
+              Some(MaybePIAUnchangedOrDecreased.No),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false)
+            )
+          ),
+          Some(
+            LifetimeAllowanceSetup(
+              Some(true),
+              Some(false),
+              Some(true),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(true)
+            )
+          )
         ),
         None,
         None
@@ -78,8 +136,33 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
       val calculationInputs = CalculationInputs(
         Resubmission(false, None),
         Setup(
-          Some(AnnualAllowanceSetup(Some(true))),
-          Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+          Some(
+            AnnualAllowanceSetup(
+              Some(true),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(MaybePIAIncrease.No),
+              Some(MaybePIAUnchangedOrDecreased.No),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(false)
+            )
+          ),
+          Some(
+            LifetimeAllowanceSetup(
+              Some(true),
+              Some(false),
+              Some(true),
+              Some(false),
+              Some(false),
+              Some(false),
+              Some(true)
+            )
+          )
         ),
         None,
         None

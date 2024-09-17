@@ -69,7 +69,11 @@ class SubmissionRepositorySpec
 
   private val calculationInputs = CalculationInputs(
     Resubmission(false, None),
-    Setup(Some(AnnualAllowanceSetup(Some(true))), Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))),
+    Setup(
+      Some(AnnualAllowanceSetup(Some(true), Some(false), Some(false), Some(false), Some(false), Some(false),
+        Some(MaybePIAIncrease.No), Some(MaybePIAUnchangedOrDecreased.No), Some(false), Some(false), Some(false), Some(false))),
+      Some(LifetimeAllowanceSetup(Some(true), Some(false), Some(true), Some(false), Some(false), Some(false), Some(true)))
+    ),
     None,
     None
   )

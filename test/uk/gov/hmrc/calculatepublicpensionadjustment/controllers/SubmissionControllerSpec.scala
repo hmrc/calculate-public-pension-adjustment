@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, CalculationResponse, LifetimeAllowanceSetup, Resubmission, Setup, TotalAmounts}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, CalculationResponse, LifetimeAllowanceSetup, MaybePIAIncrease, MaybePIAUnchangedOrDecreased, Resubmission, Setup, TotalAmounts}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{Submission, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models._
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
@@ -123,14 +123,38 @@ class SubmissionControllerSpec
                 CalculationInputs(
                   Resubmission(false, None),
                   Setup(
-                    Some(AnnualAllowanceSetup(Some(true))),
-                    Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                    Some(
+                      AnnualAllowanceSetup(
+                        Some(true),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(MaybePIAIncrease.No),
+                        Some(MaybePIAUnchangedOrDecreased.No),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(false)
+                      )
+                    ),
+                    Some(
+                      LifetimeAllowanceSetup(
+                        Some(true),
+                        Some(false),
+                        Some(true),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(true)
+                      )
+                    )
                   ),
                   None,
                   Some(
                     LifeTimeAllowance(
                       LocalDate.parse("2018-11-28"),
-                      ChangeInTaxCharge.IncreasedCharge,
                       LtaProtectionOrEnhancements.Protection,
                       Some(ProtectionType.FixedProtection2014),
                       Some("R41AB678TR23355"),
@@ -195,9 +219,14 @@ class SubmissionControllerSpec
 
       status(result) mustEqual OK
       contentAsJson(result) mustEqual Json.parse(
-        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true},\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true," +
-          "\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"multipleBenefitCrystallisationEventFlag\":false}},\"lifeTimeAllowance\":{\"benefitCrystallisationEventDate\":\"2018-11-28\"," +
-          "\"changeInTaxCharge\":\"increasedCharge\",\"lifetimeAllowanceProtectionOrEnhancements\":\"protection\"," +
+        "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true," +
+          "\"pensionProtectedMember\":false,\"hadAACharge\":false,\"contributionRefunds\":false,\"netIncomeAbove100K\":false,\"netIncomeAbove190K\":false," +
+          "\"maybePIAIncrease\":\"no\",\"maybePIAUnchangedOrDecreased\":\"no\",\"pIAAboveAnnualAllowanceIn2023\":false,\"netIncomeAbove190KIn2023\":false," +
+          "\"flexibleAccessDcScheme\":false,\"contribution4000ToDirectContributionScheme\":false},\"lifetimeAllowanceSetup\":{\"benefitCrystallisationEventFlag\":true," +
+          "\"previousLTACharge\":false,\"changeInLifetimeAllowancePercentageInformedFlag\":true,\"increaseInLTACharge\":false,\"newLTACharge\":false," +
+          "\"multipleBenefitCrystallisationEventFlag\":false,\"otherSchemeNotification\":true}}," +
+          "\"lifeTimeAllowance\":{\"benefitCrystallisationEventDate\":\"2018-11-28\"," +
+          "\"lifetimeAllowanceProtectionOrEnhancements\":\"protection\"," +
           "\"protectionType\":\"fixedProtection2014\",\"protectionReference\":\"R41AB678TR23355\",\"protectionTypeEnhancementChanged\":\"protection\"," +
           "\"newProtectionTypeOrEnhancement\":\"individualProtection2016\",\"newProtectionTypeOrEnhancementReference\":\"2134567801\",\"previousLifetimeAllowanceChargeFlag\":true," +
           "\"previousLifetimeAllowanceChargePaymentMethod\":\"annualPayment\",\"previousLifetimeAllowanceChargePaidBy\":\"pensionScheme\"," +
@@ -248,14 +277,38 @@ class SubmissionControllerSpec
                 CalculationInputs(
                   Resubmission(false, None),
                   Setup(
-                    Some(AnnualAllowanceSetup(Some(true))),
-                    Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+                    Some(
+                      AnnualAllowanceSetup(
+                        Some(true),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(MaybePIAIncrease.No),
+                        Some(MaybePIAUnchangedOrDecreased.No),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(false)
+                      )
+                    ),
+                    Some(
+                      LifetimeAllowanceSetup(
+                        Some(true),
+                        Some(false),
+                        Some(true),
+                        Some(false),
+                        Some(false),
+                        Some(false),
+                        Some(true)
+                      )
+                    )
                   ),
                   None,
                   Some(
                     LifeTimeAllowance(
                       LocalDate.parse("2018-11-28"),
-                      ChangeInTaxCharge.IncreasedCharge,
                       LtaProtectionOrEnhancements.Protection,
                       Some(ProtectionType.FixedProtection2014),
                       Some("R41AB678TR23355"),
@@ -404,14 +457,30 @@ class SubmissionControllerSpec
     CalculationInputs(
       Resubmission(false, None),
       Setup(
-        Some(AnnualAllowanceSetup(Some(true))),
-        Some(LifetimeAllowanceSetup(Some(true), Some(true), Some(false)))
+        Some(
+          AnnualAllowanceSetup(
+            Some(true),
+            Some(false),
+            Some(false),
+            Some(false),
+            Some(false),
+            Some(false),
+            Some(MaybePIAIncrease.No),
+            Some(MaybePIAUnchangedOrDecreased.No),
+            Some(false),
+            Some(false),
+            Some(false),
+            Some(false)
+          )
+        ),
+        Some(
+          LifetimeAllowanceSetup(Some(true), Some(false), Some(true), Some(false), Some(false), Some(false), Some(true))
+        )
       ),
       None,
       Some(
         LifeTimeAllowance(
           LocalDate.parse("2018-11-28"),
-          ChangeInTaxCharge.IncreasedCharge,
           LtaProtectionOrEnhancements.Protection,
           Some(ProtectionType.FixedProtection2014),
           Some("R41AB678TR23355"),
