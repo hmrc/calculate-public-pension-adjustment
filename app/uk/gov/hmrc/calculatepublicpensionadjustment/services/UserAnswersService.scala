@@ -116,7 +116,7 @@ class UserAnswersService @Inject() (
                         case Some(ua) =>
                           userAnswers.set(ua).map(_ => Done)
                         case None     =>
-                          logger.warn(s"No UserAnswers found for uniqueId: $uniqueId")
+                          logger.warn(s"No UserAnswers found for uniqueId")
                           Future.successful(Done)
                       }
                     } else {
@@ -140,7 +140,7 @@ class UserAnswersService @Inject() (
                         case Some(ua) =>
                           userAnswers.set(ua).map(_ => Done)
                         case None     =>
-                          logger.warn(s"No UserAnswers found for id: $id")
+                          logger.warn(s"No UserAnswers found for id")
                           Future.successful(Done)
                       }
                     } else {
