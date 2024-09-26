@@ -46,7 +46,7 @@ class SubmitBackendConnector @Inject() (
             Future.successful(None)
           case _          =>
             logger.error(
-              s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers/$uniqueId with status : ${response.status}"
+              s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers/uniqueId with status : ${response.status}"
             )
             Future.failed(
               UpstreamErrorResponse(
@@ -72,11 +72,11 @@ class SubmitBackendConnector @Inject() (
             Future.successful(None)
           case _          =>
             logger.error(
-              s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers-with-id/$id with status : ${response.status}"
+              s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers-with-id/id with status : ${response.status}"
             )
             Future.failed(
               UpstreamErrorResponse(
-                s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers-with-id/$id",
+                s"Unexpected response from /submit-public-pension-adjustment/calc-user-answers-with-id/id",
                 response.status
               )
             )
