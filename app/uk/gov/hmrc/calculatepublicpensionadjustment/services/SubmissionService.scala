@@ -18,6 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import cats.data.{EitherT, NonEmptyChain}
 import play.api.Logging
+import play.api.libs.json.Json
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission}
@@ -43,6 +44,8 @@ class SubmissionService @Inject() (
   )(implicit hc: HeaderCarrier): Future[Either[NonEmptyChain[String], String]] = {
 
     val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse, userId)
+
+    println(Json.prettyPrint(Json.toJson(submission)))
 
     val result: EitherT[Future, NonEmptyChain[String], String] = for {
       _ <- EitherT.liftF(Future.successful(auditService.auditSubmitRequest(buildAudit(submission))))
