@@ -45,8 +45,6 @@ class SubmissionService @Inject() (
 
     val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse, userId)
 
-    println(Json.prettyPrint(Json.toJson(submission)))
-
     val result: EitherT[Future, NonEmptyChain[String], String] = for {
       _ <- EitherT.liftF(Future.successful(auditService.auditSubmitRequest(buildAudit(submission))))
       _ <- EitherT.liftF(submissionRepository.insert(submission))
