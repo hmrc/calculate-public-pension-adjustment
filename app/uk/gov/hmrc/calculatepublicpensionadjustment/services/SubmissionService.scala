@@ -18,7 +18,6 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import cats.data.{EitherT, NonEmptyChain}
 import play.api.Logging
-import play.api.libs.json.Json
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission}
