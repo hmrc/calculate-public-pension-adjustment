@@ -930,19 +930,13 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   }
 
   def sendIncomeRequestHandler(reducedNetIncomeRequest: ReducedNetIncomeRequest): Future[(Int, Int)] = {
-    val x: (Int,Int,Int) = calculatePersonalAllowanceAndReducedNetIncome(
+    val (a,b,c): (Int,Int, Int) = calculatePersonalAllowanceAndReducedNetIncome(
       reducedNetIncomeRequest.period,
       reducedNetIncomeRequest.scottishTaxYears,
       reducedNetIncomeRequest.totalIncome,
       reducedNetIncomeRequest.incomeSubJourney)
 
-    x match{
-      case Some(x._1, x._2, x._3) =>
-        Future.successful(x._1, )
-      case None =>
-        Future.successful(0,0)
-    }
+    Future.successful((a,b))
   }
-
 
 }
