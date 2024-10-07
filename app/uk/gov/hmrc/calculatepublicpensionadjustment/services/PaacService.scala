@@ -17,9 +17,10 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import com.google.inject.Inject
+import play.mvc.Results.status
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{IncomeSubJourney, ReducedNetIncomeRequest}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.BelowThreshold
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
@@ -926,6 +927,25 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     }
     PaacRequest(paacTaxYears, paacTaxYears.map(_.period).sorted.max)
+  }
+
+  def sendIncomeRequestHandler(reducedNetIncomeRequest: ReducedNetIncomeRequest): Future[(Int, Int)] = {
+    calculatePersonalAllowanceAndReducedNetIncome(
+      reducedNetIncomeRequest.period,
+      reducedNetIncomeRequest.scottishTaxYears,
+      reducedNetIncomeRequest.totalIncome,
+      reducedNetIncomeRequest.incomeSubJourney).flatMap {
+      case Some(_) =>
+        Future.successful(true)
+      case None    =>
+        Future.successful(false)
+    }
+
+    match status
+        case Some(_) =>
+        Future.successful(x._,x.reducedNetIncome) //personal allowance
+        case None    =>
+        Future.successful(false)
   }
 
 }
