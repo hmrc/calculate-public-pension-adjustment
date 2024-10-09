@@ -933,8 +933,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     PaacRequest(paacTaxYears, paacTaxYears.map(_.period).sorted.max)
   }
 
-  def sendReducedNetIncome: Action[JsValue] = Action.async(parse.json)
-    withValidJson[ReducedNetIncomeRequest]("ReducedNetIncomeRequest")
+//  def sendReducedNetIncome: Action[JsValue] = Action.async(parse.json)
+//    withValidJson[ReducedNetIncomeRequest]("ReducedNetIncomeRequest")
 
 //  def sendIncomeRequestHandler(): Future[(Int, Int)] = {
 //    val (a,b,c): (Int,Int, Int) = calculatePersonalAllowanceAndReducedNetIncome(

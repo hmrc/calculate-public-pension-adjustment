@@ -22,4 +22,4 @@ GET         /check-and-retrieve-calc-user-answers-with-id/:id     uk.gov.hmrc.ca
 
 POST        /test-only/user-answers               uk.gov.hmrc.calculatepublicpensionadjustment.controllers.UserAnswersController.testOnlyset
 
-POST        /calculate-personal-allowance-and-reduced-net-income           uk.gov.hmrc.calculatepublicpensionadjustment.services.PaacService.sendIncomeRequestHandler
+POST        /calculate-personal-allowance-and-reduced-net-income           uk.gov.hmrc.calculatepublicpensionadjustment.controllers.SubmissionController.retrieveCalculatedValues

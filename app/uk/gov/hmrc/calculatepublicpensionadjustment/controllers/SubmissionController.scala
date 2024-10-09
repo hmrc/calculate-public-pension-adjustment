@@ -77,18 +77,28 @@ class SubmissionController @Inject() (
 
   def retrieveCalculatedValues: Action[JsValue] = Action.async(parse.json)  { implicit request  =>
     withValidJson[ReducedNetIncomeRequest]("ReducedNetIncomeRequest") { reducedNetIncomeRequest =>
-      paacService.calculatePersonalAllowanceAndReducedNetIncome(
+      val (x,y,z) = paacService.calculatePersonalAllowanceAndReducedNetIncome(
         reducedNetIncomeRequest.period,
         reducedNetIncomeRequest.scottishTaxYears,
         reducedNetIncomeRequest.totalIncome,
         reducedNetIncomeRequest.incomeSubJourney)
 
+        val jsonResponse = Json.obj(
+          "x" -> x,
+          "y" -> y
+        )
+      println("////////////////////////////////////////")
+      println(x)
+      println(y)
+      println(jsonResponse)
+      println("////////////////////////////////////////")
 
+
+      Future.successful(Ok(jsonResponse))
       }
 
       }
-    }
-  }
+
 
   def withValidJson[T](
     errMessage: String
