@@ -389,6 +389,33 @@ class SubmissionControllerSpec
       intercept[Exception](route(app, request).value.futureValue)
     }
 
+    "must return calculated personal allowance and reduced net income values" in {
+      ReducedNetIncomeRequest(
+      models.calculation.period
+        Period._2021,
+      List(Period._2016PostAlignment, Period._2018),
+      60000,
+      IncomeSubJourney(
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None
+      )
+      )
+    }
+
     "must return BAD_REQUEST when the submission service returns errors" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
