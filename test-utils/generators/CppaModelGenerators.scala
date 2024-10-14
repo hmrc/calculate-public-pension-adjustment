@@ -92,6 +92,7 @@ trait CppaModelGenerators extends ModelGenerators {
       None,
       None,
       blindPersonsAllowanceAmount,
+      None,
       None
     )
 
@@ -112,6 +113,7 @@ trait CppaModelGenerators extends ModelGenerators {
       tradeUnionOrPoliceReliefAmount        <- genIncomeSubJourneyAmountsLessThan100
       blindPersonsAllowanceAmount           <- genIncomeSubJourneyAmounts
       thresholdAmount                       <- genIncomeSubJourneyAmounts
+      reducedNetIncomeAmount                <-genIncomeSubJourneyAmounts
     } yield IncomeSubJourney(
       salarySacrificeAmount,
       flexibleRemunerationAmount,
@@ -127,7 +129,8 @@ trait CppaModelGenerators extends ModelGenerators {
       personalAllowanceAmount,
       tradeUnionOrPoliceReliefAmount,
       blindPersonsAllowanceAmount,
-      thresholdAmount
+      thresholdAmount,
+      reducedNetIncomeAmount
     )
 
   lazy val genCppaTaxYear2011To2015ForPeriod: Period => Gen[CppaTaxYear2011To2015] = (period: Period) =>
