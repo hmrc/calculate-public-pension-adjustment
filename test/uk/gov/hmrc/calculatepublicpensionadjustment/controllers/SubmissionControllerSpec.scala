@@ -59,7 +59,7 @@ class SubmissionControllerSpec
   private val mockUserAnswersService                       = mock[UserAnswersService]
   private val mockStubBehaviour                            = mock[StubBehaviour]
   private val mockSubmissionRepository                     = mock[SubmissionRepository]
-  private val mockPaacService = mock[PaacService]
+  private val mockPaacService                              = mock[PaacService]
   private val backendAuthComponents: BackendAuthComponents =
     BackendAuthComponentsStub(mockStubBehaviour)(Helpers.stubControllerComponents(), global)
 
@@ -459,39 +459,80 @@ class SubmissionControllerSpec
 
     "must return calculated personal allowance and reduced net income values" in {
 
+      when(mockPaacService.calculatePersonalAllowanceAndReducedNetIncome(any(), any(), any(), any()))
+        .thenReturn((1, 2, 3))
 
       val request = FakeRequest(routes.SubmissionController.retrieveCalculatedValues)
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(Json.toJson(ReducedNetIncomeRequest(
-          Period._2021,
-          List(Period._2016PostAlignment, Period._2018),
-          60000,
-          IncomeSubJourney(
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None
-          ))))
+        .withBody(
+          Json.toJson(
+            ReducedNetIncomeRequest(
+              Period._2021,
+              List(Period._2016PostAlignment, Period._2018),
+              60000,
+              IncomeSubJourney(
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None
+              )
+            )
+          )
+        )
 
       val result = route(app, request).value
 
-      when(mockPaacService.calculatePersonalAllowanceAndReducedNetIncome(any, any, any, any)).thenReturn((1, 2, 3))
-
       status(result) mustEqual OK
-      contentAsJson(result) mustEqual Json.toJson(ReducedNetIncomeResponse(1,2))
+      contentAsJson(result) mustEqual Json.toJson(ReducedNetIncomeResponse(1, 2))
 
+    }
+
+    "must return bad request when failed" in {
+
+      val request = FakeRequest(routes.SubmissionController.retrieveCalculatedValues)
+        .withHeaders(AUTHORIZATION -> "my-token")
+        .withBody(
+          Json.toJson(
+            ReducedNetIncomeRequest(
+              Period._2021,
+              List(Period._2016PostAlignment, Period._2018),
+              60000,
+              IncomeSubJourney(
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None
+              )
+            )
+          )
+        )
+
+      val result = route(app, request).value
+      status(result) mustEqual BAD_REQUEST
     }
   }
 
