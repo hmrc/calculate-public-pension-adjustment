@@ -21,7 +21,7 @@ import play.api.Logging
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
 import play.api.mvc._
 import uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions.IdentifierAction
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{ReducedNetIncomeRequest, RetrieveSubmissionInfo}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.{ReducedNetIncomeRequest, ReducedNetIncomeResponse, RetrieveSubmissionInfo}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.{PaacService, SubmissionService, UserAnswersService}
@@ -77,26 +77,14 @@ class SubmissionController @Inject() (
 
   def retrieveCalculatedValues: Action[JsValue] = Action.async(parse.json)  { implicit request  =>
     withValidJson[ReducedNetIncomeRequest]("ReducedNetIncomeRequest") { reducedNetIncomeRequest =>
-      val (x,y,z) = paacService.calculatePersonalAllowanceAndReducedNetIncome(
+      val (personalAllowance, reducedNetIncome, _) = paacService.calculatePersonalAllowanceAndReducedNetIncome(
         reducedNetIncomeRequest.period,
         reducedNetIncomeRequest.scottishTaxYears,
         reducedNetIncomeRequest.totalIncome,
         reducedNetIncomeRequest.incomeSubJourney)
 
-        val jsonResponse = Json.obj(
-          "x" -> x,
-          "y" -> y
-        )
-      println("////////////////////////////////////////")
-      println(x)
-      println(y)
-      println(jsonResponse)
-      println("////////////////////////////////////////")
-
-
-      Future.successful(Ok(jsonResponse))
-      }
-
+      Future.successful(Ok(Json.toJson(ReducedNetIncomeResponse(personalAllowance, reducedNetIncome))))
+        }
       }
 
 

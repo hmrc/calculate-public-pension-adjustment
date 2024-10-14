@@ -39,7 +39,7 @@ class SubmissionRepository @Inject() (
       collectionName = "submissions",
       mongoComponent = mongoComponent,
       replaceIndexes = true,
-      domainFormat = Submission.encryptedFormat,
+      domainFormat = Submission.format,
       indexes = Seq(
         IndexModel(
           Indexes.ascending("lastUpdated"),
