@@ -113,7 +113,7 @@ trait CppaModelGenerators extends ModelGenerators {
       tradeUnionOrPoliceReliefAmount        <- genIncomeSubJourneyAmountsLessThan100
       blindPersonsAllowanceAmount           <- genIncomeSubJourneyAmounts
       thresholdAmount                       <- genIncomeSubJourneyAmounts
-      reducedNetIncomeAmount                <-genIncomeSubJourneyAmounts
+      reducedNetIncomeAmount                <- genIncomeSubJourneyAmounts
     } yield IncomeSubJourney(
       salarySacrificeAmount,
       flexibleRemunerationAmount,
