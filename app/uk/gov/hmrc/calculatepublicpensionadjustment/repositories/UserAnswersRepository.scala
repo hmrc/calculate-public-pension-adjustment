@@ -41,7 +41,7 @@ class UserAnswersRepository @Inject() (
       collectionName = "user-answers",
       mongoComponent = mongoComponent,
       replaceIndexes = true,
-      domainFormat = UserAnswers.format,
+      domainFormat = UserAnswers.encryptedFormat,
       indexes = Seq(
         IndexModel(
           Indexes.ascending("lastUpdated"),
