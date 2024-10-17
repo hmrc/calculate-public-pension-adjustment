@@ -499,37 +499,11 @@ class SubmissionControllerSpec
 
     }
 
-    "must return bad request when failed" in {
+    "must return bad request for calculating reduced net income and personal allowance when failed" in {
 
       val request = FakeRequest(routes.SubmissionController.retrieveCalculatedValues)
         .withHeaders(AUTHORIZATION -> "my-token")
-        .withBody(
-          Json.toJson(
-            ReducedNetIncomeRequest(
-              Period._2021,
-              List(Period._2016PostAlignment, Period._2018),
-              60000,
-              IncomeSubJourney(
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None
-              )
-            )
-          )
-        )
+        .withBody(Json.toJson("{\"invalid\":\"request\"}"))
 
       val result = route(app, request).value
       status(result) mustEqual BAD_REQUEST
