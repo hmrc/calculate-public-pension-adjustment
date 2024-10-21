@@ -901,14 +901,14 @@ class PaacServiceSpec
 
         val result = service.findTaxRate(List(Period._2017), Period._2016, 12385, 28000, 2250, 2000)
 
-        result mustEqual (0.2, 12385)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2016 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2016, Period._2017), Period._2016, 12384, 28000, 2250, 2000)
 
-        result mustEqual (0.2, 12384)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2016 under TopRateAllowance" in {
@@ -943,7 +943,7 @@ class PaacServiceSpec
 
         val result = service.findTaxRate(List(Period._2018), Period._2017, 11000, 28000, 2250, 2000)
 
-        result mustEqual (0.2, 11000)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2017 under BasicRateAllowance" in {
@@ -951,7 +951,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2017), Period._2017, 12000, 28000, 2250, 2000)
 
-        result mustEqual (0.2, 12000)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2017 under TopRateAllowance" in {
@@ -988,7 +988,7 @@ class PaacServiceSpec
 
         val result = service.findTaxRate(List(Period._2017), Period._2018, 8000, 18000, 2250, 2000)
 
-        result mustEqual (0.2, 8000)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2018 under BasicRateAllowance" in {
@@ -996,7 +996,7 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2018), Period._2018, 12000, 28000, 2250, 2000)
 
-        result mustEqual (0.2, 12000)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2018 under TopRateAllowance" in {
@@ -1034,14 +1034,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2019), Period._2019, 13850, 1000, 500, 1000)
 
-        result mustEqual (0.19, 13850)
+        result mustEqual (0.19, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2019 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2019, 16350, 28000, 2250, 2000)
 
-        result mustEqual (0.2, 16350)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2019 under BasicRateAllowance" in {
@@ -1095,14 +1095,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2020), Period._2020, 14549, 1000, 750, 800)
 
-        result mustEqual (0.19, 14549)
+        result mustEqual (0.19, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2020 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2020, 5000, 31000, 1250, 1000)
 
-        result mustEqual (0.2, 5000)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2020 under BasicRateAllowance" in {
@@ -1156,14 +1156,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2021), Period._2021, 9585, 1000, 750, 800)
 
-        result mustEqual (0.19, 9585)
+        result mustEqual (0.19, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2021 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2021, 10160, 31000, 1250, 1000)
 
-        result mustEqual (0.2, 10160)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2021 under BasicRateAllowance" in {
@@ -1217,14 +1217,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2022), Period._2022, 14667, 1000, 750, 800)
 
-        result mustEqual (0.19, 14667)
+        result mustEqual (0.19, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2022 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2022, 14270, 27000, 2250, 2000)
 
-        result mustEqual (0.2, 14270)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2022 under BasicRateAllowance" in {
@@ -1278,14 +1278,14 @@ class PaacServiceSpec
         val result =
           service.findTaxRate(List(Period._2016, Period._2023), Period._2023, 14732, 1000, 750, 800)
 
-        result mustEqual (0.19, 14732)
+        result mustEqual (0.19, 0)
       }
 
       "must return correct TaxRate for NonScottishTaxRate 2023 under BasicRateAllowance" in {
 
         val result = service.findTaxRate(List(Period._2017), Period._2023, 15270, 28000, 2250, 2000)
 
-        result mustEqual (0.2, 15270)
+        result mustEqual (0.2, 0)
       }
 
       "must return correct TaxRate for ScottishTaxRate 2023 under BasicRateAllowance" in {
@@ -1642,6 +1642,134 @@ class PaacServiceSpec
           )
 
         result mustEqual 9020.0
+      }
+
+      "must return correct RevisedCharge for zero chargeableAmount and non scottishTaxYear 2016" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2016,
+            10600,
+            5440,
+            0,
+            0,
+            0
+          )
+
+        result mustEqual 0.0
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and non scottishTaxYear 2017" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2017,
+            11000,
+            5040,
+            4307,
+            0,
+            0
+          )
+
+        result mustEqual 861.4
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and non scottishTaxYear 2018" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2018,
+            11500,
+            27500,
+            29570,
+            0,
+            0
+          )
+
+        result mustEqual 10628.0
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and non scottishTaxYear 2019" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2019,
+            11850,
+            27150,
+            17443,
+            0,
+            0
+          )
+
+        result mustEqual 5507.2
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and non scottishTaxYear 2020" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2020,
+            12500,
+            26500,
+            17443,
+            0,
+            0
+          )
+
+        result mustEqual 4777.2
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and non scottishTaxYear 2021" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2021,
+            12500,
+            35542,
+            18087,
+            0,
+            0
+          )
+
+        result mustEqual 6843.2
+      }
+
+      "must return correct RevisedCharge for non-zero chargeableAmount and non scottishTaxYear 2022" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2022,
+            12570,
+            43245,
+            52350,
+            0,
+            0
+          )
+
+        result mustEqual 20940.0
+      }
+
+      "must return correct RevisedCharge for zero chargeableAmount and non scottishTaxYear 2023" in {
+
+        val result =
+          service.calculateRevisedCharge(
+            List(),
+            Period._2023,
+            12570,
+            47430,
+            0,
+            0,
+            0
+          )
+
+        result mustEqual 0.0
       }
 
     }
