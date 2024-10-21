@@ -35,7 +35,7 @@ sealed trait TaxRate {
   def getTaxRate(income: Int, grossGiftAidAmount: Int, rASContributionsAmount: Int): (Double, Int) =
     income match {
       case i if i <= basicRateAllowance + grossGiftAidAmount + rASContributionsAmount =>
-        (basicTaxRate, personalAllowance)
+        (basicTaxRate, 0)
       case i if i <= topRateAllowance + grossGiftAidAmount + rASContributionsAmount   =>
         (higherTaxRate, basicRateAllowance + grossGiftAidAmount + rASContributionsAmount)
       case _                                                                          => (topTaxRate, topRateAllowance + grossGiftAidAmount + rASContributionsAmount)
@@ -149,7 +149,7 @@ sealed trait ScottishTaxRateAfter2018 extends ScottishTaxRate {
 
   override def getTaxRate(income: Int, grossGiftAidAmount: Int, rASContributionsAmount: Int): (Double, Int) =
     income match {
-      case i if i <= starterRateAllowance                                                    => (starterTaxRate, personalAllowance)
+      case i if i <= starterRateAllowance                                                    => (starterTaxRate, 0)
       case i if i <= basicRateAllowance + grossGiftAidAmount + rASContributionsAmount        =>
         (basicTaxRate, starterRateAllowance)
       case i if i <= intermediateRateAllowance + grossGiftAidAmount + rASContributionsAmount =>
