@@ -1851,7 +1851,8 @@ class PaacServiceSpec
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1600),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 2400)
-          )
+          ),
+          Some(4800)
         )
       }
 
@@ -1904,7 +1905,8 @@ class PaacServiceSpec
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1790),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 2685)
-          )
+          ),
+          Some(5370)
         )
       }
 
@@ -1960,7 +1962,8 @@ class PaacServiceSpec
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-          )
+          ),
+          Some(0)
         )
       }
 
@@ -2013,7 +2016,8 @@ class PaacServiceSpec
           List(
             OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
             OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-          )
+          ),
+          Some(0)
         )
       }
 
@@ -2080,7 +2084,8 @@ class PaacServiceSpec
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 2000),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 3000)
-          )
+          ),
+          Some(4800)
         )
       }
 
@@ -2133,7 +2138,8 @@ class PaacServiceSpec
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 2000),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 3000)
-          )
+          ),
+          Some(5370)
         )
       }
 
@@ -2189,7 +2195,8 @@ class PaacServiceSpec
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 200),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 300)
-          )
+          ),
+          Some(-600)
         )
       }
 
@@ -2242,7 +2249,8 @@ class PaacServiceSpec
           List(
             InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
             InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-          )
+          ),
+          Some(-1200)
         )
       }
 

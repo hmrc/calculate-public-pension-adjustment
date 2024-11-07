@@ -36,7 +36,8 @@ object SubmissionTestData {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(0)
       )
     ),
     List(
@@ -53,7 +54,8 @@ object SubmissionTestData {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(1)
       )
     )
   )
