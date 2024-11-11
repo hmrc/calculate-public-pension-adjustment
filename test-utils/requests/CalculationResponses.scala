@@ -36,7 +36,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 334),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 334)
-        )
+        ),
+        Some(2000)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2017,
@@ -50,7 +51,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(2000)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2018,
@@ -64,7 +66,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(2000)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2019,
@@ -78,7 +81,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(5000)
       )
     ),
     List(
@@ -95,7 +99,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(5000)
       ),
       InDatesTaxYearsCalculation(
         Period._2021,
@@ -110,7 +115,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(10000)
       ),
       InDatesTaxYearsCalculation(
         Period._2022,
@@ -125,7 +131,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(5000)
       ),
       InDatesTaxYearsCalculation(
         Period._2023,
@@ -140,7 +147,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(6000)
       )
     )
   )
@@ -161,7 +169,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2016PostAlignment,
@@ -175,7 +184,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2017,
@@ -189,7 +199,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2018,
@@ -203,7 +214,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2019,
@@ -217,7 +229,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       )
     ),
     List(
@@ -234,7 +247,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(-400)
       ),
       InDatesTaxYearsCalculation(
         Period._2021,
@@ -249,7 +263,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(-200)
       ),
       InDatesTaxYearsCalculation(
         Period._2022,
@@ -264,7 +279,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(-200)
       ),
       InDatesTaxYearsCalculation(
         Period._2023,
@@ -279,7 +295,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(-400)
       )
     )
   )
@@ -300,7 +317,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2016PostAlignment,
@@ -314,7 +332,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 334),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 334)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2017,
@@ -328,7 +347,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2018,
@@ -342,7 +362,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2019,
@@ -356,7 +377,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-        )
+        ),
+        Some(400)
       )
     ),
     List(
@@ -373,7 +395,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       ),
       InDatesTaxYearsCalculation(
         Period._2021,
@@ -388,7 +411,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(0)
       ),
       InDatesTaxYearsCalculation(
         Period._2022,
@@ -403,7 +427,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(-200)
       ),
       InDatesTaxYearsCalculation(
         Period._2023,
@@ -418,7 +443,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(400)
       )
     )
   )
@@ -439,7 +465,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(0)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2016PostAlignment,
@@ -453,7 +480,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(200)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2017,
@@ -467,7 +495,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-        )
+        ),
+        Some(0)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2019,
@@ -481,7 +510,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(400)
       )
     ),
     List(
@@ -498,7 +528,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(-200)
       ),
       InDatesTaxYearsCalculation(
         Period._2022,
@@ -513,7 +544,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(0)
       ),
       InDatesTaxYearsCalculation(
         Period._2023,
@@ -528,7 +560,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(400)
       )
     )
   )
@@ -549,7 +582,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-        )
+        ),
+        Some(0)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2017,
@@ -563,7 +597,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 7200),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 7200)
-        )
+        ),
+        Some(14400)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2018,
@@ -577,7 +612,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 9000),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 9000)
-        )
+        ),
+        Some(18000)
       ),
       OutOfDatesTaxYearsCalculation(
         Period._2019,
@@ -591,7 +627,8 @@ trait CalculationResponses {
         List(
           OutOfDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 0),
           OutOfDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-        )
+        ),
+        Some(0)
       )
     ),
     List(
@@ -608,7 +645,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 6000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 0)
-        )
+        ),
+        Some(2600)
       ),
       InDatesTaxYearsCalculation(
         Period._2021,
@@ -623,7 +661,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 2000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 1000)
-        )
+        ),
+        Some(11000)
       ),
       InDatesTaxYearsCalculation(
         Period._2022,
@@ -638,7 +677,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 3000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 6000)
-        )
+        ),
+        Some(4800)
       ),
       InDatesTaxYearsCalculation(
         Period._2023,
@@ -653,7 +693,8 @@ trait CalculationResponses {
         List(
           InDatesTaxYearSchemeCalculation("Scheme 1", "pstrTest1", 1000),
           InDatesTaxYearSchemeCalculation("Scheme 2", "pstrTest2", 6000)
-        )
+        ),
+        Some(4600)
       )
     )
   )
