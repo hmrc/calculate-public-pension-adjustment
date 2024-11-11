@@ -349,7 +349,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       floor(revisedCharge).toInt,
       unusedAnnualAllowance.getOrElse(0),
       compensationToSchemes,
-      Some(floor(adjustedCompensation).toInt)
+      Some(ceil(adjustedCompensation).toInt)
     )
   }
 
@@ -407,7 +407,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       floor(revisedCharge).toInt,
       oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0),
       inDatesTaxYearSchemeCalculation,
-      Some(floor(totalCompensation).toInt)
+      Some(ceil(totalCompensation).toInt)
     )
 
   }
