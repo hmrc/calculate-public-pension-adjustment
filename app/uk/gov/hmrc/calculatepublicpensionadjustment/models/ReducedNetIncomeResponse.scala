@@ -20,8 +20,8 @@ import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 case class ReducedNetIncomeResponse(
-  personalAllowance: Int,
-  reducedNetIncomeAmount: Int
+  personalAllowance: Double,
+  reducedNetIncomeAmount: Double
 )
 
 object ReducedNetIncomeResponse {

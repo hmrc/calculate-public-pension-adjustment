@@ -41,7 +41,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
   private final val personalAllowanceTaperingLimit = 100000
 
-  private final val giftAidAmountGrossingRatio = 1.25
+  private final val giftAidAmountGrossingRatio: Double = 1.25
 
   def calculate(
     calculationRequest: CalculationRequest
@@ -339,6 +339,21 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       } else
         oPaacResponseRow.map(_.predictedFutureUnusedAllowance)
 
+    /*
+    case class OutOfDatesTaxYearsCalculation(
+  period: Period,
+  directCompensation: Double,
+  indirectCompensation: Double,
+  chargePaidByMember: Double,
+  chargePaidBySchemes: Double,
+  revisedChargableAmountBeforeTaxRate: Double,
+  revisedChargableAmountAfterTaxRate: Double,
+  unusedAnnualAllowance: Double,
+  taxYearSchemes: List[OutOfDatesTaxYearSchemeCalculation],
+  adjustedCompensation: Option[Double]
+)
+     */
+
     OutOfDatesTaxYearsCalculation(
       period,
       directCompensation,
@@ -347,7 +362,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       taxYearSchemes.map(_.chargePaidByScheme).sum,
       chargeableAmount,
       floor(revisedCharge).toInt,
-      unusedAnnualAllowance.getOrElse(0),
+      unusedAnnualAllowance.getOrElse(0).toDouble,
       compensationToSchemes,
       Some(ceil(adjustedCompensation).toInt)
     )
@@ -405,7 +420,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       taxYearSchemes.map(_.chargePaidByScheme).sum,
       chargeableAmount,
       floor(revisedCharge).toInt,
-      oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0),
+      oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0).toDouble,
       inDatesTaxYearSchemeCalculation,
       Some(ceil(totalCompensation).toInt)
     )
@@ -418,10 +433,10 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   def calculateRevisedCharge(
     scottishTaxYears: List[Period],
     period: Period,
-    personalAllowance: Int,
-    revisedNetIncome: Int,
+    personalAllowance: Double,
+    revisedNetIncome: Double,
     chargeableAmount: Int,
-    grossGiftAidAmount: Int,
+    grossGiftAidAmount: Double,
     rASContributionsAmount: Int
   ): Double =
     (period, chargeableAmount > 0) match {
@@ -455,10 +470,10 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   private def calculateRevisedChargeHelper(
     scottishTaxYears: List[Period],
     period: Period,
-    personalAllowance: Int,
-    revisedNetIncome: Int,
-    chargeableAmount: Int,
-    grossGiftAidAmount: Int,
+    personalAllowance: Double,
+    revisedNetIncome: Double,
+    chargeableAmount: Double,
+    grossGiftAidAmount: Double,
     rASContributionsAmount: Int,
     revisedCharge: Double = 0.0
   ): Double =
@@ -501,11 +516,11 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
   def findTaxRate(
     scottishTaxYears: List[Period],
     period: Period,
-    personalAllowance: Int,
-    revisedNetIncome: Int,
-    grossGiftAidAmount: Int,
+    personalAllowance: Double,
+    revisedNetIncome: Double,
+    grossGiftAidAmount: Double,
     rASContributionsAmount: Int
-  ): (Double, Int) =
+  ): (Double, Double) =
     (scottishTaxYears.contains(period), period) match {
       case (true, Period._2016) =>
         ScottishTaxRateTill2018
@@ -638,22 +653,22 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     scottishTaxYears: List[Period],
     totalIncome: Int,
     incomeSubJourney: IncomeSubJourney
-  ): (Int, Int, Int) = {
+  ): (Double, Double, Double) = {
 
     val freeAllowance = findFreeAllowance(scottishTaxYears, period)
 
     val netIncome = totalIncome - incomeSubJourney.taxReliefAmount.getOrElse(0)
 
-    val grossGiftAidAmount = (giftAidAmountGrossingRatio * incomeSubJourney.giftAidAmount.getOrElse(0)).ceil.toInt
+    val grossGiftAidAmount = giftAidAmountGrossingRatio * incomeSubJourney.giftAidAmount.getOrElse(0.0)
 
     val rASContributionsAmount = incomeSubJourney.rASContributionsAmount.getOrElse(0)
 
     val tradeUnionOrPoliceReliefAmount = incomeSubJourney.tradeUnionOrPoliceReliefAmount.getOrElse(0)
 
-    val adjustedNetIncome: Int =
+    val adjustedNetIncome: Double =
       netIncome - grossGiftAidAmount - rASContributionsAmount + tradeUnionOrPoliceReliefAmount
 
-    val freeAllowanceAfterTapering: Int =
+    val freeAllowanceAfterTapering: Double =
       if (adjustedNetIncome > personalAllowanceTaperingLimit) {
         val taperingAmount = (adjustedNetIncome - personalAllowanceTaperingLimit) / 2
         if (freeAllowance > taperingAmount)
@@ -665,13 +680,14 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val blindPersonaAllowance: Int = incomeSubJourney.blindPersonsAllowanceAmount.getOrElse(0)
 
-    val personalAllowance: Int = incomeSubJourney.personalAllowanceAmount.getOrElse(
-      freeAllowanceAfterTapering + blindPersonaAllowance
-    )
+    val personalAllowance: Double =
+      incomeSubJourney.personalAllowanceAmount
+        .map(_.toDouble)
+        .getOrElse(freeAllowanceAfterTapering + blindPersonaAllowance)
 
     (
       personalAllowance,
-      Math.max(0, netIncome - personalAllowance),
+      Math.max(0.0, netIncome.toDouble - personalAllowance),
       grossGiftAidAmount
     )
   }
