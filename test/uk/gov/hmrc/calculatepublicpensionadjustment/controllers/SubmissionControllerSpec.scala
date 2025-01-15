@@ -210,9 +210,6 @@ class SubmissionControllerSpec
           Future.successful(true)
         )
 
-//      val calculationResponse =
-//        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
-
       val request = FakeRequest(routes.SubmissionController.retrieveSubmission)
         .withHeaders(AUTHORIZATION -> "my-token")
         .withBody(Json.toJson(retrieveSubmissionInfo))
