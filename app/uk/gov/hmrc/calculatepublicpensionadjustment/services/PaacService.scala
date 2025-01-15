@@ -268,7 +268,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     scottishTaxYears: List[Period],
     totalIncome: Int,
     incomeSubJourney: IncomeSubJourney,
-    chargePaidByMember: Int,
+    chargePaidByMember: Double,
     taxYearSchemes: List[TaxYearScheme],
     oPaacResponseRow: Option[PaacResponseRow],
     oPaacResponse2016PostRow: Option[PaacResponseRow]
@@ -308,7 +308,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val directCompensation =
       if (chargePaidByMember != 0)
-        ceil((chargePaidByMember.toDouble / originalCharge.toDouble) * adjustedCompensation).toInt
+        ceil((chargePaidByMember.toDouble / originalCharge.toDouble) * adjustedCompensation)
       else
         0
 
@@ -345,7 +345,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       floor(revisedCharge).toInt,
       unusedAnnualAllowance.getOrElse(0),
       compensationToSchemes,
-      Some(ceil(adjustedCompensation).toInt)
+      Some(adjustedCompensation)
     )
   }
 
@@ -354,7 +354,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
     scottishTaxYears: List[Period],
     totalIncome: Int,
     incomeSubJourney: IncomeSubJourney,
-    chargePaidByMember: Int,
+    chargePaidByMember: Double,
     taxYearSchemes: List[TaxYearScheme],
     oPaacResponseRow: Option[PaacResponseRow]
   ): InDatesTaxYearsCalculation = {
@@ -403,12 +403,12 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       floor(revisedCharge).toInt,
       oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0),
       inDatesTaxYearSchemeCalculation,
-      Some(ceil(totalCompensation).toInt)
+      Some(totalCompensation)
     )
 
   }
 
-  def calculateOriginalCharge(chargePaidByMember: Int, taxYearSchemes: List[TaxYearScheme]): Int =
+  def calculateOriginalCharge(chargePaidByMember: Double, taxYearSchemes: List[TaxYearScheme]): Double =
     chargePaidByMember + taxYearSchemes.map(_.chargePaidByScheme).sum
 
   def calculateRevisedCharge(

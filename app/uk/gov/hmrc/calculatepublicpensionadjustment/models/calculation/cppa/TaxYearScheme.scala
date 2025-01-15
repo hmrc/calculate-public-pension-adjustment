@@ -22,7 +22,7 @@ case class TaxYearScheme(
   name: String,
   pensionSchemeTaxReference: String,
   revisedPensionInputAmount: Int,
-  chargePaidByScheme: Int,
+  chargePaidByScheme: Double,
   revisedPensionInput2016PostAmount: Option[Int]
 )
 
@@ -36,7 +36,7 @@ object TaxYearScheme {
       (__ \ "name").read[String] and
         (__ \ "pensionSchemeTaxReference").read[String] and
         (__ \ "revisedPensionInputAmount").read[Int] and
-        (__ \ "chargePaidByScheme").read[Int] and
+        (__ \ "chargePaidByScheme").read[Double] and
         (__ \ "revisedPensionInput2016PostAmount").readNullable[Int]
     )(TaxYearScheme.apply _)
 
@@ -50,7 +50,7 @@ object TaxYearScheme {
       (__ \ "name").write[String] and
         (__ \ "pensionSchemeTaxReference").write[String] and
         (__ \ "revisedPensionInputAmount").write[Int] and
-        (__ \ "chargePaidByScheme").write[Int] and
+        (__ \ "chargePaidByScheme").write[Double] and
         (__ \ "revisedPensionInput2016PostAmount").writeNullable[Int]
     )(a =>
       (
