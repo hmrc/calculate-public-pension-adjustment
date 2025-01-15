@@ -210,8 +210,8 @@ class SubmissionControllerSpec
           Future.successful(true)
         )
 
-      val calculationResponse =
-        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
+//      val calculationResponse =
+//        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.retrieveSubmission)
         .withHeaders(AUTHORIZATION -> "my-token")
@@ -246,9 +246,6 @@ class SubmissionControllerSpec
 
       when(mockSubmissionService.retrieve("1234"))
         .thenReturn(Future.successful(None))
-
-      val calculationResponse =
-        Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
 
       val request = FakeRequest(routes.SubmissionController.retrieveSubmission)
         .withHeaders(AUTHORIZATION -> "my-token")

@@ -57,7 +57,7 @@ class SubmissionServiceSpec
 
   private val hc: HeaderCarrier = HeaderCarrier()
 
-  private val service = new SubmissionService(mockAuditService, mockSubmissionRepository, mockUuidService)
+  private val service = new SubmissionService(mockAuditService, mockSubmissionRepository)
 
   "SubmissionService" - {
 
