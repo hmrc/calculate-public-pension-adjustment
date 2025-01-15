@@ -23,20 +23,18 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import play.api.libs.json.Json
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, MaybePIAIncrease, MaybePIAUnchangedOrDecreased, Resubmission, Setup}
+import play.api.libs.json.{JsObject, Json}
+import requests.CalculationResponses
+import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.SubmitBackendConnector
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, UniqueId, UserAnswers}
-
-import java.time.Instant
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import play.api.libs.json.JsObject
-import requests.CalculationResponses
-import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.SubmitBackendConnector
 
 class UserAnswersServiceSpec
     extends AnyFreeSpec

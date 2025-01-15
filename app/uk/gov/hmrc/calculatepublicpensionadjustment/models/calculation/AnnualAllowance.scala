@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.CppaTaxYear
 import play.api.libs.json.{Format, Json, Reads, __}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.CppaTaxYear
 
 case class AnnualAllowance(scottishTaxYears: List[Period], taxYears: List[CppaTaxYear])
 

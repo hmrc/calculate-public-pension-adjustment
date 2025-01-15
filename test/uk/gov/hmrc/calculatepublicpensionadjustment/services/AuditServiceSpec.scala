@@ -16,23 +16,18 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
-import cats.data.NonEmptyChain
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import requests.CalculationResponses
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, Resubmission}
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.PPASubmissionEvent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class AuditServiceSpec
     extends AnyFreeSpec
