@@ -223,47 +223,6 @@ class SubmissionServiceSpec
     "clearBySessionId" - {
 
       "must clear a submission when it exists in the repository" in {
-        val submission =
-          Submission(
-            "id",
-            "uniqueId",
-            CalculationInputs(
-              Resubmission(false, None),
-              Setup(
-                Some(
-                  AnnualAllowanceSetup(
-                    Some(true),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(MaybePIAIncrease.No),
-                    Some(MaybePIAUnchangedOrDecreased.No),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(false)
-                  )
-                ),
-                Some(
-                  LifetimeAllowanceSetup(
-                    Some(true),
-                    Some(false),
-                    Some(true),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(true)
-                  )
-                )
-              ),
-              None,
-              None
-            ),
-            None
-          )
-
         when(mockSubmissionRepository.clear("userId")).thenReturn(Future.successful(Done))
 
         service.clearByUserId("userId").futureValue mustBe Done
@@ -323,47 +282,6 @@ class SubmissionServiceSpec
     "clearByUniqueIdAndNotId" - {
 
       "must return Done when clearing a submission" in {
-        val submission =
-          Submission(
-            "id",
-            "uniqueId",
-            CalculationInputs(
-              Resubmission(false, None),
-              Setup(
-                Some(
-                  AnnualAllowanceSetup(
-                    Some(true),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(MaybePIAIncrease.No),
-                    Some(MaybePIAUnchangedOrDecreased.No),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(false)
-                  )
-                ),
-                Some(
-                  LifetimeAllowanceSetup(
-                    Some(true),
-                    Some(false),
-                    Some(true),
-                    Some(false),
-                    Some(false),
-                    Some(false),
-                    Some(true)
-                  )
-                )
-              ),
-              None,
-              None
-            ),
-            None
-          )
-
         when(mockSubmissionRepository.clearByUniqueIdAndNotId("uniqueId", "id2")).thenReturn(Future.successful(Done))
 
         service.clearByUniqueIdAndNotId("uniqueId", "id2").futureValue mustBe Done
