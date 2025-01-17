@@ -308,7 +308,9 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val directCompensation =
       if (chargePaidByMember != 0)
-        ceil((chargePaidByMember.toDouble / originalCharge.toDouble) * adjustedCompensation)
+        BigDecimal((chargePaidByMember / originalCharge) * adjustedCompensation)
+          .setScale(2, BigDecimal.RoundingMode.UP)
+          .toDouble
       else
         0
 
@@ -317,7 +319,9 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         s.name,
         s.pensionSchemeTaxReference,
         if (s.chargePaidByScheme != 0)
-          ceil((s.chargePaidByScheme.toDouble / originalCharge.toDouble) * adjustedCompensation).toInt
+          BigDecimal((s.chargePaidByScheme / originalCharge) * adjustedCompensation)
+            .setScale(2, BigDecimal.RoundingMode.UP)
+            .toDouble
         else
           0
       )
@@ -342,10 +346,10 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       chargePaidByMember,
       taxYearSchemes.map(_.chargePaidByScheme).sum,
       chargeableAmount,
-      floor(revisedCharge).toInt,
+      revisedCharge,
       unusedAnnualAllowance.getOrElse(0),
       compensationToSchemes,
-      Some(adjustedCompensation)
+      Some(directCompensation + indirectCompensation)
     )
   }
 
