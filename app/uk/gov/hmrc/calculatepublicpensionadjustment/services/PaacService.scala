@@ -382,11 +382,11 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
 
     val totalCompensation = originalCharge - revisedCharge
 
-    val (memberCredit, schemeCredit, debit): (Int, Int, Int) =
+    val (memberCredit, schemeCredit, debit): (Double, Double, Double) =
       if (totalCompensation > 0) {
-        val iMemberCredit = (chargePaidByMember.toDouble / originalCharge.toDouble) * totalCompensation
-        (ceil(iMemberCredit).toInt, ceil(totalCompensation - iMemberCredit).toInt, 0)
-      } else (0, 0, floor(-totalCompensation).toInt)
+        val iMemberCredit = (chargePaidByMember / originalCharge) * totalCompensation
+        (iMemberCredit, totalCompensation - iMemberCredit, 0)
+      } else (0, 0, -totalCompensation)
 
     val inDatesTaxYearSchemeCalculation: List[InDatesTaxYearSchemeCalculation] = taxYearSchemes.map { s =>
       InDatesTaxYearSchemeCalculation(
@@ -404,10 +404,10 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       chargePaidByMember,
       taxYearSchemes.map(_.chargePaidByScheme).sum,
       chargeableAmount,
-      floor(revisedCharge).toInt,
+      revisedCharge,
       oPaacResponseRow.map(_.predictedFutureUnusedAllowance).getOrElse(0),
       inDatesTaxYearSchemeCalculation,
-      Some(totalCompensation)
+      Some(memberCredit + schemeCredit - debit)
     )
 
   }

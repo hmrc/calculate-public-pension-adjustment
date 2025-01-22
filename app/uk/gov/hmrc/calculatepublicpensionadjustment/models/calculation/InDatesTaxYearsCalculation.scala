@@ -26,7 +26,7 @@ case class InDatesTaxYearsCalculation(
   chargePaidByMember: Double,
   chargePaidBySchemes: Double,
   revisedChargableAmountBeforeTaxRate: Int,
-  revisedChargableAmountAfterTaxRate: Int,
+  revisedChargableAmountAfterTaxRate: Double,
   unusedAnnualAllowance: Int,
   taxYearSchemes: List[InDatesTaxYearSchemeCalculation],
   totalCompensation: Option[Double]
@@ -46,7 +46,7 @@ object InDatesTaxYearsCalculation {
         (__ \ "chargePaidByMember").read[Double] and
         (__ \ "chargePaidBySchemes").read[Double] and
         (__ \ "revisedChargableAmountBeforeTaxRate").read[Int] and
-        (__ \ "revisedChargableAmountAfterTaxRate").read[Int] and
+        (__ \ "revisedChargableAmountAfterTaxRate").read[Double] and
         (__ \ "unusedAnnualAllowance").read[Int] and
         (__ \ "taxYearSchemes").read[List[InDatesTaxYearSchemeCalculation]] and
         (__ \ "totalCompensation").readNullable[Double]
@@ -65,7 +65,7 @@ object InDatesTaxYearsCalculation {
         (__ \ "chargePaidByMember").write[Double] and
         (__ \ "chargePaidBySchemes").write[Double] and
         (__ \ "revisedChargableAmountBeforeTaxRate").write[Int] and
-        (__ \ "revisedChargableAmountAfterTaxRate").write[Int] and
+        (__ \ "revisedChargableAmountAfterTaxRate").write[Double] and
         (__ \ "unusedAnnualAllowance").write[Int] and
         (__ \ "taxYearSchemes").write[List[InDatesTaxYearSchemeCalculation]] and
         (__ \ "totalCompensation").writeNullable[Double]
