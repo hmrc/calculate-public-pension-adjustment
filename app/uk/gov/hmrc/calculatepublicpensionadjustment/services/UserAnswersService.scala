@@ -67,7 +67,7 @@ class UserAnswersService @Inject() (
                                   .copy(id = retrieveSubmissionInfo.userId)
                               )
                        } yield r
-                     case None             =>
+                     case None              =>
                        Future.successful(false)
                    }
               r <- userAnswers.clearByUniqueIdAndNotId(
