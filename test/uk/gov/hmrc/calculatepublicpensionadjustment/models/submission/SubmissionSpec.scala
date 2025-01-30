@@ -21,7 +21,7 @@ import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, startWith}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Logging
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{AnnualAllowanceSetup, CalculationInputs, LifetimeAllowanceSetup, MaybePIAIncrease, MaybePIAUnchangedOrDecreased, Resubmission, Setup}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 
 class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logging {
 

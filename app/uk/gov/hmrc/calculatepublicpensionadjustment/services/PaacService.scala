@@ -17,14 +17,10 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import com.google.inject.Inject
-import play.api.http.MediaRange.parse
-import play.api.libs.json.JsValue
-import play.api.mvc.Action
-import play.mvc.Action
-import play.mvc.Results.status
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.PaacConnector
+import uk.gov.hmrc.calculatepublicpensionadjustment.exceptions.InvalidInputException
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.{IncomeSubJourney, ReducedNetIncomeRequest}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.BelowThreshold
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
@@ -449,6 +445,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
           grossGiftAidAmount,
           rASContributionsAmount
         )
+
+      case _ => throw InvalidInputException(s"Invalid period, $period during calculateRevisedCharge")
     }
 
   @tailrec
@@ -586,6 +584,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
         NonScottishTaxRate
           ._2023(personalAllowance)
           .getTaxRate(revisedNetIncome, grossGiftAidAmount, rASContributionsAmount)
+
+      case _ => throw InvalidInputException(s"Invalid period, $period during findTaxRate")
     }
 
   def findFreeAllowance(scottishTaxYears: List[Period], period: Period): Int =
@@ -621,6 +621,8 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
       case (true, Period._2023) => ScottishTaxRateAfter2018._2023(0).freeAllowance
 
       case (false, Period._2023) => NonScottishTaxRate._2023(0).freeAllowance
+
+      case _ => throw InvalidInputException(s"Invalid period, $period while findFreeAllowance")
     }
 
   def calculateTotalAmounts(
@@ -931,6 +933,7 @@ class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionCon
           )
         )
 
+      case _ => throw InvalidInputException(s"Invalid taxyear encountered while building paacTaxYears")
     }
     PaacRequest(paacTaxYears, paacTaxYears.map(_.period).sorted.max)
   }

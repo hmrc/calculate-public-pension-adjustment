@@ -30,8 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubmissionService @Inject() (
   auditService: AuditService,
-  submissionRepository: SubmissionRepository,
-  uuidService: UuidService
+  submissionRepository: SubmissionRepository
 )(implicit ec: ExecutionContext)
     extends Logging {
 

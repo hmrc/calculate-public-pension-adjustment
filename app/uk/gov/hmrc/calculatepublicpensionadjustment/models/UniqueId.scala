@@ -21,5 +21,5 @@ import play.api.libs.json._
 case class UniqueId(value: String)
 
 object UniqueId {
-  implicit val format = Json.format[UniqueId]
+  implicit val format: OFormat[UniqueId] = Json.format[UniqueId]
 }

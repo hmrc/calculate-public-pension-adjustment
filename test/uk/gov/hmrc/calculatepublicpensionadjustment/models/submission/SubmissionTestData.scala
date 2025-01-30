@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationResponse, InDatesTaxYearSchemeCalculation, InDatesTaxYearsCalculation, OutOfDatesTaxYearSchemeCalculation, OutOfDatesTaxYearsCalculation, Period, Resubmission, TotalAmounts}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 
 object SubmissionTestData {
 

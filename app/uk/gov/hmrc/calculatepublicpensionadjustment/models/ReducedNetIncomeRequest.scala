@@ -15,9 +15,8 @@
  */
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
-
 import play.api.libs.json.{Format, Json}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 case class ReducedNetIncomeRequest(
   period: Period,

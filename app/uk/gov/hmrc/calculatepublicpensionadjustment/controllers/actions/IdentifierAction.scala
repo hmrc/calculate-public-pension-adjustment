@@ -19,11 +19,10 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions
 import play.api.mvc.Results.BadRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, NoActiveSession}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.IdentifierRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.IdentifierRequest
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

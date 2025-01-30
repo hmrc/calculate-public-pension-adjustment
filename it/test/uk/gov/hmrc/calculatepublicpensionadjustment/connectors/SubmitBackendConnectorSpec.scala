@@ -18,12 +18,9 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.mockito.MockitoSugar
-import org.scalatest.concurrent.Eventually.eventually
-import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, NO_CONTENT, OK}
@@ -104,7 +101,7 @@ class SubmitBackendConnectorSpec
         connector.retrieveCalcUserAnswersFromSubmitBE(id).futureValue shouldBe None
       }
 
-      "should throw BadRequestException when calc backend responds with an error" in {
+      "should throw UpstreamErrorResponse when calc backend responds with an error" in {
         val uniqueId = "uniqueId"
         val url      = s"/submit-public-pension-adjustment/calc-user-answers/$uniqueId"
 
@@ -116,7 +113,7 @@ class SubmitBackendConnectorSpec
         val response = connector.retrieveCalcUserAnswersFromSubmitBE(uniqueId)
 
         ScalaFutures.whenReady(response.failed) { response =>
-          response shouldBe a[BadRequestException]
+          response shouldBe a[UpstreamErrorResponse]
         }
       }
     }
@@ -155,7 +152,7 @@ class SubmitBackendConnectorSpec
         connector.retrieveCalcUserAnswersFromSubmitBEWithId(id).futureValue shouldBe None
       }
 
-      "should throw BadRequestException when calc backend responds with an error" in {
+      "should throw UpstreamErrorResponse when calc backend responds with an error" in {
         val id         = "id"
         val url      = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
 
@@ -167,7 +164,7 @@ class SubmitBackendConnectorSpec
         val response = connector.retrieveCalcUserAnswersFromSubmitBEWithId(id)
 
         ScalaFutures.whenReady(response.failed) { response =>
-          response shouldBe a[BadRequestException]
+          response shouldBe a[UpstreamErrorResponse]
         }
       }
     }
@@ -184,7 +181,7 @@ class SubmitBackendConnectorSpec
         connector.clearCalcUserAnswersSubmitBE().futureValue shouldBe Done
       }
 
-      "should throw BadRequestException when calc backend responds with a bad request" in {
+      "should throw UpstreamErrorResponse when calc backend responds with a bad request" in {
         val url = s"/submit-public-pension-adjustment/calc-user-answers"
 
         wireMockServer.stubFor(
@@ -195,7 +192,7 @@ class SubmitBackendConnectorSpec
         val response = connector.clearCalcUserAnswersSubmitBE()
 
         ScalaFutures.whenReady(response.failed) { response =>
-          response shouldBe a[BadRequestException]
+          response shouldBe a[UpstreamErrorResponse]
         }
       }
     }

@@ -23,6 +23,7 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +38,7 @@ class SubmitBackendConnector @Inject() (
       url"${config.sppaBaseUrl}/submit-public-pension-adjustment/calc-user-answers/$uniqueId"
     httpClient2
       .get(submissionsSessionUrl)
-      .execute
+      .execute[HttpResponse]
       .flatMap { response =>
         response.status match {
           case OK         =>
@@ -63,7 +64,7 @@ class SubmitBackendConnector @Inject() (
       url"${config.sppaBaseUrl}/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
     httpClient2
       .get(submissionsSessionUrl)
-      .execute
+      .execute[HttpResponse]
       .flatMap { response =>
         response.status match {
           case OK         =>
