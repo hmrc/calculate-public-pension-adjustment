@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.repositories
+import org.apache.pekko.pattern.after
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
@@ -27,6 +28,7 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -60,14 +62,33 @@ class SubmissionRepository @Inject() (
     val updatedSubmission =
       item copy (lastUpdated = Instant.now(clock))
 
-    collection
-      .replaceOne(
-        filter = byUniqueId(updatedSubmission.uniqueId),
-        replacement = updatedSubmission,
-        options = ReplaceOptions().upsert(true)
-      )
-      .toFuture()
-      .map(_ => Done)
+    def attemptInsert(): Future[Done] = {
+      collection
+        .replaceOne(
+          filter = byUniqueId(updatedSubmission.uniqueId),
+          replacement = updatedSubmission,
+          options = ReplaceOptions().upsert(true)
+        )
+        .toFuture()
+        .map(_ => Done)
+    }
+
+      attemptInsert().recoverWith{
+        case ex: Exception =>
+          println("=================================")
+          println(s"Insert Failed ${ex}")
+          println("=================================")
+
+          clear(updatedSubmission.id)
+
+          attemptInsert().recover{
+            case retryEx: Exception =>
+              println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+              println(s"Insert Failed at SECOND insert ${retryEx}")
+              println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+              throw retryEx
+          }
+      }
   }
 
   private def byUniqueId(uniqueId: String): Bson = Filters.equal("uniqueId", uniqueId)
