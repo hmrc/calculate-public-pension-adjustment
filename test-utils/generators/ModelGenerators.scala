@@ -54,7 +54,7 @@ trait ModelGenerators {
   lazy val genIncome: Gen[Income] =
     Gen.oneOf(
       Gen.const(Income.BelowThreshold),
-      genAdjustedIncome.map(Income.AboveThreshold)
+      genAdjustedIncome.map(Income.AboveThreshold.apply)
     )
 
   lazy val genIncomeSubJourneyAmounts: Gen[Option[Int]] =

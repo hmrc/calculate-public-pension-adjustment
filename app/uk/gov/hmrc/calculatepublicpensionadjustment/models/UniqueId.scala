@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class UniqueId(value: String)
 

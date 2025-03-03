@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.repositories
 
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model._
+import org.mongodb.scala.model.*
 import play.api.libs.json.Format
 import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
@@ -30,6 +30,7 @@ import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 @Singleton
 class UserAnswersRepository @Inject() (

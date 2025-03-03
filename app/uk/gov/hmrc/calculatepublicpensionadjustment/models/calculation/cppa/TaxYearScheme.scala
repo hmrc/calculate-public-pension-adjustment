@@ -30,7 +30,7 @@ object TaxYearScheme {
 
   implicit lazy val reads: Reads[TaxYearScheme] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "name").read[String] and
@@ -44,7 +44,7 @@ object TaxYearScheme {
 
   implicit lazy val writes: Writes[TaxYearScheme] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "name").write[String] and

@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
-import org.mockito.MockitoSugar
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
