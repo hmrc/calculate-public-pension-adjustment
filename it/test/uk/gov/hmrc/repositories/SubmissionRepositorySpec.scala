@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.repositories
 
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{verify, when}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Filters
 import org.scalatest.OptionValues
@@ -27,7 +28,7 @@ import play.api.Configuration
 import play.api.libs.json.Json
 import uk.gov.hmrc.calculatepublicpensionadjustment.config.AppConfig
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter, SymmetricCryptoFactory}
@@ -38,6 +39,7 @@ import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
 import java.util.Base64
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 class SubmissionRepositorySpec
     extends AnyFreeSpec
@@ -132,9 +134,9 @@ class SubmissionRepositorySpec
 
   private val submission: Submission = Submission("id", "uniqueId", calculationInputs, calculation)
 
-  when(mockAppConfig.ttlInDays) thenReturn 900
+  when(mockAppConfig.ttlInDays) `thenReturn` 900.toLong
 
-  protected override val repository = new SubmissionRepository(
+  protected override val repository: SubmissionRepository = new SubmissionRepository(
     mongoComponent = mongoComponent,
     appConfig = mockAppConfig,
     clock = stubClock
@@ -155,8 +157,8 @@ class SubmissionRepositorySpec
       val insertResult = repository.insert(submission).futureValue
       val dbRecord     = find(Filters.equal("_id", "id")).futureValue.headOption.value
 
-      insertResult mustEqual Done
-      dbRecord mustEqual expectedResult
+      insertResult `mustEqual` Done
+      dbRecord `mustEqual` expectedResult
     }
 
     "must store the data section as encrypted bytes" in {
@@ -191,16 +193,16 @@ class SubmissionRepositorySpec
     plainInputs must include("resubmission")
 
     val decryptedInputObject: CalculationInputs = Json.parse(plainInputs).as[CalculationInputs]
-    decryptedInputObject.resubmission.isResubmission mustBe false
+    decryptedInputObject.resubmission.isResubmission `mustBe` false
 
     val encryptedCalculation: String = (json \ "calculation").get.as[String]
     encryptedCalculation mustNot include("totalAmounts")
 
     val plainCalculation: String = decrypt(encryptedCalculation)
-    plainCalculation must include("totalAmounts")
+    plainCalculation `must` include("totalAmounts")
 
     val decryptedCalculationObject: CalculationResponse = Json.parse(plainCalculation).as[CalculationResponse]
-    decryptedCalculationObject.totalAmounts.inDatesDebit mustBe 1620
+    decryptedCalculationObject.totalAmounts.inDatesDebit `mustBe` 1620
   }
 
   private def decrypt(encryptedString: String): String = {
@@ -225,7 +227,7 @@ class SubmissionRepositorySpec
         insert(submission).futureValue
 
         val result = repository.get("uniqueId").futureValue
-        result.value mustEqual submission
+        result.value `mustEqual` submission
       }
     }
 
@@ -233,7 +235,7 @@ class SubmissionRepositorySpec
 
       "must return None" in {
 
-        repository.get(id).futureValue must not be defined
+        repository.get(id).futureValue `must` `not` `be` defined
       }
     }
   }
@@ -250,7 +252,7 @@ class SubmissionRepositorySpec
       )
 
       repository.set(submission).futureValue
-      repository.get(uniqueId).futureValue.value mustBe submission
+      repository.get(uniqueId).futureValue.value `mustBe` submission
     }
 
     "must delete previous submission with the same id regardless of uniqueId" in {
@@ -293,7 +295,7 @@ class SubmissionRepositorySpec
 
       insert(submission).futureValue
       repository.clear("userId").futureValue
-      repository.get(id).futureValue must not be defined
+      repository.get(id).futureValue `must` `not` `be` defined
     }
   }
 
@@ -313,8 +315,8 @@ class SubmissionRepositorySpec
       insert(submission.copy(id = id2, uniqueId = uniqueId2)).futureValue
 
       repository.clearByUniqueIdAndNotId(uniqueId, id2).futureValue
-      repository.get(uniqueId2).futureValue mustBe defined
-      repository.get(uniqueId).futureValue must not be defined
+      repository.get(uniqueId2).futureValue `mustBe` defined
+      repository.get(uniqueId).futureValue `must` `not` `be` defined
     }
   }
 }

@@ -19,7 +19,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 import cats.data.EitherT
 import play.api.Logging
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions.IdentifierAction
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{RetrieveSubmissionResponse, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{ReducedNetIncomeRequest, ReducedNetIncomeResponse, RetrieveSubmissionInfo}
@@ -85,7 +85,7 @@ class SubmissionController @Inject() (
       ) match {
         case (personalAllowance, reducedNetIncome, _) =>
           Future.successful(Ok(Json.toJson(ReducedNetIncomeResponse(personalAllowance, reducedNetIncome))))
-        case _                                        =>
+        case null                                     =>
           Future.successful(BadRequest)
       }
     }

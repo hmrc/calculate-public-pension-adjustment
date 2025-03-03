@@ -18,7 +18,7 @@ package uk.gov.hmrc.submitpublicpensionadjustment.models.response
 
 import org.apache.pekko.util.Helpers.Requiring
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.JsString
 import play.api.mvc.PathBindable
@@ -63,7 +63,7 @@ class PeriodSpec extends AnyFlatSpec with Matchers {
     val period       = Period._2017
 
     val bind: Either[String, Period] = pathBindable.bind("", "2017")
-    bind.value mustBe Right(period)
+    bind.value `mustBe` Right(period)
   }
 
   "Period Model" should "should return fold left and error when string is not a valid tax year" in {
@@ -71,7 +71,7 @@ class PeriodSpec extends AnyFlatSpec with Matchers {
     val pathBindable = implicitly[PathBindable[Period]]
 
     val bind: Either[String, Period] = pathBindable.bind("", "2011")
-    bind.value mustBe Left("Invalid tax year")
+    bind.value `mustBe` Left("Invalid tax year")
   }
 
   "Period Model" should "should unbind year from period and return as a string" in {
@@ -79,6 +79,6 @@ class PeriodSpec extends AnyFlatSpec with Matchers {
     val pathBindable = implicitly[PathBindable[Period]]
 
     val bindValue = pathBindable.unbind("", Period._2017)
-    bindValue mustBe "2017"
+    bindValue `mustBe` "2017"
   }
 }

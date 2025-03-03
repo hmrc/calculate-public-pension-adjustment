@@ -16,7 +16,7 @@
 
 package requests
 
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.*
 
 trait CalculationResponses {
 

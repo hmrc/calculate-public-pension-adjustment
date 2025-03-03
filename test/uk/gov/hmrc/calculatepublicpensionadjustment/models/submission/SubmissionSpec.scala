@@ -17,11 +17,11 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.submission
 
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, startWith}
+import org.scalatest.matchers.must.Matchers.{must, mustEqual, startWith}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Logging
 import play.api.libs.json.{JsResult, JsSuccess, JsValue, Json}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.*
 
 class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logging {
 
@@ -77,7 +77,7 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
           "\"uniqueId\":\"uniqueId\"}"
       )
 
-      serialised mustEqual expectedJson
+      serialised `mustEqual` expectedJson
     }
 
     "must de-serialise from valid Json with userAnswers" in {
@@ -129,7 +129,7 @@ class SubmissionSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with Logg
         None
       )
       val submissionRequest = SubmissionRequest(calculationInputs, None, "userId", "uniqueId")
-      deserialised mustEqual (JsSuccess(submissionRequest))
+      deserialised `mustEqual` (JsSuccess(submissionRequest))
     }
 
     "serialise" in {

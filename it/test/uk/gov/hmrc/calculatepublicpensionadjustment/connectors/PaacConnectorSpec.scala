@@ -18,7 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
 import org.apache.pekko.actor.ActorSystem
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.{AboveThreshold, BelowThreshold}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.utils.WireMockHelper
 import uk.gov.hmrc.http.HeaderCarrier
 

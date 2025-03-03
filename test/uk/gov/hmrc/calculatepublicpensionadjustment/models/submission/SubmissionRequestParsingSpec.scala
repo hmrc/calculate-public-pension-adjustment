@@ -29,10 +29,10 @@ class SubmissionRequestParsingSpec extends AnyFreeSpec with Matchers {
 
     "must parse a SubmissionRequest in alignment with calculate frontend" in {
       val request: SubmissionRequest = readSubmissionRequest("test/resources/SubmissionRequest.json")
-      request.calculationInputs.resubmission mustBe (Resubmission(false, None))
+      request.calculationInputs.resubmission `mustBe` (Resubmission(false, None))
 
-      request.calculationInputs.annualAllowance.get.scottishTaxYears mustBe List.empty
-      request.calculationInputs.annualAllowance.get.taxYears.size mustBe 2
+      request.calculationInputs.annualAllowance.get.scottishTaxYears `mustBe` List.empty
+      request.calculationInputs.annualAllowance.get.taxYears.size `mustBe` 2
     }
   }
 

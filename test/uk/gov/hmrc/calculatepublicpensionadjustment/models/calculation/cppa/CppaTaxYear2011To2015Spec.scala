@@ -19,15 +19,15 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 import generators.CppaModelGenerators
 import org.scalacheck.Gen
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 class CppaTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyChecks with CppaModelGenerators {
 
-  private val genValidCppaTaxYear2011To2015Period   = Gen.choose(2011, 2015).map(Period.Year)
-  private val genInvalidCppaTaxYear2011To2015Period = Gen.choose(2017, 2023).map(Period.Year)
+  private val genValidCppaTaxYear2011To2015Period   = Gen.choose(2011, 2015).map(Period.Year.apply)
+  private val genInvalidCppaTaxYear2011To2015Period = Gen.choose(2017, 2023).map(Period.Year.apply)
 
   "CppaTaxYear2011To2015" - {
 
@@ -38,7 +38,9 @@ class CppaTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        json.validate[CppaTaxYear2011To2015] mustEqual JsSuccess(CppaTaxYear2011To2015(v.pensionInputAmount, v.period))
+        json.validate[CppaTaxYear2011To2015] `mustEqual` JsSuccess(
+          CppaTaxYear2011To2015(v.pensionInputAmount, v.period)
+        )
       }
     }
 
@@ -49,7 +51,7 @@ class CppaTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        json.validate[CppaTaxYear2011To2015] mustEqual JsError("taxYear must fall between `2011`-`2015`")
+        json.validate[CppaTaxYear2011To2015] `mustEqual` JsError("taxYear must fall between `2011`-`2015`")
       }
     }
 
@@ -60,7 +62,7 @@ class CppaTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        Json.toJson[CppaTaxYear2011To2015](CppaTaxYear2011To2015(v.pensionInputAmount, v.period)) mustEqual json
+        Json.toJson[CppaTaxYear2011To2015](CppaTaxYear2011To2015(v.pensionInputAmount, v.period)) `mustEqual` json
       }
     }
   }

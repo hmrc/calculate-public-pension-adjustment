@@ -19,15 +19,15 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 import generators.PaacModelGenerators
 import org.scalacheck.Gen
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 class PaacTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyChecks with PaacModelGenerators {
 
-  private val genValidPaacTaxYear2011To2015Period   = Gen.choose(2011, 2015).map(Period.Year)
-  private val genInvalidPaacTaxYear2011To2015Period = Gen.choose(2017, 2023).map(Period.Year)
+  private val genValidPaacTaxYear2011To2015Period   = Gen.choose(2011, 2015).map(Period.Year.apply)
+  private val genInvalidPaacTaxYear2011To2015Period = Gen.choose(2017, 2023).map(Period.Year.apply)
 
   "PaacTaxYear2011To2015NormalTaxYear" - {
 
@@ -38,7 +38,7 @@ class PaacTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2011To2015] mustEqual JsSuccess(
+        json.validate[PaacTaxYear2011To2015] `mustEqual` JsSuccess(
           PaacTaxYear2011To2015.NormalTaxYear(v.pensionInputAmount, v.period)
         )
       }
@@ -52,7 +52,7 @@ class PaacTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period"             -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2011To2015] mustEqual JsError("taxYear must fall between `2011`-`2015`")
+        json.validate[PaacTaxYear2011To2015] `mustEqual` JsError("taxYear must fall between `2011`-`2015`")
       }
 
     }
@@ -66,7 +66,7 @@ class PaacTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
 
         Json.toJson[PaacTaxYear2011To2015](
           PaacTaxYear2011To2015.NormalTaxYear(v.pensionInputAmount, v.period)
-        ) mustEqual json
+        ) `mustEqual` json
       }
 
     }
@@ -81,7 +81,7 @@ class PaacTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period" -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2011To2015] mustEqual JsSuccess(
+        json.validate[PaacTaxYear2011To2015] `mustEqual` JsSuccess(
           PaacTaxYear2011To2015.NoInputTaxYear(v.period)
         )
       }
@@ -94,7 +94,7 @@ class PaacTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
           "period" -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2011To2015] mustEqual JsError("taxYear must fall between `2011`-`2015`")
+        json.validate[PaacTaxYear2011To2015] `mustEqual` JsError("taxYear must fall between `2011`-`2015`")
       }
 
     }
@@ -107,7 +107,7 @@ class PaacTaxYear2011To2015Spec extends AnyFreeSpec with ScalaCheckPropertyCheck
 
         Json.toJson[PaacTaxYear2011To2015](
           PaacTaxYear2011To2015.NoInputTaxYear(v.period)
-        ) mustEqual json
+        ) `mustEqual` json
       }
 
     }

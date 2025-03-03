@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 sealed trait PaacTaxYear2016PreAlignment extends PaacTaxYear
@@ -45,7 +45,7 @@ object PaacTaxYear2016PreAlignment {
 
   implicit lazy val reads: Reads[PaacTaxYear2016PreAlignment] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     val normalReads: Reads[PaacTaxYear2016PreAlignment] =
       (__ \ "pensionInputAmount")
@@ -64,7 +64,7 @@ object PaacTaxYear2016PreAlignment {
     )(PaacTaxYear2016PreAlignment.PostFlexiblyAccessedTaxYear(_, _))
 
     val noInputReads: Reads[PaacTaxYear2016PreAlignment] =
-      (__ \ "period").read[Period].map(PaacTaxYear2016PreAlignment.NoInputTaxYear)
+      (__ \ "period").read[Period].map(PaacTaxYear2016PreAlignment.NoInputTaxYear.apply)
 
     (__ \ "period")
       .read[Period]
@@ -79,7 +79,7 @@ object PaacTaxYear2016PreAlignment {
 
   implicit lazy val writes: Writes[PaacTaxYear2016PreAlignment] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     lazy val normalWrites: Writes[PaacTaxYear2016PreAlignment.NormalTaxYear] = (
       (__ \ "pensionInputAmount").write[Int] and
