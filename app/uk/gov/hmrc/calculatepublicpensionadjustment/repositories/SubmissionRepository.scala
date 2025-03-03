@@ -56,18 +56,20 @@ class SubmissionRepository @Inject() (
       )
     ) {
 
-  def insert(item: Submission): Future[Done] = {
-    val updatedSubmission =
-      item copy (lastUpdated = Instant.now(clock))
+  def insert(submission: Submission): Future[Done] = {
 
-    collection
-      .replaceOne(
-        filter = byUniqueId(updatedSubmission.uniqueId),
-        replacement = updatedSubmission,
-        options = ReplaceOptions().upsert(true)
-      )
-      .toFuture()
-      .map(_ => Done)
+    val updatedSubmission = submission copy (lastUpdated = Instant.now(clock))
+
+    for {
+      _ <- clear(updatedSubmission.id)
+      _ <- collection
+        .replaceOne(
+          filter = byUniqueId(updatedSubmission.uniqueId),
+          replacement = updatedSubmission,
+          options = ReplaceOptions().upsert(true)
+        )
+        .toFuture()
+    } yield Done
   }
 
   private def byUniqueId(uniqueId: String): Bson = Filters.equal("uniqueId", uniqueId)
