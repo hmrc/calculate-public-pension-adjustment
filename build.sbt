@@ -21,7 +21,8 @@ lazy val microservice = Project("calculate-public-pension-adjustment", file(".")
     // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
     // suppress warnings in generated routes files
     scalacOptions ++= Seq(
-      "-Wconf:src=routes/.*:s"
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:msg=Flag.*repeatedly:s"
     ),
     PlayKeys.playDefaultPort := 12802
   )
