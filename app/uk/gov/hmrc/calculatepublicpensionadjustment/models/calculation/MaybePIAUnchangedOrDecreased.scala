@@ -33,5 +33,5 @@ object MaybePIAUnchangedOrDecreased extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[MaybePIAUnchangedOrDecreased] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

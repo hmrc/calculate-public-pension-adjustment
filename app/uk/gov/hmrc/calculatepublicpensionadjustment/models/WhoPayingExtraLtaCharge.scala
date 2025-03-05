@@ -29,5 +29,5 @@ object WhoPayingExtraLtaCharge extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[WhoPayingExtraLtaCharge] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

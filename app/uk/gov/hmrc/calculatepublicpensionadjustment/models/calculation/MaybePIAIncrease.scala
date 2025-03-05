@@ -33,5 +33,5 @@ object MaybePIAIncrease extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[MaybePIAIncrease] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

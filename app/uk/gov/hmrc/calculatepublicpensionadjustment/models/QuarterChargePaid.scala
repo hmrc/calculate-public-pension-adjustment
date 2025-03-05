@@ -33,5 +33,5 @@ object QuarterChargePaid extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[QuarterChargePaid] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

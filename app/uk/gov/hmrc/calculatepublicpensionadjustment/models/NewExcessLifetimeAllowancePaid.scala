@@ -31,5 +31,5 @@ object NewExcessLifetimeAllowancePaid extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[NewExcessLifetimeAllowancePaid] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

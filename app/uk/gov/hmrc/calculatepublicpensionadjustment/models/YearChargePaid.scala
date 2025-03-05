@@ -41,5 +41,5 @@ object YearChargePaid extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[YearChargePaid] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }
