@@ -33,5 +33,5 @@ object LtaProtectionOrEnhancements extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[LtaProtectionOrEnhancements] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

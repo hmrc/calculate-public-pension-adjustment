@@ -31,5 +31,5 @@ object NewEnhancementType extends Enumerable.Implicits {
   )
 
   implicit val enumerable: Enumerable[NewEnhancementType] =
-    Enumerable(values.map(v => v.toString -> v) *)
+    Enumerable(values.map(v => v.toString -> v)*)
 }
