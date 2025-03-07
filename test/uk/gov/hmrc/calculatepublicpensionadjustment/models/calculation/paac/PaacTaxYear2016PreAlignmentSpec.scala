@@ -18,7 +18,7 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 
 import generators.PaacModelGenerators
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
@@ -34,7 +34,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
           "period"             -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2016PreAlignment] mustEqual JsSuccess(
+        json.validate[PaacTaxYear2016PreAlignment] `mustEqual` JsSuccess(
           PaacTaxYear2016PreAlignment.NormalTaxYear(v.pensionInputAmount, v.period)
         )
       }
@@ -48,7 +48,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
           "period"             -> Period._2016PostAlignment.toString
         )
 
-        json.validate[PaacTaxYear2016PreAlignment] mustEqual JsError("tax year must be `2016-pre`")
+        json.validate[PaacTaxYear2016PreAlignment] `mustEqual` JsError("tax year must be `2016-pre`")
       }
 
     }
@@ -62,7 +62,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
 
         Json.toJson[PaacTaxYear2016PreAlignment](
           PaacTaxYear2016PreAlignment.NormalTaxYear(v.pensionInputAmount, v.period)
-        ) mustEqual json
+        ) `mustEqual` json
       }
 
     }
@@ -80,7 +80,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
           "period"                                   -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2016PreAlignment] mustEqual JsSuccess(
+        json.validate[PaacTaxYear2016PreAlignment] `mustEqual` JsSuccess(
           PaacTaxYear2016PreAlignment.InitialFlexiblyAccessedTaxYear(
             v.definedBenefitInputAmount,
             v.preAccessDefinedContributionInputAmount,
@@ -101,7 +101,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
           "period"                                   -> Period._2016PostAlignment.toString
         )
 
-        json.validate[PaacTaxYear2016PreAlignment] mustEqual JsError("tax year must be `2016-pre`")
+        json.validate[PaacTaxYear2016PreAlignment] `mustEqual` JsError("tax year must be `2016-pre`")
       }
 
     }
@@ -122,7 +122,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
             v.postAccessDefinedContributionInputAmount,
             v.period
           )
-        ) mustEqual json
+        ) `mustEqual` json
 
       }
 
@@ -137,7 +137,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
         "period" -> Period._2016PreAlignment.toString
       )
 
-      json.validate[PaacTaxYear2016PreAlignment] mustEqual JsSuccess(
+      json.validate[PaacTaxYear2016PreAlignment] `mustEqual` JsSuccess(
         PaacTaxYear2016PreAlignment.NoInputTaxYear(Period._2016PreAlignment)
       )
 
@@ -148,7 +148,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
         "period" -> Period._2016PostAlignment.toString
       )
 
-      json.validate[PaacTaxYear2016PreAlignment] mustEqual JsError("tax year must be `2016-pre`")
+      json.validate[PaacTaxYear2016PreAlignment] `mustEqual` JsError("tax year must be `2016-pre`")
 
     }
 
@@ -159,7 +159,7 @@ class PaacTaxYear2016PreAlignmentSpec extends AnyFreeSpec with ScalaCheckPropert
 
       Json.toJson[PaacTaxYear2016PreAlignment](
         PaacTaxYear2016PreAlignment.NoInputTaxYear(Period._2016PreAlignment)
-      ) mustEqual json
+      ) `mustEqual` json
 
     }
 

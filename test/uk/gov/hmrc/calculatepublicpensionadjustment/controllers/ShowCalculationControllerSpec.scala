@@ -17,7 +17,8 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -27,7 +28,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import requests.{CalculationResponses, CppaRequests}
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.PaacService
 
@@ -64,7 +65,7 @@ class ShowCalculationControllerSpec
       "when the valid request contains all tax years 2013 - 2023 with NormalTaxYear" in {
 
         when(mockPaacService.calculate(any())(any()))
-          .thenReturn(Future.successful(allTaxYearsWithNormalTaxYearResponse))
+          .`thenReturn`(Future.successful(allTaxYearsWithNormalTaxYearResponse))
 
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
@@ -74,13 +75,13 @@ class ShowCalculationControllerSpec
             .withJsonBody(allTaxYearsWithNormalTaxYearValidRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual OK
+        status(result) `mustEqual` OK
       }
 
       "when the valid request contains all tax years 2013 - 2023 with InitialFlexiblyAccessedTaxYear" in {
 
         when(mockPaacService.calculate(any())(any()))
-          .thenReturn(Future.successful(allTaxYearsWithInitialFlexiblyAccessedTaxYearResponse))
+          .`thenReturn`(Future.successful(allTaxYearsWithInitialFlexiblyAccessedTaxYearResponse))
 
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
@@ -90,13 +91,13 @@ class ShowCalculationControllerSpec
             .withJsonBody(allTaxYearsWithInitialFlexiblyAccessedTaxYearValidRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual OK
+        status(result) `mustEqual` OK
       }
 
       "when the valid request contains all tax years 2013 - 2023 with PostFlexiblyAccessedTax" in {
 
         when(mockPaacService.calculate(any())(any()))
-          .thenReturn(Future.successful(allTaxYearsWithPostFlexiblyAccessedTaxYearResponse))
+          .`thenReturn`(Future.successful(allTaxYearsWithPostFlexiblyAccessedTaxYearResponse))
 
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
@@ -106,13 +107,13 @@ class ShowCalculationControllerSpec
             .withJsonBody(allTaxYearsWithPostFlexiblyAccessedTaxYearValidRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual OK
+        status(result) `mustEqual` OK
       }
 
       "when the valid request missing few tax years" in {
 
         when(mockPaacService.calculate(any())(any()))
-          .thenReturn(Future.successful(missingTaxYearsValidResponse))
+          .`thenReturn`(Future.successful(missingTaxYearsValidResponse))
 
         val request =
           FakeRequest(POST, "/calculate-public-pension-adjustment/show-calculation")
@@ -122,7 +123,7 @@ class ShowCalculationControllerSpec
             .withJsonBody(missingTaxYearsValidRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual OK
+        status(result) `mustEqual` OK
       }
 
     }
@@ -138,7 +139,7 @@ class ShowCalculationControllerSpec
             .withJsonBody(emptyRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
+        status(result) `mustEqual` BAD_REQUEST
       }
 
       "when the request contains tax year out of valid 2013 - 2023 tax years" in {
@@ -151,7 +152,7 @@ class ShowCalculationControllerSpec
             .withJsonBody(outOfTaxYearsRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
+        status(result) `mustEqual` BAD_REQUEST
       }
 
       "when the request contains invalid data type" in {
@@ -164,7 +165,7 @@ class ShowCalculationControllerSpec
             .withJsonBody(invalidDataTypeRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
+        status(result) `mustEqual` BAD_REQUEST
       }
 
       "when the request is missing mandatory data" in {
@@ -177,7 +178,7 @@ class ShowCalculationControllerSpec
             .withJsonBody(missingDataRequest)
 
         val result = route(app, request).value
-        status(result) mustEqual BAD_REQUEST
+        status(result) `mustEqual` BAD_REQUEST
       }
     }
 

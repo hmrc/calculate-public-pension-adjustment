@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Income, Period}
 
 sealed trait PaacTaxYear2017ToCurrent extends PaacTaxYear
@@ -48,15 +48,15 @@ object PaacTaxYear2017ToCurrent {
 
   implicit lazy val reads: Reads[PaacTaxYear2017ToCurrent] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
-    import Ordering.Implicits._
+    import Ordering.Implicits.*
 
     val normalReads: Reads[PaacTaxYear2017ToCurrent] = (
       (__ \ "pensionInputAmount").read[Int] and
         (__ \ "income").read[Income] and
         (__ \ "period").read[Period]
-    )(PaacTaxYear2017ToCurrent.NormalTaxYear)
+    )(PaacTaxYear2017ToCurrent.NormalTaxYear.apply _)
 
     val initialReads: Reads[PaacTaxYear2017ToCurrent] = (
       (__ \ "definedBenefitInputAmount").read[Int] and
@@ -64,17 +64,17 @@ object PaacTaxYear2017ToCurrent {
         (__ \ "postAccessDefinedContributionInputAmount").read[Int] and
         (__ \ "income").read[Income] and
         (__ \ "period").read[Period]
-    )(PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear)
+    )(PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear.apply _)
 
     val postReads: Reads[PaacTaxYear2017ToCurrent] = (
       (__ \ "definedBenefitInputAmount").read[Int] and
         (__ \ "definedContributionInputAmount").read[Int] and
         (__ \ "income").read[Income] and
         (__ \ "period").read[Period]
-    )(PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear)
+    )(PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear.apply _)
 
     val noInputReads: Reads[PaacTaxYear2017ToCurrent] =
-      (__ \ "period").read[Period].map(PaacTaxYear2017ToCurrent.NoInputTaxYear)
+      (__ \ "period").read[Period].map(PaacTaxYear2017ToCurrent.NoInputTaxYear.apply)
 
     (__ \ "period")
       .read[Period]
@@ -89,7 +89,7 @@ object PaacTaxYear2017ToCurrent {
 
   implicit lazy val writes: Writes[PaacTaxYear2017ToCurrent] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     lazy val normalWrites: Writes[PaacTaxYear2017ToCurrent.NormalTaxYear] = (
       (__ \ "pensionInputAmount").write[Int] and

@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
-import org.mockito.MockitoSugar
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.utils.WireMockHelper
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import java.time.Instant
 

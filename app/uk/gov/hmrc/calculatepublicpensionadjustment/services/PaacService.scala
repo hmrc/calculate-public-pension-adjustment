@@ -22,16 +22,16 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.exceptions.InvalidInputExcep
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Income.BelowThreshold
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.*
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.*
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
-import scala.math._
+import scala.math.*
 
 class PaacService @Inject() (connector: PaacConnector)(implicit ec: ExecutionContext) extends Logging {
 
