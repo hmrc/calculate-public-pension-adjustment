@@ -17,7 +17,7 @@
 package uk.gov.hmrc.repositories
 
 import org.scalatestplus.mockito.MockitoSugar
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -35,7 +35,6 @@ import java.time.temporal.ChronoUnit
 import java.time.{Clock, Instant, ZoneId}
 import java.util.Base64
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 class UserAnswersRepositorySpec
     extends AnyFreeSpec

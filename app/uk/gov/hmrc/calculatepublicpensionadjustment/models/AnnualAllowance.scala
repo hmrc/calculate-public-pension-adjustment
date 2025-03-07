@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
 import play.api.libs.functional.syntax.*
-import play.api.libs.json.{Format, Json, Reads, __}
+import play.api.libs.json.{Format, Reads, __}
 
 case class AnnualAllowance(scottishTaxYears: List[Period], taxYears: List[TaxYear])
 

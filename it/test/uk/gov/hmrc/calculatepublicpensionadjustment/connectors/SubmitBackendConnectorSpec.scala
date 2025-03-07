@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.utils.WireMockHelper
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
 import java.time.Instant
 
