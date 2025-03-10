@@ -44,20 +44,18 @@ class SubmissionServiceSpec
     with BeforeAndAfterEach
     with CalculationResponses {
 
-  private val mockAuditService         = mock[AuditService]
   private val mockSubmissionRepository = mock[SubmissionRepository]
   private val mockUuidService          = mock[UuidService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockAuditService)
     reset(mockSubmissionRepository)
     reset(mockUuidService)
   }
 
   private val hc: HeaderCarrier = HeaderCarrier()
 
-  private val service = new SubmissionService(mockAuditService, mockSubmissionRepository)
+  private val service = new SubmissionService(mockSubmissionRepository)
 
   "SubmissionService" - {
 

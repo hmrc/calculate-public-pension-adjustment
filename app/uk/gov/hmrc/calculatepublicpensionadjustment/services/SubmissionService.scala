@@ -20,16 +20,14 @@ import cats.data.{EitherT, NonEmptyChain}
 import play.api.Logging
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{CalculationInputs, CalculationResponse}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{PPASubmissionEvent, Submission}
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubmissionService @Inject() (
-  auditService: AuditService,
   submissionRepository: SubmissionRepository
 )(implicit ec: ExecutionContext)
     extends Logging {
@@ -39,12 +37,11 @@ class SubmissionService @Inject() (
     calculationResponse: Option[CalculationResponse],
     userId: String,
     uniqueId: String
-  )(implicit hc: HeaderCarrier): Future[Either[NonEmptyChain[String], String]] = {
+  ): Future[Either[NonEmptyChain[String], String]] = {
 
     val submission = buildSubmission(uniqueId, calculationInputs, calculationResponse, userId)
 
     val result: EitherT[Future, NonEmptyChain[String], String] = for {
-      _ <- EitherT.liftF(Future.successful(auditService.auditSubmitRequest(buildAudit(submission))))
       _ <- EitherT.liftF(submissionRepository.insert(submission))
     } yield submission.uniqueId
 
@@ -67,5 +64,4 @@ class SubmissionService @Inject() (
     userId: String
   ) = Submission(userId, uniqueId, calculationInputs, calculationResponse)
 
-  private def buildAudit(submission: Submission): PPASubmissionEvent = PPASubmissionEvent(submission.uniqueId)
 }
