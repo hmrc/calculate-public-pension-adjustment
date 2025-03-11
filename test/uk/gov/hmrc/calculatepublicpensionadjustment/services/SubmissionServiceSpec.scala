@@ -29,7 +29,6 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -52,8 +51,6 @@ class SubmissionServiceSpec
     reset(mockSubmissionRepository)
     reset(mockUuidService)
   }
-
-  private val hc: HeaderCarrier = HeaderCarrier()
 
   private val service = new SubmissionService(mockSubmissionRepository)
 
@@ -105,7 +102,7 @@ class SubmissionServiceSpec
             None,
             "userId",
             "uniqueId"
-          )(hc)
+          )
 
         result.futureValue mustBe Right("uniqueId")
       }
@@ -154,7 +151,7 @@ class SubmissionServiceSpec
             None,
             "userId",
             "uniqueId"
-          )(hc)
+          )
 
         an[RuntimeException] mustBe thrownBy(result.futureValue)
       }
