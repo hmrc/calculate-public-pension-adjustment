@@ -29,7 +29,6 @@ import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -44,20 +43,16 @@ class SubmissionServiceSpec
     with BeforeAndAfterEach
     with CalculationResponses {
 
-  private val mockAuditService         = mock[AuditService]
   private val mockSubmissionRepository = mock[SubmissionRepository]
   private val mockUuidService          = mock[UuidService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockAuditService)
     reset(mockSubmissionRepository)
     reset(mockUuidService)
   }
 
-  private val hc: HeaderCarrier = HeaderCarrier()
-
-  private val service = new SubmissionService(mockAuditService, mockSubmissionRepository)
+  private val service = new SubmissionService(mockSubmissionRepository)
 
   "SubmissionService" - {
 
@@ -107,7 +102,7 @@ class SubmissionServiceSpec
             None,
             "userId",
             "uniqueId"
-          )(hc)
+          )
 
         result.futureValue mustBe Right("uniqueId")
       }
@@ -156,7 +151,7 @@ class SubmissionServiceSpec
             None,
             "userId",
             "uniqueId"
-          )(hc)
+          )
 
         an[RuntimeException] mustBe thrownBy(result.futureValue)
       }

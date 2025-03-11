@@ -91,7 +91,7 @@ class SubmissionControllerSpec
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
         .thenReturn(Future.successful(Retrieval.Username("test-service")))
 
-      when(mockSubmissionService.submit(any(), any(), any(), any())(any()))
+      when(mockSubmissionService.submit(any(), any(), any(), any()))
         .thenReturn(Future.successful(Right("uniqueId")))
 
       val calculationResponse =
@@ -107,7 +107,7 @@ class SubmissionControllerSpec
       contentAsJson(result) mustEqual Json.obj("uniqueId" -> "uniqueId")
 
       verify(mockSubmissionService, times(1))
-        .submit(eqTo(calculationInputs), eqTo(calculationResponse), eqTo("uniqueId"), any())(any())
+        .submit(eqTo(calculationInputs), eqTo(calculationResponse), eqTo("uniqueId"), any())
     }
 
     "must return Submission when a valid uniqueId is specified" in {
@@ -372,7 +372,7 @@ class SubmissionControllerSpec
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
         .thenReturn(Future.successful(Retrieval.Username("test-service")))
 
-      when(mockSubmissionService.submit(any(), any(), any(), any())(any()))
+      when(mockSubmissionService.submit(any(), any(), any(), any()))
         .thenReturn(Future.failed(new RuntimeException()))
 
       val calculationResponse =
@@ -390,7 +390,7 @@ class SubmissionControllerSpec
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
         .thenReturn(Future.successful(Retrieval.Username("test-service")))
 
-      when(mockSubmissionService.submit(any(), any(), any(), any())(any()))
+      when(mockSubmissionService.submit(any(), any(), any(), any()))
         .thenReturn(Future.successful(Left(NonEmptyChain.one("some error"))))
 
       val calculationResponse =
