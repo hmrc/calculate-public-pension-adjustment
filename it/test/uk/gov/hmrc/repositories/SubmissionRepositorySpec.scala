@@ -70,9 +70,25 @@ class SubmissionRepositorySpec
   private val calculationInputs = CalculationInputs(
     Resubmission(false, None),
     Setup(
-      Some(AnnualAllowanceSetup(Some(true), Some(false), Some(false), Some(false), Some(false), Some(false),
-        Some(MaybePIAIncrease.No), Some(MaybePIAUnchangedOrDecreased.No), Some(false), Some(false), Some(false), Some(false))),
-      Some(LifetimeAllowanceSetup(Some(true), Some(false), Some(true), Some(false), Some(false), Some(false), Some(true)))
+      Some(
+        AnnualAllowanceSetup(
+          Some(true),
+          Some(false),
+          Some(false),
+          Some(false),
+          Some(false),
+          Some(false),
+          Some(MaybePIAIncrease.No),
+          Some(MaybePIAUnchangedOrDecreased.No),
+          Some(false),
+          Some(false),
+          Some(false),
+          Some(false)
+        )
+      ),
+      Some(
+        LifetimeAllowanceSetup(Some(true), Some(false), Some(true), Some(false), Some(false), Some(false), Some(true))
+      )
     ),
     None,
     None
@@ -235,6 +251,31 @@ class SubmissionRepositorySpec
 
       repository.set(submission).futureValue
       repository.get(uniqueId).futureValue.value mustBe submission
+    }
+
+    "must delete previous submission with the same id regardless of uniqueId" in {
+
+      val firstSubmission = Submission(
+        id,
+        uniqueId,
+        calculationInputs,
+        calculation,
+        Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
+      )
+
+      val secondSubmissionWithSameId = Submission(
+        id,
+        uniqueId2,
+        calculationInputs,
+        calculation,
+        Instant.now(stubClock).truncatedTo(ChronoUnit.MILLIS)
+      )
+
+      repository.set(firstSubmission).futureValue
+      repository.set(secondSubmissionWithSameId).futureValue
+
+      repository.get(uniqueId).futureValue mustBe None
+      repository.get(uniqueId2).futureValue.value mustBe secondSubmissionWithSameId
     }
   }
 
