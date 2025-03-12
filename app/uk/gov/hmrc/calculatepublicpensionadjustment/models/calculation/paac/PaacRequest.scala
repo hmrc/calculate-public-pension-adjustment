@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Period, paac}
 import uk.gov.hmrc.time
 
@@ -25,7 +25,7 @@ case class PaacRequest(taxYears: List[PaacTaxYear], until: Period = Period.Year(
 object PaacRequest {
   implicit lazy val reads: Reads[PaacRequest] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "taxYears").read[List[PaacTaxYear]] and

@@ -19,15 +19,15 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.paac
 import generators.PaacModelGenerators
 import org.scalacheck.Gen
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyChecks with PaacModelGenerators {
 
-  private val genValidPaacTaxYear2017ToCurrentPeriod   = Gen.choose(2017, 2023).map(Period.Year)
-  private val genInvalidPaacTaxYear2017ToCurrentPeriod = Gen.choose(2011, 2015).map(Period.Year)
+  private val genValidPaacTaxYear2017ToCurrentPeriod   = Gen.choose(2017, 2023).map(Period.Year.apply)
+  private val genInvalidPaacTaxYear2017ToCurrentPeriod = Gen.choose(2011, 2015).map(Period.Year.apply)
 
   "PaacTaxYear2017ToCurrentNormalTaxYear" - {
 
@@ -40,7 +40,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
             "period"             -> v.period
           )
 
-          json.validate[PaacTaxYear2017ToCurrent] mustEqual JsSuccess(
+          json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsSuccess(
             PaacTaxYear2017ToCurrent.NormalTaxYear(
               v.pensionInputAmount,
               v.income,
@@ -60,7 +60,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
             "period"             -> v.period
           )
 
-          json.validate[PaacTaxYear2017ToCurrent] mustEqual JsError("tax year must be `2017` or later")
+          json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsError("tax year must be `2017` or later")
       }
 
     }
@@ -80,7 +80,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
               v.income,
               v.period
             )
-          ) mustEqual json
+          ) `mustEqual` json
       }
     }
 
@@ -102,7 +102,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
           "period"                                   -> v.period
         )
 
-        json.validate[PaacTaxYear2017ToCurrent] mustEqual JsSuccess(
+        json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsSuccess(
           PaacTaxYear2017ToCurrent.InitialFlexiblyAccessedTaxYear(
             v.definedBenefitInputAmount,
             v.preAccessDefinedContributionInputAmount,
@@ -130,7 +130,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
           "period"                                   -> v.period
         )
 
-        json.validate[PaacTaxYear2017ToCurrent] mustEqual JsError("tax year must be `2017` or later")
+        json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsError("tax year must be `2017` or later")
 
       }
 
@@ -158,7 +158,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
             v.income,
             v.period
           )
-        ) mustEqual json
+        ) `mustEqual` json
 
       }
 
@@ -181,7 +181,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
           "period"                         -> v.period
         )
 
-        json.validate[PaacTaxYear2017ToCurrent] mustEqual JsSuccess(
+        json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsSuccess(
           PaacTaxYear2017ToCurrent.PostFlexiblyAccessedTaxYear(
             v.definedBenefitInputAmount,
             v.definedContributionInputAmount,
@@ -207,7 +207,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
           "period"                         -> v.period
         )
 
-        json.validate[PaacTaxYear2017ToCurrent] mustEqual JsError("tax year must be `2017` or later")
+        json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsError("tax year must be `2017` or later")
 
       }
 
@@ -233,7 +233,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
             v.income,
             v.period
           )
-        ) mustEqual json
+        ) `mustEqual` json
 
       }
 
@@ -249,7 +249,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
           "period" -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2017ToCurrent] mustEqual JsSuccess(
+        json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsSuccess(
           PaacTaxYear2017ToCurrent.NoInputTaxYear(v.period)
         )
 
@@ -263,7 +263,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
           "period" -> v.period.toString
         )
 
-        json.validate[PaacTaxYear2017ToCurrent] mustEqual JsError("tax year must be `2017` or later")
+        json.validate[PaacTaxYear2017ToCurrent] `mustEqual` JsError("tax year must be `2017` or later")
 
       }
 
@@ -277,7 +277,7 @@ class PaacTaxYear2017ToCurrentSpec extends AnyFreeSpec with ScalaCheckPropertyCh
 
         Json.toJson[PaacTaxYear2017ToCurrent](
           PaacTaxYear2017ToCurrent.NoInputTaxYear(v.period)
-        ) mustEqual json
+        ) `mustEqual` json
 
       }
 

@@ -22,7 +22,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, BodyParsers}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.auth.core.{AuthConnector, MissingBearerToken}
@@ -56,8 +56,8 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
 
         val result = controller.get()(request)
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual "nino"
+        status(result) `mustEqual` OK
+        contentAsString(result) `mustEqual` "nino"
       }
 
       "must return BadRequest when no nino can be retrieved" in {
@@ -69,7 +69,7 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
 
         val result = controller.get()(request)
 
-        status(result) mustEqual BAD_REQUEST
+        status(result) `mustEqual` BAD_REQUEST
       }
     }
 
@@ -84,7 +84,7 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
 
         val result = controller.get()(request)
 
-        status(result) mustEqual OK
+        status(result) `mustEqual` OK
       }
 
       "must return Bad Request when the request does not have a session id" in {
@@ -96,7 +96,7 @@ class IdentifierActionSpec extends AnyFreeSpec with Matchers {
 
         val result = controller.get()(request)
 
-        status(result) mustEqual BAD_REQUEST
+        status(result) `mustEqual` BAD_REQUEST
       }
     }
   }

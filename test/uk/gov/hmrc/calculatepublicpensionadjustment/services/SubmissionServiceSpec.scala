@@ -17,16 +17,16 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
 import cats.data.NonEmptyChain
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.Done
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 
@@ -60,8 +60,8 @@ class SubmissionServiceSpec
 
       "must succeed and return a uniqueId when submission is inserted" in {
 
-        when(mockUuidService.random()).thenReturn("uniqueId")
-        when(mockSubmissionRepository.insert(any())).thenReturn(Future.successful(Done))
+        when(mockUuidService.random()).`thenReturn`("uniqueId")
+        when(mockSubmissionRepository.insert(any())).`thenReturn`(Future.successful(Done))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
           service.submit(
@@ -104,13 +104,13 @@ class SubmissionServiceSpec
             "uniqueId"
           )
 
-        result.futureValue mustBe Right("uniqueId")
+        result.futureValue `mustBe` Right("uniqueId")
       }
 
       "must fail when insert fails" in {
 
-        when(mockUuidService.random()).thenReturn("uniqueId")
-        when(mockSubmissionRepository.insert(any())).thenReturn(Future.failed(new RuntimeException("exception")))
+        when(mockUuidService.random()).`thenReturn`("uniqueId")
+        when(mockSubmissionRepository.insert(any())).`thenReturn`(Future.failed(new RuntimeException("exception")))
 
         val result: Future[Either[NonEmptyChain[String], String]] =
           service.submit(
@@ -153,7 +153,7 @@ class SubmissionServiceSpec
             "uniqueId"
           )
 
-        an[RuntimeException] mustBe thrownBy(result.futureValue)
+        an[RuntimeException] `mustBe` thrownBy(result.futureValue)
       }
     }
 
@@ -201,16 +201,16 @@ class SubmissionServiceSpec
             None
           )
 
-        when(mockSubmissionRepository.get(any())).thenReturn(Future.successful(Some(submission)))
+        when(mockSubmissionRepository.get(any())).`thenReturn`(Future.successful(Some(submission)))
 
-        service.retrieve("uniqueId").futureValue mustBe Some(submission)
+        service.retrieve("uniqueId").futureValue `mustBe` Some(submission)
         verify(mockSubmissionRepository, times(1)).get(eqTo("uniqueId"))
       }
 
       "must return None when it does not exist in the repository" in {
-        when(mockSubmissionRepository.get("unknownId")).thenReturn(Future.successful(None))
+        when(mockSubmissionRepository.get("unknownId")).`thenReturn`(Future.successful(None))
 
-        service.retrieve("unknownId").futureValue mustBe None
+        service.retrieve("unknownId").futureValue `mustBe` None
         verify(mockSubmissionRepository, times(1)).get(eqTo("unknownId"))
       }
     }
@@ -218,9 +218,9 @@ class SubmissionServiceSpec
     "clearBySessionId" - {
 
       "must clear a submission when it exists in the repository" in {
-        when(mockSubmissionRepository.clear("userId")).thenReturn(Future.successful(Done))
+        when(mockSubmissionRepository.clear("userId")).`thenReturn`(Future.successful(Done))
 
-        service.clearByUserId("userId").futureValue mustBe Done
+        service.clearByUserId("userId").futureValue `mustBe` Done
       }
     }
 
@@ -268,18 +268,18 @@ class SubmissionServiceSpec
             None
           )
 
-        when(mockSubmissionRepository.set(submission)).thenReturn(Future.successful(Done))
+        when(mockSubmissionRepository.set(submission)).`thenReturn`(Future.successful(Done))
 
-        service.updateSubmission(submission).futureValue mustBe Done
+        service.updateSubmission(submission).futureValue `mustBe` Done
       }
     }
 
     "clearByUniqueIdAndNotId" - {
 
       "must return Done when clearing a submission" in {
-        when(mockSubmissionRepository.clearByUniqueIdAndNotId("uniqueId", "id2")).thenReturn(Future.successful(Done))
+        when(mockSubmissionRepository.clearByUniqueIdAndNotId("uniqueId", "id2")).`thenReturn`(Future.successful(Done))
 
-        service.clearByUniqueIdAndNotId("uniqueId", "id2").futureValue mustBe Done
+        service.clearByUniqueIdAndNotId("uniqueId", "id2").futureValue `mustBe` Done
       }
     }
 
@@ -290,9 +290,9 @@ class SubmissionServiceSpec
 
     val uniqueId: String = uuidService.random()
 
-    uniqueId.length mustBe 36
+    uniqueId.length `mustBe` 36
     val uuidRegex: Regex = "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$".r
-    uuidRegex.matches(uniqueId) mustBe true
+    uuidRegex.matches(uniqueId) `mustBe` true
   }
 
 }

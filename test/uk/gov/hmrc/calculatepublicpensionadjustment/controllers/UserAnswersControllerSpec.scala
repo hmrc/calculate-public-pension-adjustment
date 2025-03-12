@@ -17,7 +17,8 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.{Mockito, MockitoSugar}
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -26,7 +27,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, SubmissionStatusResponse, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.UserAnswersService
@@ -56,7 +57,7 @@ class UserAnswersControllerSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    Mockito.reset[Any](mockRepo, mockStubBehaviour, mockUserAnswersService)
+    reset[Any](mockRepo, mockStubBehaviour, mockUserAnswersService)
   }
 
   private val app = new GuiceApplicationBuilder()
@@ -70,7 +71,7 @@ class UserAnswersControllerSpec
 
     "must return OK and the data when user data can be found for this session id" in {
 
-      when(mockRepo.get(eqTo(userId))) thenReturn Future.successful(Some(userData))
+      when(mockRepo.get(eqTo(userId))) `thenReturn` Future.successful(Some(userData))
 
       val request =
         FakeRequest(GET, routes.UserAnswersController.get.url)
@@ -78,13 +79,13 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
-      contentAsJson(result) mustEqual Json.toJson(userData)
+      status(result) `mustEqual` OK
+      contentAsJson(result) `mustEqual` Json.toJson(userData)
     }
 
     "must return Not Found when user data cannot be found for this session id" in {
 
-      when(mockRepo.get(any())) thenReturn Future.successful(None)
+      when(mockRepo.get(any())) `thenReturn` Future.successful(None)
 
       val request =
         FakeRequest(GET, routes.UserAnswersController.get.url)
@@ -92,7 +93,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual NOT_FOUND
+      status(result) `mustEqual` NOT_FOUND
     }
 
     "must return Bad Request when the request does not have a session id" in {
@@ -101,7 +102,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 
@@ -109,7 +110,7 @@ class UserAnswersControllerSpec
 
     "must return No Content when the data is successfully saved" in {
 
-      when(mockRepo.set(any())) thenReturn Future.successful(Done)
+      when(mockRepo.set(any())) `thenReturn` Future.successful(Done)
 
       val request =
         FakeRequest(POST, routes.UserAnswersController.set.url)
@@ -121,7 +122,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual NO_CONTENT
+      status(result) `mustEqual` NO_CONTENT
       verify(mockRepo, times(1)).set(eqTo(userData))
     }
 
@@ -134,7 +135,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
 
     "must return Bad Request when the request cannot be parsed as UserData" in {
@@ -151,7 +152,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 
@@ -159,7 +160,7 @@ class UserAnswersControllerSpec
 
     "must return No Content when the data is successfully saved" in {
 
-      when(mockRepo.set(any())) thenReturn Future.successful(Done)
+      when(mockRepo.set(any())) `thenReturn` Future.successful(Done)
 
       val request =
         FakeRequest(POST, routes.UserAnswersController.testOnlyset.url)
@@ -170,7 +171,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual NO_CONTENT
+      status(result) `mustEqual` NO_CONTENT
       verify(mockRepo, times(1)).set(eqTo(userData))
     }
 
@@ -187,7 +188,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 
@@ -195,7 +196,7 @@ class UserAnswersControllerSpec
 
     "must return No Content when data is kept alive" in {
 
-      when(mockRepo.keepAlive(eqTo(userId))) thenReturn Future.successful(Done)
+      when(mockRepo.keepAlive(eqTo(userId))) `thenReturn` Future.successful(Done)
 
       val request =
         FakeRequest(POST, routes.UserAnswersController.keepAlive.url)
@@ -204,7 +205,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual NO_CONTENT
+      status(result) `mustEqual` NO_CONTENT
       verify(mockRepo, times(1)).keepAlive(eqTo(userId))
     }
 
@@ -216,7 +217,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 
@@ -224,7 +225,7 @@ class UserAnswersControllerSpec
 
     "must return No Content when data is cleared" in {
 
-      when(mockRepo.clear(eqTo(userId))) thenReturn Future.successful(Done)
+      when(mockRepo.clear(eqTo(userId))) `thenReturn` Future.successful(Done)
 
       val request =
         FakeRequest(DELETE, routes.UserAnswersController.clear.url)
@@ -232,7 +233,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual NO_CONTENT
+      status(result) `mustEqual` NO_CONTENT
       verify(mockRepo, times(1)).clear(eqTo(userId))
     }
 
@@ -244,14 +245,14 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 
   ".updateSubmissionLander must return OK when user answer found with uniqueID" in {
 
     when(mockUserAnswersService.retrieveUserAnswers("uniqueId"))
-      .thenReturn(
+      .`thenReturn`(
         Future.successful(
           Some(
             UserAnswers("uniqueId", Json.obj("foo" -> "bar"), "uniqueId", Instant.now(stubClock), true, true)
@@ -260,7 +261,7 @@ class UserAnswersControllerSpec
       )
 
     when(mockUserAnswersService.updateSubmissionStartedToFalse("uniqueId"))
-      .thenReturn(
+      .`thenReturn`(
         Future.successful(true)
       )
 
@@ -269,20 +270,20 @@ class UserAnswersControllerSpec
 
     val result = route(app, request).value
 
-    status(result) mustBe OK
+    status(result) `mustBe` OK
   }
 
   ".updateSubmissionLander must return bad request when user answer not found" in {
 
     when(mockUserAnswersService.retrieveUserAnswers("uniqueId"))
-      .thenReturn(
+      .`thenReturn`(
         Future.successful(
           None
         )
       )
 
     when(mockUserAnswersService.updateSubmissionStartedToFalse("uniqueId"))
-      .thenReturn(
+      .`thenReturn`(
         Future.successful(false)
       )
 
@@ -291,14 +292,14 @@ class UserAnswersControllerSpec
 
     val result = route(app, request).value
 
-    status(result) mustBe BAD_REQUEST
+    status(result) `mustBe` BAD_REQUEST
   }
 
   "checkSubmissionStarted" - {
     "must return OK when record have been found" in {
 
       val submissionStatusResponse = SubmissionStatusResponse("uniqueId", true)
-      when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) thenReturn
+      when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) `thenReturn`
         Future.successful(Some(submissionStatusResponse))
 
       val request =
@@ -307,12 +308,12 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
-      contentAsJson(result) mustEqual Json.parse("{\"uniqueId\":\"uniqueId\",\"submissionStarted\":true}")
+      status(result) `mustEqual` OK
+      contentAsJson(result) `mustEqual` Json.parse("{\"uniqueId\":\"uniqueId\",\"submissionStarted\":true}")
     }
 
     "must return Not Found when the no records have been found" in {
-      when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) thenReturn Future.successful(None)
+      when(mockUserAnswersService.checkSubmissionStartedWithId(eqTo(userId))) `thenReturn` Future.successful(None)
 
       val request =
         FakeRequest(GET, routes.UserAnswersController.checkSubmissionStartedWithId(userId).url)
@@ -320,7 +321,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual NOT_FOUND
+      status(result) `mustEqual` NOT_FOUND
     }
   }
 
@@ -331,7 +332,7 @@ class UserAnswersControllerSpec
       val userAnswers = UserAnswers("testId", Json.obj("key" -> "value"), uniqueId, Instant.now(stubClock), true, true)
 
       when(mockUserAnswersService.retrieveUserAnswersByUniqueId(eqTo(uniqueId)))
-        .thenReturn(Future.successful(Some(userAnswers)))
+        .`thenReturn`(Future.successful(Some(userAnswers)))
 
       val request = FakeRequest(POST, routes.UserAnswersController.retrieveUserAnswersByUniqueId.url)
         .withHeaders("Content-Type" -> "application/json")
@@ -339,15 +340,15 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
-      contentAsJson(result) mustEqual Json.toJson(userAnswers)
+      status(result) `mustEqual` OK
+      contentAsJson(result) `mustEqual` Json.toJson(userAnswers)
     }
 
     "must return BadRequest when submission unique id is not found" in {
       val uniqueId = "nonExistentUnique1234"
 
       when(mockUserAnswersService.retrieveUserAnswersByUniqueId(eqTo(uniqueId)))
-        .thenReturn(Future.successful(None))
+        .`thenReturn`(Future.successful(None))
 
       val request = FakeRequest(POST, routes.UserAnswersController.retrieveUserAnswersByUniqueId.url)
         .withHeaders("Content-Type" -> "application/json")
@@ -355,7 +356,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
 
     "must return BadRequest when request body is invalid" in {
@@ -365,7 +366,7 @@ class UserAnswersControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 
@@ -373,14 +374,14 @@ class UserAnswersControllerSpec
 
     "must return OK when the service processes successfully" in {
       when(mockUserAnswersService.checkAndRetrieveCalcUserAnswersWithUniqueId(eqTo("uniqueId"))(any()))
-        .thenReturn(Future.successful(Done))
+        .`thenReturn`(Future.successful(Done))
 
       val request =
         FakeRequest(GET, routes.UserAnswersController.checkAndRetrieveCalcUserAnswersWithUniqueId("uniqueId").url)
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
+      status(result) `mustEqual` OK
       verify(mockUserAnswersService).checkAndRetrieveCalcUserAnswersWithUniqueId(eqTo("uniqueId"))(any())
     }
   }
@@ -389,14 +390,14 @@ class UserAnswersControllerSpec
 
     "must return OK when the service processes successfully" in {
       when(mockUserAnswersService.checkAndRetrieveCalcUserAnswersWithId(eqTo("id"))(any()))
-        .thenReturn(Future.successful(Done))
+        .`thenReturn`(Future.successful(Done))
 
       val request =
         FakeRequest(GET, routes.UserAnswersController.checkAndRetrieveCalcUserAnswersWithId("id").url)
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
+      status(result) `mustEqual` OK
       verify(mockUserAnswersService).checkAndRetrieveCalcUserAnswersWithId(eqTo("id"))(any())
     }
   }

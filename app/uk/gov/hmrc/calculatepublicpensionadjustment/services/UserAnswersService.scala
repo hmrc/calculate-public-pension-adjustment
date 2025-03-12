@@ -40,7 +40,7 @@ class UserAnswersService @Inject() (
   def updateUserAnswers(updatedUserAnswers: UserAnswers): Future[Boolean] =
     userAnswers.set(updatedUserAnswers) map {
       case Done => true
-      case _    => false
+      case null => false
     }
 
   def updateSubmissionStartedToTrue(retrieveSubmissionInfo: RetrieveSubmissionInfo): Future[Boolean] =
@@ -76,7 +76,7 @@ class UserAnswersService @Inject() (
                    )
             } yield r match {
               case Done => true
-              case _    => false
+              case null => false
             }
 
           case None =>
