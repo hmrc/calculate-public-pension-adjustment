@@ -16,10 +16,14 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
-import play.api.libs.json._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{Format, __}
 
 case class UserSchemeDetails(name: String, taxRef: String)
 
 object UserSchemeDetails {
-  implicit val format: OFormat[UserSchemeDetails] = Json.format[UserSchemeDetails]
+  implicit lazy val format: Format[UserSchemeDetails] = (
+    (__ \ "name").format[String] and
+      (__ \ "taxRef").format[String]
+  )(UserSchemeDetails.apply, o => Tuple.fromProductTyped(o))
 }

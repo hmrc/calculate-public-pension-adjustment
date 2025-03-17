@@ -18,7 +18,8 @@ package uk.gov.hmrc.calculatepublicpensionadjustment.controllers
 
 import cats.data.NonEmptyChain
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.{Mockito, MockitoSugar}
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -26,15 +27,15 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.calculatepublicpensionadjustment.models._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Period, Resubmission, _}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.{Submission, SubmissionRequest, SubmissionResponse}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.SubmissionRepository
 import uk.gov.hmrc.calculatepublicpensionadjustment.services.{PaacService, SubmissionService, UserAnswersService}
 import uk.gov.hmrc.http.HeaderNames
-import uk.gov.hmrc.internalauth.client._
+import uk.gov.hmrc.internalauth.client.*
 import uk.gov.hmrc.internalauth.client.test.{BackendAuthComponentsStub, StubBehaviour}
 
 import java.time.temporal.ChronoUnit
@@ -53,7 +54,7 @@ class SubmissionControllerSpec
 
   override def beforeEach(): Unit                          = {
     super.beforeEach()
-    Mockito.reset[Any](mockSubmissionService, mockStubBehaviour, mockUserAnswersService, mockSubmissionRepository)
+    reset[Any](mockSubmissionService, mockStubBehaviour, mockUserAnswersService, mockSubmissionRepository)
   }
   private val mockSubmissionService                        = mock[SubmissionService]
   private val mockUserAnswersService                       = mock[UserAnswersService]
@@ -89,10 +90,10 @@ class SubmissionControllerSpec
     "must return ACCEPTED when a submission is successful" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+        .`thenReturn`(Future.successful(Retrieval.Username("test-service")))
 
       when(mockSubmissionService.submit(any(), any(), any(), any()))
-        .thenReturn(Future.successful(Right("uniqueId")))
+        .`thenReturn`(Future.successful(Right("uniqueId")))
 
       val calculationResponse =
         Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
@@ -103,8 +104,8 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual ACCEPTED
-      contentAsJson(result) mustEqual Json.obj("uniqueId" -> "uniqueId")
+      status(result) `mustEqual` ACCEPTED
+      contentAsJson(result) `mustEqual` Json.obj("uniqueId" -> "uniqueId")
 
       verify(mockSubmissionService, times(1))
         .submit(eqTo(calculationInputs), eqTo(calculationResponse), eqTo("uniqueId"), any())
@@ -113,10 +114,10 @@ class SubmissionControllerSpec
     "must return Submission when a valid uniqueId is specified" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+        .`thenReturn`(Future.successful(Retrieval.Username("test-service")))
 
       when(mockSubmissionService.retrieve("1234"))
-        .thenReturn(
+        .`thenReturn`(
           Future.successful(
             Some(
               Submission(
@@ -195,7 +196,7 @@ class SubmissionControllerSpec
         )
 
       when(mockUserAnswersService.retrieveUserAnswers("1234"))
-        .thenReturn(
+        .`thenReturn`(
           Future.successful(
             Some(
               UserAnswers("uniqueId", Json.obj("foo" -> "bar"), "dbUniqueId", Instant.now(stubClock), true, true)
@@ -206,7 +207,7 @@ class SubmissionControllerSpec
       val retrieveSubmissionInfo = RetrieveSubmissionInfo("nino", UniqueId("1234"))
 
       when(mockUserAnswersService.updateSubmissionStartedToTrue(retrieveSubmissionInfo))
-        .thenReturn(
+        .`thenReturn`(
           Future.successful(true)
         )
 
@@ -216,8 +217,8 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
-      contentAsJson(result) mustEqual Json.parse(
+      status(result) `mustEqual` OK
+      contentAsJson(result) `mustEqual` Json.parse(
         "{\"calculationInputs\":{\"resubmission\":{\"isResubmission\":false},\"setup\":{\"annualAllowanceSetup\":{\"savingsStatement\":true," +
           "\"pensionProtectedMember\":false,\"hadAACharge\":false,\"contributionRefunds\":false,\"netIncomeAbove100K\":false,\"netIncomeAbove190K\":false," +
           "\"maybePIAIncrease\":\"no\",\"maybePIAUnchangedOrDecreased\":\"no\",\"pIAAboveAnnualAllowanceIn2023\":false,\"netIncomeAbove190KIn2023\":false," +
@@ -239,10 +240,10 @@ class SubmissionControllerSpec
     "must return BadRequest when an unknown uniqueId is specified" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+        .`thenReturn`(Future.successful(Retrieval.Username("test-service")))
 
       when(mockSubmissionService.retrieve("1234"))
-        .thenReturn(Future.successful(None))
+        .`thenReturn`(Future.successful(None))
 
       val request = FakeRequest(routes.SubmissionController.retrieveSubmission)
         .withHeaders(AUTHORIZATION -> "my-token")
@@ -250,8 +251,8 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual ""
+      status(result) `mustEqual` BAD_REQUEST
+      contentAsString(result) `mustEqual` ""
 
       verify(mockSubmissionService, times(1)).retrieve(eqTo("1234"))
     }
@@ -261,10 +262,10 @@ class SubmissionControllerSpec
       val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+        .`thenReturn`(Future.successful(Retrieval.Username("test-service")))
 
       when(mockSubmissionService.retrieve("uniqueId"))
-        .thenReturn(
+        .`thenReturn`(
           Future.successful(
             Some(
               Submission(
@@ -343,14 +344,14 @@ class SubmissionControllerSpec
         )
 
       when(mockUserAnswersService.retrieveUserAnswers("uniqueId"))
-        .thenReturn(
+        .`thenReturn`(
           Future.successful(
             None
           )
         )
 
       when(mockUserAnswersService.updateSubmissionStartedToTrue(retrieveSubmissionInfo))
-        .thenReturn(
+        .`thenReturn`(
           Future.successful(false)
         )
 
@@ -363,17 +364,17 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
 
     }
 
     "must fail when the submission fails" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+        .`thenReturn`(Future.successful(Retrieval.Username("test-service")))
 
       when(mockSubmissionService.submit(any(), any(), any(), any()))
-        .thenReturn(Future.failed(new RuntimeException()))
+        .`thenReturn`(Future.failed(new RuntimeException()))
 
       val calculationResponse =
         Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
@@ -388,10 +389,10 @@ class SubmissionControllerSpec
     "must return BAD_REQUEST when the submission service returns errors" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+        .`thenReturn`(Future.successful(Retrieval.Username("test-service")))
 
       when(mockSubmissionService.submit(any(), any(), any(), any()))
-        .thenReturn(Future.successful(Left(NonEmptyChain.one("some error"))))
+        .`thenReturn`(Future.successful(Left(NonEmptyChain.one("some error"))))
 
       val calculationResponse =
         Some(CalculationResponse(Resubmission(false, None), TotalAmounts(1, 2, 3), List.empty, List.empty))
@@ -402,14 +403,14 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
-      contentAsJson(result).as[SubmissionResponse.Failure] mustEqual (SubmissionResponse.Failure(List("some error")))
+      status(result) `mustEqual` BAD_REQUEST
+      contentAsJson(result).as[SubmissionResponse.Failure] `mustEqual` (SubmissionResponse.Failure(List("some error")))
     }
 
     "must return BAD_REQUEST when the user provides an invalid request" in {
 
       when(mockStubBehaviour.stubAuth(Some(permission), Retrieval.username))
-        .thenReturn(Future.successful(Retrieval.Username("test-service")))
+        .`thenReturn`(Future.successful(Retrieval.Username("test-service")))
 
       val request = FakeRequest(routes.SubmissionController.submit)
         .withHeaders(AUTHORIZATION -> "my-token")
@@ -417,8 +418,8 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual "Invalid Submission"
+      status(result) `mustEqual` BAD_REQUEST
+      contentAsString(result) `mustEqual` "Invalid Submission"
     }
   }
 
@@ -426,7 +427,7 @@ class SubmissionControllerSpec
 
     "must return No Content when data is cleared" in {
 
-      when(mockSubmissionRepository.clear(eqTo("sessionId"))) thenReturn Future.successful(Done)
+      when(mockSubmissionRepository.clear(eqTo("sessionId"))) `thenReturn` Future.successful(Done)
 
       val request =
         FakeRequest(DELETE, routes.SubmissionController.clear.url)
@@ -434,7 +435,7 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual NO_CONTENT
+      status(result) `mustEqual` NO_CONTENT
       verify(mockSubmissionRepository, times(1)).clear(eqTo("sessionId"))
     }
 
@@ -445,7 +446,7 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 
@@ -454,7 +455,7 @@ class SubmissionControllerSpec
     "must return calculated personal allowance and reduced net income values" in {
 
       when(mockPaacService.calculatePersonalAllowanceAndReducedNetIncome(any(), any(), any(), any()))
-        .thenReturn((1, 2, 3))
+        .`thenReturn`((1, 2, 3))
 
       val request = FakeRequest(routes.SubmissionController.retrieveCalculatedValues)
         .withHeaders(AUTHORIZATION -> "my-token")
@@ -488,8 +489,8 @@ class SubmissionControllerSpec
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
-      contentAsJson(result) mustEqual Json.toJson(ReducedNetIncomeResponse(1, 2))
+      status(result) `mustEqual` OK
+      contentAsJson(result) `mustEqual` Json.toJson(ReducedNetIncomeResponse(1, 2))
 
     }
 
@@ -500,7 +501,7 @@ class SubmissionControllerSpec
         .withBody(Json.toJson("{\"invalid\":\"request\"}"))
 
       val result = route(app, request).value
-      status(result) mustEqual BAD_REQUEST
+      status(result) `mustEqual` BAD_REQUEST
     }
   }
 

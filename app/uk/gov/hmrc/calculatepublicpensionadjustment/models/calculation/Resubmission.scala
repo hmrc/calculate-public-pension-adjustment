@@ -16,26 +16,15 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.libs.json.{Reads, Writes, __}
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{Format, __}
 
 case class Resubmission(isResubmission: Boolean, reason: Option[String])
 
 object Resubmission {
 
-  implicit lazy val reads: Reads[Resubmission] = {
-    import play.api.libs.functional.syntax._
-
-    ((__ \ "isResubmission").read[Boolean] and
-      (__ \ "reason").readNullable[String])(Resubmission(_, _))
-
-  }
-
-  implicit lazy val writes: Writes[Resubmission] = {
-    import play.api.libs.functional.syntax._
-
-    ((__ \ "isResubmission").write[Boolean] and
-      (__ \ "reason").writeNullable[String])(a => (a.isResubmission, a.reason))
-
-  }
-
+  implicit lazy val format: Format[Resubmission] = (
+    (__ \ "isResubmission").format[Boolean] and
+      (__ \ "reason").formatNullable[String]
+  )(Resubmission.apply, o => Tuple.fromProductTyped(o))
 }

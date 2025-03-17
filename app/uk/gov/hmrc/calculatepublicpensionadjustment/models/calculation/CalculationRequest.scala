@@ -25,7 +25,7 @@ object CalculationRequest {
 
   implicit lazy val reads: Reads[CalculationRequest] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     ((__ \ "resubmission").read[Resubmission] and
       (__ \ "scottishTaxYears").read[List[Period]] and

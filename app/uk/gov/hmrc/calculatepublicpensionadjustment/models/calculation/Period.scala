@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.logging.Logging
 
 import scala.util.{Failure, Success, Try}

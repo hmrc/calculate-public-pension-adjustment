@@ -17,7 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.controllers.actions
 
 import play.api.mvc.Results.BadRequest
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions, NoActiveSession}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.IdentifierRequest

@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.repositories
 
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -63,9 +64,9 @@ class UserAnswersRepositorySpec
   private implicit val crypto: Encrypter with Decrypter =
     SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", configuration.underlying)
 
-  when(mockAppConfig.ttlInDays) thenReturn 900
+  when(mockAppConfig.ttlInDays) `thenReturn` 900.toLong
 
-  protected override val repository = new UserAnswersRepository(
+  protected override val repository: UserAnswersRepository = new UserAnswersRepository(
     mongoComponent = mongoComponent,
     appConfig = mockAppConfig,
     clock = stubClock

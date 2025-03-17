@@ -15,7 +15,9 @@
  */
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models
-import play.api.libs.json.{Format, Json}
+
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{Format, __}
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.Period
 
 case class ReducedNetIncomeRequest(
@@ -27,5 +29,10 @@ case class ReducedNetIncomeRequest(
 
 object ReducedNetIncomeRequest {
 
-  implicit lazy val format: Format[ReducedNetIncomeRequest] = Json.format
+  implicit lazy val format: Format[ReducedNetIncomeRequest] = (
+    (__ \ "period").format[Period] and
+      (__ \ "scottishTaxYears").format[List[Period]] and
+      (__ \ "totalIncome").format[Int] and
+      (__ \ "incomeSubJourney").format[IncomeSubJourney]
+  )(ReducedNetIncomeRequest.apply, o => Tuple.fromProductTyped(o))
 }

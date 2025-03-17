@@ -17,10 +17,10 @@
 package generators
 
 import org.scalacheck.Gen
-import org.scalacheck.Gen._
+import org.scalacheck.Gen.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.*
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa.*
 
 import java.time.LocalDate
 

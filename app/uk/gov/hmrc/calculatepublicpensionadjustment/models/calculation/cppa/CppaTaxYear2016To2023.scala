@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.cppa
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.IncomeSubJourney
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.{Income, Period}
 
@@ -68,9 +68,9 @@ object CppaTaxYear2016To2023 {
 
   implicit lazy val reads: Reads[CppaTaxYear2016To2023] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
-    import Ordering.Implicits._
+    import Ordering.Implicits.*
 
     val normalReads: Reads[CppaTaxYear2016To2023] = ((__ \ "pensionInputAmount").read[Int] and
       (__ \ "taxYearSchemes").read[List[TaxYearScheme]] and
@@ -80,7 +80,7 @@ object CppaTaxYear2016To2023 {
       (__ \ "incomeSubJourney").read[IncomeSubJourney] and
       (__ \ "income").readNullable[Income] and
       (__ \ "pensionInput2016PostAmount").readNullable[Int])(
-      CppaTaxYear2016To2023.NormalTaxYear
+      CppaTaxYear2016To2023.NormalTaxYear.apply _
     )
 
     val initialFlexiblyAccessedReads: Reads[CppaTaxYear2016To2023] =
@@ -97,7 +97,7 @@ object CppaTaxYear2016To2023 {
         (__ \ "definedBenefitInput2016PostAmount").readNullable[Int] and
         (__ \ "definedContributionInput2016PostAmount").readNullable[Int] and
         (__ \ "postAccessDefinedContributionInput2016PostAmount").readNullable[Int])(
-        CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear
+        CppaTaxYear2016To2023.InitialFlexiblyAccessedTaxYear.apply _
       )
 
     val postFlexiblyAccessedReads: Reads[CppaTaxYear2016To2023] = ((__ \ "definedBenefitInputAmount").read[Int] and
@@ -110,7 +110,7 @@ object CppaTaxYear2016To2023 {
       (__ \ "income").readNullable[Income] and
       (__ \ "definedBenefitInput2016PostAmount").readNullable[Int] and
       (__ \ "definedContributionInput2016PostAmount").readNullable[Int])(
-      CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear
+      CppaTaxYear2016To2023.PostFlexiblyAccessedTaxYear.apply _
     )
 
     (__ \ "period")
@@ -127,7 +127,7 @@ object CppaTaxYear2016To2023 {
 
   implicit lazy val writes: Writes[CppaTaxYear2016To2023] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     lazy val normalWrites: Writes[CppaTaxYear2016To2023.NormalTaxYear] = (
       (__ \ "pensionInputAmount").write[Int] and

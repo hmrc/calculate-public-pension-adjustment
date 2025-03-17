@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.calculatepublicpensionadjustment.services
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{never, reset, times, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -26,7 +26,7 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import play.api.libs.json.{JsObject, Json}
 import requests.CalculationResponses
 import uk.gov.hmrc.calculatepublicpensionadjustment.connectors.SubmitBackendConnector
-import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation._
+import uk.gov.hmrc.calculatepublicpensionadjustment.models.calculation.*
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.submission.Submission
 import uk.gov.hmrc.calculatepublicpensionadjustment.models.{Done, RetrieveSubmissionInfo, UniqueId, UserAnswers}
 import uk.gov.hmrc.calculatepublicpensionadjustment.repositories.UserAnswersRepository
@@ -69,16 +69,16 @@ class UserAnswersServiceSpec
 
         val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
-        when(mockUserAnswersRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.get(any())).`thenReturn`(Future.successful(Some(userAnswers)))
 
-        service.retrieveUserAnswers("uniqueId").futureValue mustBe Some(userAnswers)
+        service.retrieveUserAnswers("uniqueId").futureValue `mustBe` Some(userAnswers)
         verify(mockUserAnswersRepository, times(1)).get(eqTo("uniqueId"))
       }
 
       "must return None when it does not exist in the repository" in {
-        when(mockUserAnswersRepository.get("unknownId")).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.get("unknownId")).`thenReturn`(Future.successful(None))
 
-        service.retrieveUserAnswers("unknownId").futureValue mustBe None
+        service.retrieveUserAnswers("unknownId").futureValue `mustBe` None
         verify(mockUserAnswersRepository, times(1)).get(eqTo("unknownId"))
       }
     }
@@ -89,16 +89,16 @@ class UserAnswersServiceSpec
 
         val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
-        when(mockUserAnswersRepository.getByUniqueId(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.getByUniqueId(any())).`thenReturn`(Future.successful(Some(userAnswers)))
 
-        service.retrieveUserAnswersByUniqueId("uniqueId").futureValue mustBe Some(userAnswers)
+        service.retrieveUserAnswersByUniqueId("uniqueId").futureValue `mustBe` Some(userAnswers)
         verify(mockUserAnswersRepository, times(1)).getByUniqueId(eqTo("uniqueId"))
       }
 
       "must return None when it does not exist in the repository" in {
-        when(mockUserAnswersRepository.getByUniqueId("unknownId")).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.getByUniqueId("unknownId")).`thenReturn`(Future.successful(None))
 
-        service.retrieveUserAnswersByUniqueId("unknownId").futureValue mustBe None
+        service.retrieveUserAnswersByUniqueId("unknownId").futureValue `mustBe` None
         verify(mockUserAnswersRepository, times(1)).getByUniqueId(eqTo("unknownId"))
       }
     }
@@ -152,16 +152,16 @@ class UserAnswersServiceSpec
 
         val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
-        when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
-        when(mockSubmissionService.updateSubmission(any())).thenReturn(Future.successful(Done))
-        when(mockSubmissionService.clearByUserId(any())).thenReturn(Future.successful(Done))
-        when(mockSubmissionService.clearByUniqueIdAndNotId(any(), any())).thenReturn(Future.successful(Done))
-        when(mockUserAnswersRepository.clear(any())).thenReturn(Future.successful(Done))
-        when(mockUserAnswersRepository.get("id")).thenReturn(Future.successful(Some(userAnswers)))
-        when(mockUserAnswersRepository.set(any())) thenReturn (Future.successful(Done))
-        when(mockUserAnswersRepository.clearByUniqueIdAndNotId(any(), any())) thenReturn (Future.successful(Done))
+        when(mockSubmissionService.retrieve(any())).`thenReturn`(Future.successful(Some(submission)))
+        when(mockSubmissionService.updateSubmission(any())).`thenReturn`(Future.successful(Done))
+        when(mockSubmissionService.clearByUserId(any())).`thenReturn`(Future.successful(Done))
+        when(mockSubmissionService.clearByUniqueIdAndNotId(any(), any())).`thenReturn`(Future.successful(Done))
+        when(mockUserAnswersRepository.clear(any())).`thenReturn`(Future.successful(Done))
+        when(mockUserAnswersRepository.get("id")).`thenReturn`(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.set(any())) `thenReturn` (Future.successful(Done))
+        when(mockUserAnswersRepository.clearByUniqueIdAndNotId(any(), any())) `thenReturn` (Future.successful(Done))
 
-        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue mustBe true
+        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue `mustBe` true
       }
 
       "must return a false if no userAnswer exist for the session id" in {
@@ -209,20 +209,20 @@ class UserAnswersServiceSpec
             None
           )
 
-        when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(Some(submission)))
-        when(mockUserAnswersRepository.get("id")).thenReturn(Future.successful(None))
-        when(mockUserAnswersRepository.set(any())) thenReturn Future.successful(Done)
+        when(mockSubmissionService.retrieve(any())).`thenReturn`(Future.successful(Some(submission)))
+        when(mockUserAnswersRepository.get("id")).`thenReturn`(Future.successful(None))
+        when(mockUserAnswersRepository.set(any())) `thenReturn` Future.successful(Done)
 
-        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue mustBe false
+        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue `mustBe` false
       }
 
       "must return a false if no submission exist for the unique id" in {
 
         val retrieveSubmissionInfo = RetrieveSubmissionInfo("uniqueId", UniqueId("1234"))
 
-        when(mockSubmissionService.retrieve(any())).thenReturn(Future.successful(None))
+        when(mockSubmissionService.retrieve(any())).`thenReturn`(Future.successful(None))
 
-        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue mustBe false
+        service.updateSubmissionStartedToTrue(retrieveSubmissionInfo).futureValue `mustBe` false
       }
 
     }
@@ -232,16 +232,16 @@ class UserAnswersServiceSpec
       "must return a submission when it exists in the userAnswersRepository" in {
         val userAnswers = UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now)
 
-        when(mockUserAnswersRepository.get("uniqueId")).thenReturn(Future.successful(Some(userAnswers)))
-        when(mockUserAnswersRepository.set(any())) thenReturn (Future.successful(Done))
+        when(mockUserAnswersRepository.get("uniqueId")).`thenReturn`(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.set(any())) `thenReturn` (Future.successful(Done))
 
-        service.updateSubmissionStartedToFalse("uniqueId").futureValue mustBe true
+        service.updateSubmissionStartedToFalse("uniqueId").futureValue `mustBe` true
       }
 
       "must return a false if no userAnswer exist for the session id" in {
-        when(mockUserAnswersRepository.get("uniqueId")).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.get("uniqueId")).`thenReturn`(Future.successful(None))
 
-        service.updateSubmissionStartedToFalse("uniqueId").futureValue mustBe false
+        service.updateSubmissionStartedToFalse("uniqueId").futureValue `mustBe` false
       }
 
     }
@@ -251,39 +251,39 @@ class UserAnswersServiceSpec
       "must return submission started when it exists in repository" - {
         val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
 
-        when(mockUserAnswersRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.get(any())).`thenReturn`(Future.successful(Some(userAnswers)))
 
         val result = service.checkSubmissionStartedWithId("ID")
 
-        result.futureValue.get.uniqueId mustBe "uniqueId"
-        result.futureValue.get.submissionStarted mustBe true
+        result.futureValue.get.uniqueId `mustBe` "uniqueId"
+        result.futureValue.get.submissionStarted `mustBe` true
       }
 
       "must return submission started empty when it does not exists in repository" - {
-        when(mockUserAnswersRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.get(any())).`thenReturn`(Future.successful(None))
 
         val result = service.checkSubmissionStartedWithId("ID")
 
-        result.futureValue mustBe None
+        result.futureValue `mustBe` None
       }
     }
 
     "checkCalculationExistsWithUniqueId" - {
       "must return true if calculation exists" in {
         when(mockUserAnswersRepository.getByUniqueId("uniqueId"))
-          .thenReturn(Future.successful(Some(UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now))))
+          .`thenReturn`(Future.successful(Some(UserAnswers("uniqueId", Json.obj(), "uniqueId", Instant.now))))
 
         val result = service.checkCalculationExistsWithUniqueId("uniqueId")
 
-        result.futureValue mustBe true
+        result.futureValue `mustBe` true
       }
 
       "must return false if calculation does not exist" in {
-        when(mockUserAnswersRepository.getByUniqueId("unknownUniqueId")).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.getByUniqueId("unknownUniqueId")).`thenReturn`(Future.successful(None))
 
         val result = service.checkCalculationExistsWithUniqueId("unknownUniqueId")
 
-        result.futureValue mustBe false
+        result.futureValue `mustBe` false
       }
     }
 
@@ -291,25 +291,25 @@ class UserAnswersServiceSpec
       "must not retrieve calculation user answers from backend if they exist" in {
         val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
 
-        when(mockUserAnswersRepository.getByUniqueId("uniqueId")).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.getByUniqueId("uniqueId")).`thenReturn`(Future.successful(Some(userAnswers)))
 
         val result = service.checkAndRetrieveCalcUserAnswersWithUniqueId("uniqueId")(hc)
 
-        result.futureValue mustBe Done
+        result.futureValue `mustBe` Done
         verify(mockSubmitBackendConnector, never).retrieveCalcUserAnswersFromSubmitBE("uniqueId")(hc)
       }
 
       "must retrieve calculation user answers if they do not exist" in {
         val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
 
-        when(mockUserAnswersRepository.getByUniqueId("uniqueId")).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.getByUniqueId("uniqueId")).`thenReturn`(Future.successful(None))
         when(mockSubmitBackendConnector.retrieveCalcUserAnswersFromSubmitBE("uniqueId")(hc))
-          .thenReturn(Future.successful(Some(userAnswers)))
-        when(mockUserAnswersRepository.set(userAnswers)).thenReturn(Future.successful(Done))
+          .`thenReturn`(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.set(userAnswers)).`thenReturn`(Future.successful(Done))
 
         val result = service.checkAndRetrieveCalcUserAnswersWithUniqueId("uniqueId")(hc)
 
-        result.futureValue mustBe Done
+        result.futureValue `mustBe` Done
         verify(mockUserAnswersRepository, times(1)).set(userAnswers)
       }
     }
@@ -318,25 +318,25 @@ class UserAnswersServiceSpec
       "must not retrieve calculation user answers from backend if they exist" in {
         val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
 
-        when(mockUserAnswersRepository.get("ID")).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.get("ID")).`thenReturn`(Future.successful(Some(userAnswers)))
 
         val result = service.checkAndRetrieveCalcUserAnswersWithId("ID")(hc)
 
-        result.futureValue mustBe Done
+        result.futureValue `mustBe` Done
         verify(mockSubmitBackendConnector, never).retrieveCalcUserAnswersFromSubmitBEWithId("ID")(hc)
       }
 
       "must retrieve calculation user answers if they do not exist" in {
         val userAnswers = new UserAnswers("ID", new JsObject(Map.empty), "uniqueId", Instant.now(), true, true)
 
-        when(mockUserAnswersRepository.get("ID")).thenReturn(Future.successful(None))
+        when(mockUserAnswersRepository.get("ID")).`thenReturn`(Future.successful(None))
         when(mockSubmitBackendConnector.retrieveCalcUserAnswersFromSubmitBEWithId("ID")(hc))
-          .thenReturn(Future.successful(Some(userAnswers)))
-        when(mockUserAnswersRepository.set(userAnswers)).thenReturn(Future.successful(Done))
+          .`thenReturn`(Future.successful(Some(userAnswers)))
+        when(mockUserAnswersRepository.set(userAnswers)).`thenReturn`(Future.successful(Done))
 
         val result = service.checkAndRetrieveCalcUserAnswersWithId("ID")(hc)
 
-        result.futureValue mustBe Done
+        result.futureValue `mustBe` Done
         verify(mockUserAnswersRepository, times(1)).set(userAnswers)
 
       }
