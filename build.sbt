@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalaVersion := "3.3.6"
 
 lazy val it = project
   .enablePlugins(PlayScala)
