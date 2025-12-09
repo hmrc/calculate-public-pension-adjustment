@@ -17,6 +17,7 @@
 package uk.gov.hmrc.calculatepublicpensionadjustment.models
 
 import play.api.libs.json.*
+import scala.language.implicitConversions
 
 trait TaxYear {
   def period: Period
