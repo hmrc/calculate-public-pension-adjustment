@@ -89,9 +89,9 @@ class SubmitBackendConnectorSpec
       }
 
       "should return None successfully when calc backend responds with NO_CONTENT" in {
-        val id         = "id"
+        val id = "id"
 
-        val url              = s"/submit-public-pension-adjustment/calc-user-answers/$id"
+        val url = s"/submit-public-pension-adjustment/calc-user-answers/$id"
 
         wireMockServer.stubFor(
           get(url)
@@ -120,7 +120,7 @@ class SubmitBackendConnectorSpec
 
     "retrieveCalcUserAnswersFromSubmitBEWithId" - {
       "should return CalcUserAnswers successfully when calc backend responds with OK" in {
-        val id         = "id"
+        val id               = "id"
         val expectedResponse = UserAnswers(
           id,
           JsObject(Seq()),
@@ -140,9 +140,9 @@ class SubmitBackendConnectorSpec
       }
 
       "should return None successfully when calc backend responds with NO_CONTENT" in {
-        val id         = "id"
+        val id = "id"
 
-        val url              = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
+        val url = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
 
         wireMockServer.stubFor(
           get(url)
@@ -153,8 +153,8 @@ class SubmitBackendConnectorSpec
       }
 
       "should throw UpstreamErrorResponse when calc backend responds with an error" in {
-        val id         = "id"
-        val url      = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
+        val id  = "id"
+        val url = s"/submit-public-pension-adjustment/calc-user-answers-with-id/$id"
 
         wireMockServer.stubFor(
           get(url)

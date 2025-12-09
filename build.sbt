@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalaVersion := "3.3.6"
 
 lazy val it = project
   .enablePlugins(PlayScala)
@@ -17,13 +17,13 @@ lazy val microservice = Project("calculate-public-pension-adjustment", file(".")
     // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
     // suppress warnings in generated routes files
     scalacOptions ++= Seq(
+      "-feature",
       "-Wconf:src=routes/.*:s",
       "-Wconf:msg=Flag.*repeatedly:s"
     ),
     PlayKeys.playDefaultPort := 12802
   )
   .settings(inConfig(Test)(testSettings): _*)
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
   .settings(scoverageSettings)
 
@@ -35,7 +35,7 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
 lazy val scoverageSettings =
   Seq(
     coverageExcludedPackages := """;uk\.gov\.hmrc\.BuildInfo;.*\.Routes;.*\.RoutesPrefix;.*\.Reverse[^.]*;testonly;uk\.gov\.hmrc\.calculatepublicpensionadjustment\.config;""",
-    coverageExcludedFiles := "<empty>;.*javascript.*;.*Routes.*;.*testonly.*",
+    coverageExcludedFiles := "<empty>;.*javascript.*;.*Routes.*;.*testonly.*;.*PaacConnector*.;.*SubmitBackendConnector*.;",
     coverageFailOnMinimum := true,
     coverageHighlighting := true,
     coverageMinimumStmtTotal := 80

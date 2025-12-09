@@ -57,6 +57,7 @@ trait CppaModelGenerators extends ModelGenerators {
     case Period._2021              => Gen.choose(LocalDate.parse("2020-04-06"), LocalDate.parse("2021-04-05"))
     case Period._2022              => Gen.choose(LocalDate.parse("2021-04-06"), LocalDate.parse("2022-04-05"))
     case Period._2023              => Gen.choose(LocalDate.parse("2022-04-06"), LocalDate.parse("2023-04-05"))
+    case other                     => throw new IllegalArgumentException(s"Unsupported period: $other")
   }
 
   lazy val genTaxYearScheme: Gen[TaxYearScheme] =
